@@ -1,26 +1,39 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { MemberCardBlock } from "./member-card-block";
+// @ts-expect-error Static brand asset; the portal supplies its own served copy.
+import logoUrl from "../../../../brand/ppij-logo.png";
+// @ts-expect-error Static brand asset; the portal supplies its own served copy.
+import mapUrl from "../../../../brand/id-map.svg";
 
-const meta: Meta<typeof MemberCardBlock> = { title: "Portal/MemberCardBlock", component: MemberCardBlock };
+/**
+ * The real member card: design from member-card.css, themes from
+ * the real catalogue (../card-themes.ts, 27 themes). The artwork
+ * PNGs are served by the portal at /card-themes/<id>.png; where
+ * they are absent the face falls back to the theme base colour,
+ * exactly as the app behaves on an artwork error. Tap the card (or
+ * the Barcode button) to flip it; Ubah tema opens the real theme
+ * picker.
+ */
+const meta: Meta<typeof MemberCardBlock> = {
+  title: "Portal/MemberCardBlock",
+  component: MemberCardBlock,
+  args: {
+    locale: "id",
+    memberId: "PPIJ-2026-000123",
+    name: "I Nyoman Darma Kotama",
+    number: "PPIJ-2026-000123",
+    komsat: "Okayama",
+    korda: "PPI Kansai",
+    validUntil: "2027-10-31",
+    logoSrc: logoUrl,
+    mapSrc: mapUrl,
+  },
+};
 export default meta;
 type Story = StoryObj<typeof MemberCardBlock>;
 
-export const WithActions: Story = {
-  render: () => (
-    <MemberCardBlock
-      name="I Nyoman Darma Kotama"
-      memberId="PPIJ-2026-000123"
-      komsat="Okayama"
-      affiliation="Okayama University"
-      validUntil="Okt 2027"
-      statusLabel="Aktif"
-      backNote="Tunjukkan kartu ini saat verifikasi kehadiran."
-      themes={[
-        { id: "kansai", label: "Kansai", group: "Korda", base: "#c8102e", faceTheme: "red" },
-        { id: "ppij-ink", label: "PPIJ Tinta", group: "PPIJ", base: "#1c1f23", faceTheme: "ink" },
-        { id: "sakura", label: "Sakura", group: "Musim", base: "#d77a94", faceTheme: "red" },
-        { id: "mega-mendung", label: "Mega Mendung", group: "Nusantara", base: "#31517f", faceTheme: "ink" },
-      ]}
-    />
-  ),
-};
+export const Active: Story = { args: { state: "active" } };
+export const Expiring: Story = { args: { state: "expiring", validUntil: "2026-11-15" } };
+export const ChangePending: Story = { args: { state: "change_pending" } };
+export const ExpiredGrace: Story = { args: { state: "expired_grace", graceUntil: "2026-12-31" } };
+export const Suspended: Story = { args: { state: "suspended", suspendReason: "Menunggu verifikasi dokumen" } };

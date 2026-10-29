@@ -34,7 +34,10 @@
     "radix-ui": "1.8.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "3.7.0",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "react-parallax-tilt": "1.7.346",
+    "react-barcode": "1.6.1",
+    "html-to-image": "1.11.13"
   },
   "devDependencies": {
     "@fontsource/noto-sans-jp": "^5.3.1",

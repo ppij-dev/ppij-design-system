@@ -80,7 +80,7 @@ export { TagInput, type TagInputProps } from "./components/tag-input";
 export { PortalShell, type PortalShellProps, type PortalNavItem, type PortalLanguage } from "./components/portal-shell";
 export { StatusCard, type StatusCardProps, type StatusCardTone } from "./components/status-card";
 export { ServiceTiles, type ServiceTilesProps, type ServiceTile, type ServiceTileGroup } from "./components/service-tiles";
-export { MemberCardBlock, type MemberCardBlockProps, type CardThemeOption } from "./components/member-card-block";
+export { MemberCardBlock, hasBarcode, type MemberCardBlockProps, type MemberCardState, type CardThemePreference } from "./components/member-card-block";
 export { PhoneField, PHONE_COUNTRY_CODES, type PhoneFieldProps } from "./components/phone-field";
 export { SegmentedProgress, type SegmentedProgressProps } from "./components/segmented-progress";
 export { WizardHeader, type WizardHeaderProps, type WizardLanguage } from "./components/wizard-header";
@@ -93,3 +93,9 @@ export { SuggestionSheet, type SuggestionSheetProps, type SuggestKind } from "./
 export { SubmitOverlay, type SubmitOverlayProps } from "./components/submit-overlay";
 export { ReviewPanel, type ReviewPanelProps } from "./components/review-panel";
 export { WizardFooter, type WizardFooterProps } from "./components/wizard-footer";
+export { BannerCarousel, type BannerCarouselProps } from "./components/banner-carousel";
+export { OfflineBanner, type OfflineBannerProps } from "./components/offline-banner";
+export { TodoStrip, type TodoStripProps } from "./components/todo-strip";
+export { InvitationCard, type InvitationCardProps } from "./components/invitation-card";
+export { cardThemes, resolveCardTheme, type CardTheme } from "./card-themes";
+export { activeBanners, jstToday, MAX_ACTIVE, type PromoBanner } from "./banners";

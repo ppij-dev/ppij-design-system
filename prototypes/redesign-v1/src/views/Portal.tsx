@@ -1,6 +1,22 @@
 import { IconHome, IconIdBadge2, IconSchool, IconUsers, IconCalendar } from "@tabler/icons-react";
-import { MemberCardBlock, PortalShell, ServiceTiles, StatusCard } from "ppij-design-system";
+import { BannerCarousel, MemberCardBlock, PortalShell, ServiceTiles, TodoStrip, type PromoBanner } from "ppij-design-system";
 import logoUrl from "../../../../brand/ppij-logo.png";
+import mapUrl from "../../../../brand/id-map.svg";
+import b1d from "../../../../brand/banners/banner_1.jpg";
+import b1m from "../../../../brand/banners/banner_1_mobile.jpg";
+import b2d from "../../../../brand/banners/banner_2.jpg";
+import b2m from "../../../../brand/banners/banner_2_mobile.jpg";
+import b3d from "../../../../brand/banners/banner_3.jpg";
+import b3m from "../../../../brand/banners/banner_3_mobile.jpg";
+import b4d from "../../../../brand/banners/banner_4.jpg";
+import b4m from "../../../../brand/banners/banner_4_mobile.jpg";
+
+const BANNERS: PromoBanner[] = [
+  { id: "banner_4", image: { desktop: b4d, mobile: b4m }, alt: { id: "Webinar gratis Communication Survival Skills 2027 bersama John Robert Powers, Sabtu 31 Oktober 2026 pukul 14.00 WIB via Zoom. Daftar sekarang.", en: "Free Communication Survival Skills 2027 webinar with John Robert Powers, Saturday 31 October 2026, 14.00 WIB on Zoom. Register now." }, href: "https://bit.ly/CSSSeminar2026", start: "2026-10-24", end: "2026-11-01", order: 1 },
+  { id: "banner_1", image: { desktop: b1d, mobile: b1m }, alt: { id: "Diskon 10% di Toko Indonesia Tokyo untuk anggota PPI Jepang", en: "10% off at Toko Indonesia Tokyo for PPI Japan members" }, href: "https://ppijepang.org", start: "2026-10-20", end: "2026-12-31", order: 2 },
+  { id: "banner_2", image: { desktop: b2d, mobile: b2m }, alt: { id: "Gratis ongkir kirim paket ke Indonesia untuk anggota aktif", en: "Free shipping to Indonesia for active members" }, href: "https://ppijepang.org", start: "2026-10-20", end: "2026-12-31", order: 3 },
+  { id: "banner_3", image: { desktop: b3d, mobile: b3m }, alt: { id: "Ski & Snowboard bareng PPI Okayama musim dingin ini. Daftar sekarang.", en: "Join the PPI Okayama Winter Ski and Snowboard trip. Register now." }, href: "https://ppijepang.org", start: "2026-10-21", order: 4 },
+];
 
 export function PortalView({ onNavigate }: { onNavigate: (view: "profile") => void }) {
   const go = (view: "profile") => (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -27,24 +43,12 @@ export function PortalView({ onNavigate }: { onNavigate: (view: "profile") => vo
       ]}
     >
       <div className="flex flex-col gap-5">
+        <BannerCarousel banners={BANNERS} />
         <h1 className="text-2xl font-bold text-brand-ink">Halo, Darma</h1>
-        <StatusCard compact icon={<IconIdBadge2 stroke={1.75} />} title="Kartu anggota aktif" actionLabel="Lihat profil" actionHref="#" onAction={() => onNavigate("profile")} />
         <div className="flex flex-col gap-5 md:grid md:grid-cols-[350px_minmax(0,1fr)] md:items-start md:gap-x-8 md:gap-y-6">
-          {/* Entry point to the registration wizard. The wizard itself
-              stays in the app; the design system records it in the
-              Storybook Wizard section, so this card is inert here. */}
-          <a
-            href="#"
-            className="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-brand-border bg-card px-4 py-3 text-brand-ink hover:border-brand-red focus-visible:outline-2 focus-visible:outline-brand-red md:col-span-2"
-          >
-            <span>
-              <span className="block text-xs font-semibold tracking-wide text-brand-muted uppercase">Lengkapi profilmu</span>
-              <span className="block font-semibold">Tambahkan minat dan keahlianmu</span>
-            </span>
-            <span aria-hidden className="text-sm font-semibold text-brand-red">&rsaquo;</span>
-          </a>
+          <TodoStrip heading="Langkah berikutnya" label="Tambahkan minat Anda (opsional)" href="#" onClick={go("profile")} />
           <div className="md:sticky md:top-[72px]">
-            <MemberCardBlock name="I Nyoman Darma Kotama" memberId="PPIJ-2026-000123" komsat="Okayama" affiliation="Okayama University" validUntil="Okt 2027" statusLabel="Aktif" backNote="Tunjukkan kartu ini saat verifikasi kehadiran." themes={[{ id: "kansai", label: "Kansai", group: "Korda", base: "#c8102e", faceTheme: "red" }, { id: "ppij-ink", label: "PPIJ Tinta", group: "PPIJ", base: "#1c1f23", faceTheme: "ink" }, { id: "sakura", label: "Sakura", group: "Musim", base: "#d77a94", faceTheme: "red" }, { id: "mega-mendung", label: "Mega Mendung", group: "Nusantara", base: "#31517f", faceTheme: "ink" }]} />
+            <MemberCardBlock locale="id" memberId="PPIJ-2026-000123" name="I Nyoman Darma Kotama" number="PPIJ-2026-000123" komsat="Okayama" korda="PPI Kansai" validUntil="2027-10-31" state="active" logoSrc={logoUrl} mapSrc={mapUrl} />
           </div>
           <ServiceTiles
             groups={[

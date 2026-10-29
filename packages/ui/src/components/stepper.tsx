@@ -23,6 +23,10 @@ export interface StepperProps {
  * upcoming steps stay quiet. On phones it compacts to one line, the
  * current step name, and a progress bar, because seven labels do not
  * fit in a phone width and the person only needs to know where they are.
+ *
+ * @deprecated The wizard's segmented progress (SegmentedProgress, WIZ106-09) is the
+ * standard progress treatment for multi-step flows. Kept for compatibility; do not
+ * adopt for new surfaces.
  */
 export function Stepper({ steps, current, stepWord = "Langkah", className }: StepperProps) {
   const total = steps.length

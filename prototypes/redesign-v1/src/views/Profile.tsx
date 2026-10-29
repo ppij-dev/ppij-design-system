@@ -332,8 +332,8 @@ function ProfileContent() {
   );
 }
 
-export function ProfileView({ onNavigate }: { onNavigate: (view: "portal" | "wizard" | "profile") => void }) {
-  const go = (view: "portal" | "wizard" | "profile") => (event: React.MouseEvent<HTMLAnchorElement>) => {
+export function ProfileView({ onNavigate }: { onNavigate: (view: "portal" | "profile") => void }) {
+  const go = (view: "portal" | "profile") => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     onNavigate(view);
   };

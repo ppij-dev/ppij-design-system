@@ -2,8 +2,8 @@ import { IconHome, IconIdBadge2, IconSchool, IconUsers, IconCalendar } from "@ta
 import { MemberCardBlock, PortalShell, ServiceTiles, StatusCard } from "ppij-design-system";
 import logoUrl from "../../../../brand/ppij-logo.png";
 
-export function PortalView({ onNavigate }: { onNavigate: (view: "wizard" | "profile") => void }) {
-  const go = (view: "wizard" | "profile") => (event: React.MouseEvent<HTMLAnchorElement>) => {
+export function PortalView({ onNavigate }: { onNavigate: (view: "profile") => void }) {
+  const go = (view: "profile") => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     onNavigate(view);
   };
@@ -30,9 +30,11 @@ export function PortalView({ onNavigate }: { onNavigate: (view: "wizard" | "prof
         <h1 className="text-2xl font-bold text-brand-ink">Halo, Darma</h1>
         <StatusCard compact icon={<IconIdBadge2 stroke={1.75} />} title="Kartu anggota aktif" actionLabel="Lihat profil" actionHref="#" onAction={() => onNavigate("profile")} />
         <div className="flex flex-col gap-5 md:grid md:grid-cols-[350px_minmax(0,1fr)] md:items-start md:gap-x-8 md:gap-y-6">
+          {/* Entry point to the registration wizard. The wizard itself
+              stays in the app; the design system records it in the
+              Storybook Wizard section, so this card is inert here. */}
           <a
             href="#"
-            onClick={go("wizard")}
             className="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-brand-border bg-card px-4 py-3 text-brand-ink hover:border-brand-red focus-visible:outline-2 focus-visible:outline-brand-red md:col-span-2"
           >
             <span>

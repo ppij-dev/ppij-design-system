@@ -1,13 +1,11 @@
 import * as React from "react";
 import { PortalView } from "./views/Portal";
-import { WizardView } from "./views/Wizard";
 import { ProfileView } from "./views/Profile";
 
-type View = "portal" | "wizard" | "profile";
+type View = "portal" | "profile";
 
 const VIEWS: { id: View; label: string }[] = [
   { id: "portal", label: "Portal" },
-  { id: "wizard", label: "Wizard" },
   { id: "profile", label: "Profil" },
 ];
 
@@ -30,7 +28,6 @@ export function App() {
         ))}
       </div>
       {view === "portal" && <PortalView onNavigate={setView} />}
-      {view === "wizard" && <WizardView />}
       {view === "profile" && <ProfileView onNavigate={setView} />}
     </div>
   );

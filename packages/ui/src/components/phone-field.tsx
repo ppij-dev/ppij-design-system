@@ -91,7 +91,7 @@ export function PhoneField({ id, value, onChange, defaultCode = "+81", locale = 
           onChange(compose(code, number))
         }}
       >
-        <SelectTrigger aria-label={en ? "Country code" : "Kode negara"} className="min-h-11 w-full bg-card">
+        <SelectTrigger aria-label={en ? "Country code" : "Kode negara"} className="h-11 min-h-11 w-full bg-card">
           <SelectValue />
         </SelectTrigger>
         <SelectContent position="popper" align="start" avoidCollisions={false} className="max-h-72">
@@ -110,7 +110,7 @@ export function PhoneField({ id, value, onChange, defaultCode = "+81", locale = 
         type="tel"
         inputMode="tel"
         autoComplete="tel-national"
-        className="min-h-11 min-w-0"
+        className="h-11 min-h-11 min-w-0"
         value={number}
         onChange={(event) => onChange(compose(selected, event.target.value))}
       />

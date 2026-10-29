@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { IconEye, IconEyeOff, IconHistory, IconHome, IconIdBadge2, IconPencil } from "@tabler/icons-react";
+import { IconCheck, IconClockHour4, IconEye, IconEyeOff, IconHistory, IconHome, IconIdBadge2, IconPencil, IconShieldLock } from "@tabler/icons-react";
 import { PortalShell } from "./portal-shell";
 import { PageHeader } from "./page-header";
 import { Card } from "./card";
@@ -9,26 +9,89 @@ import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
 import { Textarea } from "./textarea";
+import { Alert, AlertDescription, AlertTitle } from "./alert";
+import { AdminDrawer } from "./admin-drawer";
+import { Spinner } from "./spinner";
 import { TagInput } from "./tag-input";
 import { TypeAhead } from "./type-ahead";
-import { RadioGroup, RadioGroupItem } from "./radio-group";
-import { FileUpload } from "./file-upload";
 import { PhoneField } from "./phone-field";
-import { Spinner } from "./spinner";
+import { PillRadio } from "./pill-radio";
+import { MonthPicker } from "./month-picker";
+import { PostcodeField } from "./postcode-field";
+import { FundingPicker } from "./funding-picker";
 // @ts-expect-error Static brand asset; the portal supplies its own served copy.
 import logoUrl from "../../../../brand/ppij-logo.png";
 
 /**
- * The member Profil page, read first. Every registration datum is
- * shown as text, grouped and labelled exactly as in the wizard.
- * Each section edits on intent: Ubah swaps the text for that
- * section's form, Simpan carries its loading inside the button, and
- * Batal returns to reading. Sealed data (data model design section
- * 7: the member phone and the whole emergency contact, encrypted at
- * rest) is masked by default; Tampilkan reveals it for that section
- * only, saving re-masks it, and in the real system a reveal is
- * audited. The rail keeps the issued facts and the status history.
+ * The member Profil page, aligned with the profile change policy
+ * (ppij-identity-sso design/1.0.6/profile-change-policy.md and its
+ * reference mock PortalProfileDemo.tsx):
+ *
+ * - Read first: every panel shows committed values as text.
+ * - Panels edit one at a time in the AdminDrawer, with the wizard's
+ *   own components (PhoneField, PostcodeField autofill, TypeAhead,
+ *   PillRadio, MonthPicker, FundingPicker, TagInput).
+ * - Reviewed panels (Data diri: name, date of birth, komsat;
+ *   Pendidikan: institution, degree, expected graduation) submit
+ *   with "Ajukan perubahan": the proposal appears under the panel
+ *   as "Perubahan menunggu peninjauan" with a Menunggu badge, and
+ *   the current values stay in effect.
+ * - Direct panels (Kontak, Domisili, Pendanaan, Minat, Izin)
+ *   submit with "Simpan perubahan" and update immediately;
+ *   funding changes keep the previous selection in the history.
+ * - Fields with no edit contract (gender, origin province,
+ *   faculty, study program, entry month, lab, student number,
+ *   residence status) are read-only text, per the policy.
+ * - The student card photo is NOT shown: it is deleted 30 days
+ *   after the registration decision.
+ * - Sealed data (member phone, the whole emergency contact) is
+ *   masked by default; revealing or editing it is the audited
+ *   action in production.
  */
+
+type PanelKey = "identity" | "contact" | "residence" | "education" | "funding" | "interests" | "permit";
+
+interface ProfileData {
+  fullName: string; birthDate: string; gender: string; originProvince: string; komsat: string;
+  nickname: string; phone: string; lineId: string;
+  postcode: string; prefecture: string; city: string;
+  institution: string; faculty: string; degree: string; studyProgram: string; entryMonth: string; expectedGraduation: string; lab: string; studentNumber: string;
+  funding: string[]; interests: string[];
+  residenceStatus: string; residenceExpiry: string;
+  emergencyName: string; emergencyRelationship: string; emergencyPhone: string; emergencyAddress: string;
+}
+
+const INITIAL: ProfileData = {
+  fullName: "I Nyoman Darma Kotama", birthDate: "1992-09-02", gender: "Laki-laki", originProvince: "Bali", komsat: "Okayama",
+  nickname: "Darma", phone: "+81 90-1234-5678", lineId: "darmakotama",
+  postcode: "700-0001", prefecture: "Okayama", city: "Kita-ku, Kota Okayama",
+  institution: "Okayama University", faculty: "Graduate School of Science and Technology", degree: "s2", studyProgram: "Computer Science", entryMonth: "2025-04", expectedGraduation: "2027-03", lab: "Laboratorium Sistem Informasi", studentNumber: "76123456",
+  funding: ["Beasiswa MEXT"], interests: ["Fotografi", "Riset kecerdasan buatan", "Bahasa Jepang"],
+  residenceStatus: "Student", residenceExpiry: "2027-03-31",
+  emergencyName: "Ni Made Rai", emergencyRelationship: "Ibu", emergencyPhone: "+62 812-3456-7890", emergencyAddress: "Denpasar, Bali",
+};
+
+const DEGREE_LABELS: Record<string, string> = { d3: "D3 / Diploma", s1: "S1 / Sarjana", s2: "S2 / Magister", s3: "S3 / Doktor" };
+const KOMSAT_OPTIONS = ["Okayama", "Shinjuku", "Sendai", "Kyoto", "Fukuoka", "Sapporo"];
+const PREFECTURES = ["Okayama", "Hiroshima", "Kagawa", "Tokyo", "Osaka"];
+const CITIES: Record<string, string[]> = {
+  Okayama: ["Kita-ku, Kota Okayama", "Kurashiki", "Tsuyama"],
+  Hiroshima: ["Naka-ku, Kota Hiroshima", "Fukuyama"],
+  Kagawa: ["Takamatsu"],
+  Tokyo: ["Shinjuku", "Setagaya"],
+  Osaka: ["Kita-ku, Kota Osaka", "Sakai"],
+};
+const INSTITUTIONS = ["Okayama University", "Kyoto University", "Tokyo Institute of Technology", "Hiroshima University"];
+
+function formatDateID(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  return Number.isNaN(d.getTime()) ? iso : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
+}
+function formatMonthID(ym: string): string {
+  const d = new Date(`${ym}-01T00:00:00Z`);
+  return Number.isNaN(d.getTime()) ? ym : new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric", timeZone: "UTC" }).format(d);
+}
+
 function Rows({ items }: { items: Array<[string, React.ReactNode]> }) {
   return (
     <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
@@ -65,224 +128,6 @@ function F({ label, children, span }: { label: string; children: React.ReactNode
   );
 }
 
-function EditableSection({ title, read, children, onAfterSave }: { title: string; read: React.ReactNode; children: React.ReactNode; onAfterSave?: () => void }) {
-  const [editing, setEditing] = React.useState(false);
-  const [saving, setSaving] = React.useState(false);
-  const [saved, setSaved] = React.useState(false);
-  const save = () => {
-    setSaving(true);
-    window.setTimeout(() => { setSaving(false); setEditing(false); setSaved(true); onAfterSave?.(); }, 900);
-  };
-  return (
-    <Card className="grid gap-4 rounded-xl border border-brand-border bg-card p-5">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-base font-semibold text-brand-ink">{title}</h2>
-        {!editing && (
-          <Button variant="ghost" size="sm" onClick={() => { setEditing(true); setSaved(false); }}>
-            <IconPencil className="size-4" aria-hidden="true" />
-            Ubah
-          </Button>
-        )}
-      </div>
-      {saved && !editing && <p role="status" className="-mt-2 text-sm text-success">Perubahan tersimpan.</p>}
-      {editing ? (
-        <form className="grid gap-4" onSubmit={(e) => e.preventDefault()}>
-          {children}
-          <div className="flex flex-wrap gap-2 pt-1">
-            <Button type="submit" disabled={saving} aria-busy={saving} onClick={save}>
-              {saving ? (<><Spinner size="sm" decorative /><span>Menyimpan…</span></>) : "Simpan perubahan"}
-            </Button>
-            <Button variant="ghost" disabled={saving} onClick={() => setEditing(false)}>Batal</Button>
-          </div>
-        </form>
-      ) : read}
-    </Card>
-  );
-}
-
-function DataDiriSection() {
-  const [provinsi, setProvinsi] = React.useState("Bali");
-  const [phone, setPhone] = React.useState("+81 90-1234-5678");
-  const [phoneRevealed, setPhoneRevealed] = React.useState(false);
-  const [minat, setMinat] = React.useState(["Fotografi", "Riset kecerdasan buatan", "Bahasa Jepang"]);
-  return (
-    <EditableSection
-      onAfterSave={() => setPhoneRevealed(false)}
-      title="Data diri"
-      read={<Rows items={[
-        ["Nama lengkap", "I Nyoman Darma Kotama"],
-        ["Nama panggilan", "Darma"],
-        ["Jenis kelamin", "Laki-laki"],
-        ["Tanggal lahir", "2 September 1992"],
-        ["Provinsi asal di Indonesia", "Bali"],
-        ["Nomor telepon atau WhatsApp", phoneRevealed ? "+81 90-1234-5678" : (
-          <span key="phone" className="flex flex-wrap items-center gap-2">
-            <Masked />
-            <Button variant="ghost" size="sm" onClick={() => setPhoneRevealed(true)}>
-              <IconEye className="size-4" aria-hidden="true" />
-              Tampilkan
-            </Button>
-          </span>
-        )],
-        ["LINE ID", "darmakotama"],
-        ["Minat", <Chips key="minat" values={minat} />],
-      ]} />}
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <F label="Nama lengkap"><Input defaultValue="I Nyoman Darma Kotama" /></F>
-        <F label="Nama panggilan"><Input defaultValue="Darma" /></F>
-        <F label="Jenis kelamin">
-          <RadioGroup defaultValue="laki-laki" className="flex gap-4 pt-1.5">
-            <span className="flex items-center gap-2"><RadioGroupItem value="laki-laki" id="jk-l" /><Label htmlFor="jk-l">Laki-laki</Label></span>
-            <span className="flex items-center gap-2"><RadioGroupItem value="perempuan" id="jk-p" /><Label htmlFor="jk-p">Perempuan</Label></span>
-          </RadioGroup>
-        </F>
-        <F label="Tanggal lahir"><Input type="date" defaultValue="1992-09-02" /></F>
-        <F label="Provinsi asal di Indonesia"><TypeAhead value={provinsi} onChange={setProvinsi} options={["Bali", "Jawa Timur", "Jawa Barat", "DKI Jakarta", "Sulawesi Selatan"]} placeholder="Ketik provinsi atau kabupaten/kota" /></F>
-        <F label="Nomor telepon atau WhatsApp"><PhoneField value={phone} onChange={setPhone} defaultCode="+81" /></F>
-        <F label="LINE ID"><Input defaultValue="darmakotama" /></F>
-        <F label="Minat" span><TagInput values={minat} onChange={setMinat} suggestions={["Musik", "Olahraga", "Kuliner", "Teknologi"]} placeholder="Cari atau ketik minat" /></F>
-      </div>
-    </EditableSection>
-  );
-}
-
-function DomisiliSection() {
-  const [prefektur, setPrefektur] = React.useState("Okayama");
-  const [kota, setKota] = React.useState("Kita-ku, Kota Okayama");
-  return (
-    <EditableSection
-      title="Domisili di Jepang"
-      read={<Rows items={[
-        ["Kode pos", "700-0001"],
-        ["Prefektur", "Okayama"],
-        ["Kota atau kecamatan", "Kita-ku, Kota Okayama"],
-        ["Komsat", "Okayama"],
-      ]} />}
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <F label="Kode pos"><Input defaultValue="700-0001" inputMode="numeric" /></F>
-        <F label="Prefektur"><TypeAhead value={prefektur} onChange={setPrefektur} options={["Okayama", "Hiroshima", "Osaka", "Kyoto"]} placeholder="Ketik prefektur" /></F>
-        <F label="Kota atau kecamatan"><TypeAhead value={kota} onChange={setKota} options={["Kita-ku, Kota Okayama", "Naka-ku, Kota Okayama", "Kurashiki"]} placeholder="Ketik nama kota atau ku" /></F>
-      </div>
-      <p className="rounded-md border border-brand-border bg-secondary/50 p-3 text-sm text-brand-ink">Komsat Anda: <strong>Okayama</strong>, ditentukan otomatis dari domisili.</p>
-    </EditableSection>
-  );
-}
-
-function PendidikanSection() {
-  const [institusi, setInstitusi] = React.useState("Okayama University");
-  return (
-    <EditableSection
-      title="Pendidikan"
-      read={<Rows items={[
-        ["Institusi", "Okayama University"],
-        ["Fakultas atau sekolah pascasarjana", "Graduate School of Science and Technology"],
-        ["Jenjang", "S2 (Magister)"],
-        ["Program studi", "Computer Science"],
-        ["Bulan masuk", "April 2025"],
-        ["Perkiraan bulan lulus", "Maret 2027"],
-        ["Lab atau pembimbing", "Laboratorium Sistem Informasi"],
-        ["Nomor pelajar", "76123456"],
-        ["Kartu pelajar", "Terunggah (kartu-pelajar.jpg)"],
-      ]} />}
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <F label="Institusi"><TypeAhead value={institusi} onChange={setInstitusi} options={["Okayama University", "Hiroshima University", "Osaka University", "Kyoto University"]} placeholder="Ketik institusi" /></F>
-        <F label="Fakultas atau sekolah pascasarjana"><Input defaultValue="Graduate School of Science and Technology" /></F>
-        <F label="Jenjang">
-          <RadioGroup defaultValue="s2" className="flex flex-wrap gap-4 pt-1.5">
-            <span className="flex items-center gap-2"><RadioGroupItem value="s1" id="jg-s1" /><Label htmlFor="jg-s1">S1</Label></span>
-            <span className="flex items-center gap-2"><RadioGroupItem value="s2" id="jg-s2" /><Label htmlFor="jg-s2">S2</Label></span>
-            <span className="flex items-center gap-2"><RadioGroupItem value="s3" id="jg-s3" /><Label htmlFor="jg-s3">S3</Label></span>
-          </RadioGroup>
-        </F>
-        <F label="Program studi"><Input defaultValue="Computer Science" /></F>
-        <F label="Bulan masuk"><Input type="month" defaultValue="2025-04" /></F>
-        <F label="Perkiraan bulan lulus"><Input type="month" defaultValue="2027-03" /></F>
-        <F label="Lab atau pembimbing"><Input defaultValue="Laboratorium Sistem Informasi" /></F>
-        <F label="Nomor pelajar"><Input defaultValue="76123456" inputMode="numeric" /></F>
-        <F label="Kartu pelajar" span><FileUpload label="Foto kartu pelajar" status="done" fileName="kartu-pelajar.jpg" onPick={() => {}} onRemove={() => {}} /></F>
-      </div>
-    </EditableSection>
-  );
-}
-
-function PendanaanSection() {
-  const [funding, setFunding] = React.useState(["Beasiswa: JASSO"]);
-  return (
-    <EditableSection
-      title="Pendanaan"
-      read={<Rows items={[["Sumber pendanaan", <Chips key="funding" values={funding} />]]} />}
-    >
-      <F label="Sumber pendanaan">
-        <TagInput values={funding} onChange={setFunding} suggestions={["MEXT", "LPDP", "Beasiswa universitas", "Biaya sendiri"]} placeholder="Cari atau ketik sumber pendanaan" />
-      </F>
-    </EditableSection>
-  );
-}
-
-function IzinSection() {
-  const [contactRevealed, setContactRevealed] = React.useState(false);
-  const [emPhone, setEmPhone] = React.useState("+62 812-3456-7890");
-  return (
-    <EditableSection
-      onAfterSave={() => setContactRevealed(false)}
-      title="Izin tinggal dan kontak darurat"
-      read={<>
-        <Rows items={[
-          ["Status izin tinggal", "Student"],
-          ["Tanggal kedaluwarsa izin tinggal", "31 Maret 2027"],
-        ]} />
-        <h3 className="flex flex-wrap items-center gap-2 pt-4 pb-1 text-sm font-bold text-brand-ink">
-          Kontak darurat
-          <span className="text-xs font-medium text-brand-muted">(terenkripsi)</span>
-          {contactRevealed ? (
-            <Button variant="ghost" size="sm" onClick={() => setContactRevealed(false)}>
-              <IconEyeOff className="size-4" aria-hidden="true" />
-              Sembunyikan
-            </Button>
-          ) : (
-            <Button variant="ghost" size="sm" onClick={() => setContactRevealed(true)}>
-              <IconEye className="size-4" aria-hidden="true" />
-              Tampilkan
-            </Button>
-          )}
-        </h3>
-        {contactRevealed ? (
-          <Rows items={[
-            ["Nama kontak", "Ni Made Rai"],
-            ["Hubungan", "Ibu"],
-            ["Nomor telepon kontak", "+62 812-3456-7890"],
-            ["Alamat kontak", "Denpasar, Bali"],
-          ]} />
-        ) : (
-          <Rows items={[
-            ["Nama kontak", <Masked key="m1" />],
-            ["Hubungan", <Masked key="m2" />],
-            ["Nomor telepon kontak", <Masked key="m3" />],
-            ["Alamat kontak", <Masked key="m4" />],
-          ]} />
-        )}
-      </>}
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <F label="Status izin tinggal"><Input defaultValue="Student" /></F>
-        <F label="Tanggal kedaluwarsa izin tinggal"><Input type="date" defaultValue="2027-03-31" /></F>
-      </div>
-      <fieldset className="grid gap-4 border-t border-brand-border pt-4">
-        <legend className="px-1 text-sm font-bold text-brand-ink">Kontak darurat</legend>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <F label="Nama kontak"><Input defaultValue="Ni Made Rai" /></F>
-          <F label="Hubungan"><Input defaultValue="Ibu" /></F>
-          <F label="Nomor telepon kontak"><PhoneField value={emPhone} onChange={setEmPhone} defaultCode="+62" /></F>
-          <F label="Alamat kontak"><Textarea rows={3} defaultValue="Denpasar, Bali" /></F>
-        </div>
-      </fieldset>
-    </EditableSection>
-  );
-}
-
 function RailFact({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="grid gap-0.5">
@@ -292,14 +137,277 @@ function RailFact({ label, children }: { label: string; children: React.ReactNod
   );
 }
 
+const PANEL_META: Record<PanelKey, { title: string; description: string; review: boolean }> = {
+  identity: { title: "Data diri", review: true, description: "Perubahan nama, tanggal lahir, dan komsat ditinjau pengurus. Data saat ini tetap berlaku sampai disetujui." },
+  contact: { title: "Kontak", review: false, description: "Nama panggilan, telepon, dan LINE diperbarui langsung." },
+  residence: { title: "Domisili di Jepang", review: false, description: "Prefektur dan kota tempat tinggal diperbarui langsung. Komsat ditentukan otomatis dari domisili; pindah komsat adalah perubahan yang ditinjau." },
+  education: { title: "Pendidikan", review: true, description: "Perubahan institusi, jenjang, dan perkiraan lulus ditinjau pengurus. Data saat ini tetap berlaku sampai disetujui." },
+  funding: { title: "Pendanaan", review: false, description: "Sumber pendanaan diperbarui langsung. Pilihan sebelumnya tetap tercatat." },
+  interests: { title: "Minat", review: false, description: "Minat diperbarui langsung." },
+  permit: { title: "Izin tinggal dan kontak darurat", review: false, description: "Tanggal berakhir izin tinggal dan kontak darurat diperbarui langsung." },
+};
+
+type PendingProposal = Partial<Pick<ProfileData, "fullName" | "birthDate" | "komsat" | "institution" | "degree" | "expectedGraduation">>;
+
 function ProfileContent() {
+  const [profile, setProfile] = React.useState<ProfileData>(INITIAL);
+  const [draft, setDraft] = React.useState<ProfileData>(INITIAL);
+  const [editing, setEditing] = React.useState<PanelKey | null>(null);
+  const [saving, setSaving] = React.useState(false);
+  const [savedMsg, setSavedMsg] = React.useState<string | null>(null);
+  const [pending, setPending] = React.useState<Partial<Record<"identity" | "education", PendingProposal>>>({});
+  const [fundingHistory, setFundingHistory] = React.useState<Array<{ values: string[]; changedOn: string }>>([{ values: ["Dukungan keluarga"], changedOn: "1 April 2026" }]);
+  const [phoneRevealed, setPhoneRevealed] = React.useState(false);
+  const [emergencyRevealed, setEmergencyRevealed] = React.useState(false);
+  const [postcodeStatus, setPostcodeStatus] = React.useState<string | undefined>(undefined);
+  const [postcodeCandidates, setPostcodeCandidates] = React.useState<Array<{ label: string; onSelect: () => void }>>([]);
+
   const history = [
     { status: "Aktif", reason: "Kartu anggota diterbitkan", date: "6 Okt 2026" },
     { status: "Belum lengkap", reason: "Pendaftaran diterima", date: "1 Okt 2026" },
   ];
+
+  const openEditor = (key: PanelKey) => {
+    setSavedMsg(null);
+    setPostcodeStatus(undefined);
+    setPostcodeCandidates([]);
+    setDraft({ ...profile, ...(key === "identity" || key === "education" ? pending[key] : {}) });
+    setEditing(key);
+  };
+
+  const submit = () => {
+    if (!editing) return;
+    setSaving(true);
+    window.setTimeout(() => {
+      setSaving(false);
+      if (editing === "identity") {
+        setPending((p) => ({ ...p, identity: { fullName: draft.fullName, birthDate: draft.birthDate, komsat: draft.komsat } }));
+        setSavedMsg("Usulan perubahan tersimpan dan menunggu peninjauan.");
+      } else if (editing === "education") {
+        setPending((p) => ({ ...p, education: { institution: draft.institution, degree: draft.degree, expectedGraduation: draft.expectedGraduation } }));
+        setSavedMsg("Usulan perubahan tersimpan dan menunggu peninjauan.");
+      } else {
+        if (editing === "funding" && JSON.stringify(draft.funding) !== JSON.stringify(profile.funding)) {
+          setFundingHistory((h) => [{ values: profile.funding, changedOn: formatDateID(new Date().toISOString().slice(0, 10)) }, ...h]);
+        }
+        setProfile({ ...draft });
+        setSavedMsg("Perubahan disimpan.");
+      }
+      setEditing(null);
+    }, 700);
+  };
+
+  const searchPostcode = () => {
+    const city = CITIES[draft.prefecture]?.[0] ?? "Kita-ku, Kota Okayama";
+    setPostcodeStatus(`Alamat ditemukan: ${draft.prefecture}, ${city}.`);
+    setPostcodeCandidates([
+      {
+        label: `${draft.prefecture} · ${city}`,
+        onSelect: () => {
+          setDraft((d) => ({ ...d, city }));
+          setPostcodeCandidates([]);
+          setPostcodeStatus(`Kota diisi otomatis: ${city}.`);
+        },
+      },
+    ]);
+  };
+
+  const proposalRows = (key: "identity" | "education"): Array<[string, string]> => {
+    const p = pending[key];
+    if (!p) return [];
+    const rows: Array<[string, string]> = [];
+    if (p.fullName) rows.push(["Nama lengkap", p.fullName]);
+    if (p.birthDate) rows.push(["Tanggal lahir", formatDateID(p.birthDate)]);
+    if (p.komsat) rows.push(["Komsat", p.komsat]);
+    if (p.institution) rows.push(["Institusi", p.institution]);
+    if (p.degree) rows.push(["Jenjang", DEGREE_LABELS[p.degree] ?? p.degree]);
+    if (p.expectedGraduation) rows.push(["Perkiraan kelulusan", formatMonthID(p.expectedGraduation)]);
+    return rows;
+  };
+
+  const renderRead = (key: PanelKey): React.ReactNode => {
+    switch (key) {
+      case "identity":
+        return <Rows items={[
+          ["Nama lengkap", profile.fullName],
+          ["Tanggal lahir", formatDateID(profile.birthDate)],
+          ["Komsat", profile.komsat],
+          ["Jenis kelamin", profile.gender],
+          ["Provinsi asal", profile.originProvince],
+        ]} />;
+      case "contact":
+        return <Rows items={[
+          ["Nama panggilan", profile.nickname],
+          ["Nomor telepon atau WhatsApp", phoneRevealed ? profile.phone : (
+            <span className="flex flex-wrap items-center gap-2">
+              <Masked />
+              <Button type="button" variant="outline" onClick={() => setPhoneRevealed(true)}><IconEye className="size-4" aria-hidden="true" />Tampilkan</Button>
+            </span>
+          )],
+          ["LINE ID", profile.lineId],
+        ]} />;
+      case "residence":
+        return <Rows items={[
+          ["Kode pos", profile.postcode],
+          ["Prefektur", profile.prefecture],
+          ["Kota atau kecamatan", profile.city],
+        ]} />;
+      case "education":
+        return <Rows items={[
+          ["Institusi", profile.institution],
+          ["Fakultas atau sekolah pascasarjana", profile.faculty],
+          ["Jenjang", DEGREE_LABELS[profile.degree] ?? profile.degree],
+          ["Program studi", profile.studyProgram],
+          ["Bulan masuk", formatMonthID(profile.entryMonth)],
+          ["Perkiraan lulus", formatMonthID(profile.expectedGraduation)],
+          ["Lab atau pembimbing", profile.lab],
+          ["Nomor pelajar", profile.studentNumber],
+        ]} />;
+      case "funding":
+        return (
+          <div className="grid gap-4">
+            <Rows items={[["Pendanaan saat ini", <Chips key="f" values={profile.funding} />]]} />
+            {fundingHistory.length > 0 ? (
+              <div className="grid gap-1">
+                <p className="text-sm text-brand-muted">Riwayat pendanaan sebelumnya</p>
+                {fundingHistory.map((h) => (
+                  <p key={h.changedOn + h.values.join()} className="text-sm font-medium text-brand-ink">{h.values.join(", ")} · {h.changedOn}</p>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        );
+      case "interests":
+        return <Rows items={[["Minat", <Chips key="i" values={profile.interests} />]]} />;
+      case "permit":
+        return (
+          <div className="grid gap-4">
+            <Rows items={[
+              ["Status izin tinggal", profile.residenceStatus],
+              ["Tanggal kedaluwarsa izin tinggal", formatDateID(profile.residenceExpiry)],
+            ]} />
+            <div className="grid gap-2 border-t border-brand-border pt-4">
+              <p className="flex items-center gap-2 font-semibold text-brand-ink">
+                Kontak darurat
+                <span className="text-sm font-normal text-brand-muted">(terenkripsi)</span>
+                <Button type="button" variant="outline" onClick={() => setEmergencyRevealed((v) => !v)}>
+                  {emergencyRevealed ? <><IconEyeOff className="size-4" aria-hidden="true" />Sembunyikan</> : <><IconEye className="size-4" aria-hidden="true" />Tampilkan</>}
+                </Button>
+              </p>
+              {emergencyRevealed ? (
+                <Rows items={[
+                  ["Nama kontak", profile.emergencyName],
+                  ["Hubungan", profile.emergencyRelationship],
+                  ["Nomor telepon kontak", profile.emergencyPhone],
+                  ["Alamat kontak", profile.emergencyAddress],
+                ]} />
+              ) : (
+                <p className="flex items-center gap-2 text-sm text-brand-muted">
+                  <IconShieldLock className="size-4 shrink-0" aria-hidden="true" />
+                  Kontak darurat disembunyikan. Pilih Tampilkan untuk melihat, atau Edit untuk memperbarui.
+                </p>
+              )}
+            </div>
+          </div>
+        );
+    }
+  };
+
+  const renderEditor = (): React.ReactNode => {
+    const set = <K extends keyof ProfileData>(k: K, v: ProfileData[K]) => setDraft((d) => ({ ...d, [k]: v }));
+    switch (editing) {
+      case "identity":
+        return (
+          <div className="grid gap-4">
+            <F label="Nama lengkap"><Input value={draft.fullName} onChange={(e) => set("fullName", e.target.value)} /></F>
+            <F label="Tanggal lahir"><Input type="date" value={draft.birthDate} onChange={(e) => set("birthDate", e.target.value)} /></F>
+            <F label="Komsat"><TypeAhead value={draft.komsat} onChange={(v) => set("komsat", v)} options={KOMSAT_OPTIONS} placeholder="Ketik nama komsat" /></F>
+          </div>
+        );
+      case "contact":
+        return (
+          <div className="grid gap-4">
+            <F label="Nama panggilan"><Input value={draft.nickname} onChange={(e) => set("nickname", e.target.value)} /></F>
+            <F label="Nomor telepon atau WhatsApp"><PhoneField value={draft.phone} onChange={(v) => set("phone", v)} defaultCode="+81" /></F>
+            <F label="LINE ID"><Input value={draft.lineId} onChange={(e) => set("lineId", e.target.value)} /></F>
+          </div>
+        );
+      case "residence":
+        return (
+          <div className="grid gap-4">
+            <F label="Kode pos">
+              <PostcodeField value={draft.postcode} onChange={(v) => set("postcode", v)} onSearch={searchPostcode} statusText={postcodeStatus} candidates={postcodeCandidates} />
+            </F>
+            <F label="Prefektur">
+              <TypeAhead value={draft.prefecture} onChange={(v) => { set("prefecture", v); }} options={PREFECTURES} placeholder="Ketik prefektur" />
+            </F>
+            <F label="Kota atau kecamatan">
+              <TypeAhead value={draft.city} onChange={(v) => set("city", v)} options={CITIES[draft.prefecture] ?? []} placeholder="Ketik kota atau kecamatan" />
+            </F>
+            <p className="rounded-lg bg-secondary p-3 text-sm text-brand-ink">
+              Komsat Anda: <strong>{profile.komsat}</strong>, ditentukan otomatis dari domisili.
+            </p>
+          </div>
+        );
+      case "education":
+        return (
+          <div className="grid gap-4">
+            <F label="Institusi"><TypeAhead value={draft.institution} onChange={(v) => set("institution", v)} options={INSTITUTIONS} placeholder="Ketik nama institusi" /></F>
+            <F label="Jenjang">
+              <PillRadio ariaLabel="Jenjang" value={draft.degree} onChange={(v) => set("degree", v)} options={[
+                { value: "d3", label: "D3 / Diploma" }, { value: "s1", label: "S1 / Sarjana" }, { value: "s2", label: "S2 / Magister" }, { value: "s3", label: "S3 / Doktor" },
+              ]} />
+            </F>
+            <F label="Perkiraan bulan lulus"><MonthPicker value={draft.expectedGraduation} onChange={(v) => set("expectedGraduation", v)} /></F>
+          </div>
+        );
+      case "funding":
+        return (
+          <div className="grid gap-2">
+            <FundingPicker values={draft.funding} onChange={(v) => set("funding", v)} options={["Beasiswa MEXT", "Beasiswa lainnya", "Biaya sendiri", "Dukungan keluarga", "Sumber lainnya"]} />
+            <p className="text-sm text-brand-muted">Perubahan menyimpan pilihan sebelumnya dalam riwayat pendanaan.</p>
+          </div>
+        );
+      case "interests":
+        return (
+          <div className="grid gap-2">
+            <TagInput values={draft.interests} onChange={(v) => { if (v.length <= 30) set("interests", v); }} suggestions={["Musik", "Olahraga", "Kuliner", "Teknologi", "Bahasa Jepang", "Karier", "Budaya"]} placeholder="Cari atau ketik minat" />
+            <p className="text-sm text-brand-muted">Pilih hingga 30 minat. Pilihan yang ada tetap dipertahankan saat disimpan.</p>
+          </div>
+        );
+      case "permit":
+        return (
+          <div className="grid gap-4">
+            <F label="Tanggal kedaluwarsa izin tinggal"><Input type="date" value={draft.residenceExpiry} onChange={(e) => set("residenceExpiry", e.target.value)} /></F>
+            <fieldset className="grid gap-4 border-t border-brand-border pt-4">
+              <legend className="px-1 text-sm font-bold text-brand-ink">Kontak darurat</legend>
+              <p className="flex items-start gap-2 text-sm text-brand-muted">
+                <IconShieldLock className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                Kontak darurat terenkripsi. Membuka editor ini tercatat dalam audit.
+              </p>
+              <F label="Nama kontak"><Input value={draft.emergencyName} onChange={(e) => set("emergencyName", e.target.value)} /></F>
+              <F label="Hubungan"><Input value={draft.emergencyRelationship} onChange={(e) => set("emergencyRelationship", e.target.value)} /></F>
+              <F label="Nomor telepon kontak"><PhoneField value={draft.emergencyPhone} onChange={(v) => set("emergencyPhone", v)} defaultCode="+62" /></F>
+              <F label="Alamat kontak"><Textarea rows={3} value={draft.emergencyAddress} onChange={(e) => set("emergencyAddress", e.target.value)} /></F>
+            </fieldset>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const review = editing ? PANEL_META[editing].review : false;
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader title="Profil" description="Data keanggotaan dan riwayat status Anda." />
+      {savedMsg ? (
+        <p role="status" className="flex items-center gap-2 text-sm font-medium text-brand-ink">
+          <IconCheck className="size-4 text-brand-red" aria-hidden="true" />
+          {savedMsg}
+        </p>
+      ) : null}
       <div className="flex flex-col gap-5 md:grid md:grid-cols-[350px_minmax(0,1fr)] md:items-start md:gap-x-8 md:gap-y-6">
         <div className="flex flex-col gap-5">
           <Card className="gap-4 rounded-xl border border-brand-border bg-card p-5">
@@ -326,13 +434,11 @@ function ProfileContent() {
               Riwayat keanggotaan
             </h2>
             <Card className="rounded-xl border border-brand-border bg-card p-5">
-              <ol className="grid">
+              <ol className="relative grid gap-5">
+                <span aria-hidden="true" className="absolute top-[11px] bottom-[6px] left-[5px] w-px bg-brand-border" />
                 {history.map((change, i) => (
-                  <li key={change.date + change.status} className="flex gap-3 pb-5 last:pb-0">
-                    <span className="flex flex-col items-center self-stretch" aria-hidden="true">
-                      <span className={i === 0 ? "mt-1.5 size-2.5 shrink-0 rounded-full bg-brand-red" : "mt-1.5 size-2.5 shrink-0 rounded-full bg-brand-muted"} />
-                      {i < history.length - 1 && <span className="mt-1 w-px flex-1 bg-brand-border" />}
-                    </span>
+                  <li key={change.date + change.status} className="relative flex gap-3 pl-6">
+                    <span aria-hidden="true" className={`absolute top-1.5 left-0 size-2.5 rounded-full ${i === 0 ? "bg-brand-red" : "bg-brand-muted"}`} />
                     <div className="flex flex-1 flex-wrap items-start justify-between gap-2">
                       <div>
                         <p className="font-semibold text-brand-ink">{change.status}</p>
@@ -347,13 +453,68 @@ function ProfileContent() {
           </section>
         </div>
         <div className="flex flex-col gap-5">
-          <DataDiriSection />
-          <DomisiliSection />
-          <PendidikanSection />
-          <PendanaanSection />
-          <IzinSection />
+          {(Object.keys(PANEL_META) as PanelKey[]).map((key) => {
+            const meta = PANEL_META[key];
+            const isPending = (key === "identity" || key === "education") && pending[key];
+            return (
+              <Card key={key} className="gap-0 rounded-xl border border-brand-border bg-card py-0">
+                <div className="flex flex-row items-start justify-between gap-3 px-5 pt-5 pb-4">
+                  <div className="grid min-w-0 gap-1.5">
+                    <h2 className="text-base leading-6 font-bold text-brand-ink">{meta.title}</h2>
+                    <p className="text-sm leading-5 text-brand-muted">{meta.description}</p>
+                  </div>
+                  {isPending ? <Badge variant="outline" className="shrink-0">Menunggu</Badge> : null}
+                </div>
+                <div className="grid gap-4 px-5 pb-5">
+                  {renderRead(key)}
+                  {isPending ? (
+                    <Alert>
+                      <IconClockHour4 aria-hidden="true" />
+                      <AlertTitle>Perubahan menunggu peninjauan</AlertTitle>
+                      <AlertDescription>
+                        <p>Data saat ini tetap berlaku sampai pengurus menyetujui perubahan.</p>
+                        <dl className="mt-2 grid gap-2 sm:grid-cols-2">
+                          {proposalRows(key as "identity" | "education").map(([label, value]) => (
+                            <div key={label}>
+                              <dt className="font-medium text-brand-ink">{label}</dt>
+                              <dd>{value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </AlertDescription>
+                    </Alert>
+                  ) : null}
+                  <div className="flex justify-end border-t border-brand-border pt-4">
+                    <Button type="button" variant="outline" onClick={() => openEditor(key)}>
+                      <IconPencil aria-hidden="true" />
+                      Edit
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </div>
+      <AdminDrawer
+        open={editing !== null}
+        onOpenChange={(open) => { if (!open) setEditing(null); }}
+        locale="id"
+        title={editing ? PANEL_META[editing].title : "Edit profil"}
+        description={editing ? (review ? "Perubahan akan menjadi usulan untuk ditinjau. Data yang disetujui tetap digunakan sampai keputusan dibuat." : "Perubahan pada bagian ini disimpan langsung.") : undefined}
+        footer={
+          editing ? (
+            <>
+              <Button type="button" variant="outline" onClick={() => setEditing(null)}>Batal</Button>
+              <Button type="button" onClick={submit} disabled={saving} aria-busy={saving}>
+                {saving ? <><Spinner />{review ? "Mengajukan…" : "Menyimpan…"}</> : review ? "Ajukan perubahan" : "Simpan perubahan"}
+              </Button>
+            </>
+          ) : null
+        }
+      >
+        {editing ? renderEditor() : null}
+      </AdminDrawer>
     </div>
   );
 }
@@ -379,4 +540,4 @@ function ProfilePageDemo() {
 const meta: Meta = { title: "Portal/ProfilePage", parameters: { layout: "fullscreen" } };
 export default meta;
 type Story = StoryObj;
-export const Profile: Story = { render: () => <ProfilePageDemo /> };
+export const ReadFirst: Story = { render: () => <ProfilePageDemo /> };

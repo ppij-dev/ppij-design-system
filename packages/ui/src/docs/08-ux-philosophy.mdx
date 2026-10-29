@@ -35,6 +35,15 @@ read first, and each island carries its own edit action. The old
 `/admin/organisasi` page is the counterexample: it opens as one long form,
 so reading the organisation profile means scanning input boxes.
 
+The pattern is concrete, and it is the same on every editable surface.
+Data lives in read-first panels (EditablePanel): values as text, one
+behaviour line, one Edit action. Edit opens the AdminDrawer, a right
+drawer on desktop and a bottom sheet on the phone, one editor at a time,
+and saving or cancelling returns to reading. Where a change needs
+review, the panel does not pretend otherwise: the submit reads Ajukan
+perubahan, the proposal waits inside the panel behind a Menunggu badge,
+and the current values stay in effect until a decision is made.
+
 ### 2. One primary action per surface
 
 Each surface has exactly one red primary action: the single most likely

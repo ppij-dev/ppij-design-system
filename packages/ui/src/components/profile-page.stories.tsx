@@ -19,6 +19,7 @@ import { PillRadio } from "./pill-radio";
 import { MonthPicker } from "./month-picker";
 import { PostcodeField } from "./postcode-field";
 import { FundingPicker } from "./funding-picker";
+import { EditablePanel } from "./editable-panel";
 // @ts-expect-error Static brand asset; the portal supplies its own served copy.
 import logoUrl from "../../../../brand/ppij-logo.png";
 
@@ -457,41 +458,32 @@ function ProfileContent() {
             const meta = PANEL_META[key];
             const isPending = (key === "identity" || key === "education") && pending[key];
             return (
-              <Card key={key} className="gap-0 rounded-xl border border-brand-border bg-card py-0">
-                <div className="flex flex-row items-start justify-between gap-3 px-5 pt-5 pb-4">
-                  <div className="grid min-w-0 gap-1.5">
-                    <h2 className="text-base leading-6 font-bold text-brand-ink">{meta.title}</h2>
-                    <p className="text-sm leading-5 text-brand-muted">{meta.description}</p>
-                  </div>
-                  {isPending ? <Badge variant="outline" className="shrink-0">Menunggu</Badge> : null}
-                </div>
-                <div className="grid gap-4 px-5 pb-5">
-                  {renderRead(key)}
-                  {isPending ? (
-                    <Alert>
-                      <IconClockHour4 aria-hidden="true" />
-                      <AlertTitle>Perubahan menunggu peninjauan</AlertTitle>
-                      <AlertDescription>
-                        <p>Data saat ini tetap berlaku sampai pengurus menyetujui perubahan.</p>
-                        <dl className="mt-2 grid gap-2 sm:grid-cols-2">
-                          {proposalRows(key as "identity" | "education").map(([label, value]) => (
-                            <div key={label}>
-                              <dt className="font-medium text-brand-ink">{label}</dt>
-                              <dd>{value}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                      </AlertDescription>
-                    </Alert>
-                  ) : null}
-                  <div className="flex justify-end border-t border-brand-border pt-4">
-                    <Button type="button" variant="outline" onClick={() => openEditor(key)}>
-                      <IconPencil aria-hidden="true" />
-                      Edit
-                    </Button>
-                  </div>
-                </div>
-              </Card>
+              <EditablePanel
+                key={key}
+                title={meta.title}
+                description={meta.description}
+                pending={!!isPending}
+                onEdit={() => openEditor(key)}
+                proposal={isPending ? (
+                  <Alert>
+                    <IconClockHour4 aria-hidden="true" />
+                    <AlertTitle>Perubahan menunggu peninjauan</AlertTitle>
+                    <AlertDescription>
+                      <p>Data saat ini tetap berlaku sampai pengurus menyetujui perubahan.</p>
+                      <dl className="mt-2 grid gap-2 sm:grid-cols-2">
+                        {proposalRows(key as "identity" | "education").map(([label, value]) => (
+                          <div key={label}>
+                            <dt className="font-medium text-brand-ink">{label}</dt>
+                            <dd>{value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </AlertDescription>
+                  </Alert>
+                ) : undefined}
+              >
+                {renderRead(key)}
+              </EditablePanel>
             );
           })}
         </div>

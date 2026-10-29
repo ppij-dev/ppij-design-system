@@ -139,6 +139,43 @@ same surface, on every page.
   </div>
 </div>
 
+## Editing: read-first panels, one drawer
+
+Every editable surface uses the same pattern, so a person learns it once
+and an agent builds it once.
+
+- Data opens as text in an **EditablePanel**: title, one behaviour line,
+  committed values, one Edit action. The panel itself is never a form.
+- Edit opens the **AdminDrawer**: a right drawer from 900 px wide, a
+  bottom sheet below that. One editor is open at a time.
+- The drawer footer is Batal plus the submit. Direct saves read
+  **Simpan perubahan**; changes that need review read **Ajukan
+  perubahan**.
+- The saving state lives inside the submit button. After the drawer
+  closes, a status line confirms the result.
+- A reviewed change leaves its proposal inside the panel with a
+  **Menunggu** badge. Current values stay in effect until approval;
+  nothing is overwritten early.
+
+<div className="ppij-guideline-grid">
+  <div className="ppij-guideline-card">
+    <span className="ppij-guideline-label" data-kind="do">Do</span>
+    <p>
+      **Panel reads, drawer edits.** The profile is the model: each panel
+      shows its values as text, and Edit opens that panel's form in the
+      drawer (right on desktop, bottom sheet on the phone).
+    </p>
+  </div>
+  <div className="ppij-guideline-card">
+    <span className="ppij-guideline-label" data-kind="dont">Do not</span>
+    <p>
+      Never swap a reading view for an inline form, and never open a page
+      as one long form. If a surface is worth reading, it opens as
+      reading; editing is a separate, deliberate step.
+    </p>
+  </div>
+</div>
+
 ## Button action intents
 
 A button states its intent by color. The words on the button say what

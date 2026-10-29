@@ -1,14 +1,15 @@
 import * as React from "react";
 import { IconCheck, IconClockHour4, IconEye, IconEyeOff, IconHistory, IconHome, IconIdBadge2, IconPencil, IconShieldLock } from "@tabler/icons-react";
-import { AdminDrawer, Alert, AlertDescription, AlertTitle, Badge, Button, Card, FundingPicker, Input, Label, MonthPicker, PageHeader, PhoneField, PillRadio, PortalShell, PostcodeField, Spinner, TagInput, Textarea, TypeAhead } from "ppij-design-system";
+import { AdminDrawer, Alert, AlertDescription, AlertTitle, Badge, Button, Card, EditablePanel, FundingPicker, Input, Label, MonthPicker, PageHeader, PhoneField, PillRadio, PortalShell, PostcodeField, Spinner, TagInput, Textarea, TypeAhead } from "ppij-design-system";
 import logoUrl from "../../../../brand/ppij-logo.png";
 
 /**
  * The member Profil page, aligned with the profile change policy
  * (ppij-identity-sso design/1.0.6/profile-change-policy.md): panels
- * read first and edit one at a time in the AdminDrawer with the
- * wizard's components; Data diri and Pendidikan changes are
- * proposals ("Ajukan perubahan") that stay pending review while
+ * read first (EditablePanel) and edit one at a time in the
+ * AdminDrawer (right drawer on desktop, bottom sheet on the phone)
+ * with the wizard's components; Data diri and Pendidikan changes
+ * are proposals ("Ajukan perubahan") that stay pending review while
  * current values remain in effect; Kontak, Domisili, Pendanaan,
  * Minat, and Izin save directly; sealed data stays masked; the
  * student card photo is never shown (deleted 30 days after the
@@ -423,41 +424,32 @@ function ProfileContent() {
             const meta = PANEL_META[key];
             const isPending = (key === "identity" || key === "education") && pending[key];
             return (
-              <Card key={key} className="gap-0 rounded-xl border border-brand-border bg-card py-0">
-                <div className="flex flex-row items-start justify-between gap-3 px-5 pt-5 pb-4">
-                  <div className="grid min-w-0 gap-1.5">
-                    <h2 className="text-base leading-6 font-bold text-brand-ink">{meta.title}</h2>
-                    <p className="text-sm leading-5 text-brand-muted">{meta.description}</p>
-                  </div>
-                  {isPending ? <Badge variant="outline" className="shrink-0">Menunggu</Badge> : null}
-                </div>
-                <div className="grid gap-4 px-5 pb-5">
-                  {renderRead(key)}
-                  {isPending ? (
-                    <Alert>
-                      <IconClockHour4 aria-hidden="true" />
-                      <AlertTitle>Perubahan menunggu peninjauan</AlertTitle>
-                      <AlertDescription>
-                        <p>Data saat ini tetap berlaku sampai pengurus menyetujui perubahan.</p>
-                        <dl className="mt-2 grid gap-2 sm:grid-cols-2">
-                          {proposalRows(key as "identity" | "education").map(([label, value]) => (
-                            <div key={label}>
-                              <dt className="font-medium text-brand-ink">{label}</dt>
-                              <dd>{value}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                      </AlertDescription>
-                    </Alert>
-                  ) : null}
-                  <div className="flex justify-end border-t border-brand-border pt-4">
-                    <Button type="button" variant="outline" onClick={() => openEditor(key)}>
-                      <IconPencil aria-hidden="true" />
-                      Edit
-                    </Button>
-                  </div>
-                </div>
-              </Card>
+              <EditablePanel
+                key={key}
+                title={meta.title}
+                description={meta.description}
+                pending={!!isPending}
+                onEdit={() => openEditor(key)}
+                proposal={isPending ? (
+                  <Alert>
+                    <IconClockHour4 aria-hidden="true" />
+                    <AlertTitle>Perubahan menunggu peninjauan</AlertTitle>
+                    <AlertDescription>
+                      <p>Data saat ini tetap berlaku sampai pengurus menyetujui perubahan.</p>
+                      <dl className="mt-2 grid gap-2 sm:grid-cols-2">
+                        {proposalRows(key as "identity" | "education").map(([label, value]) => (
+                          <div key={label}>
+                            <dt className="font-medium text-brand-ink">{label}</dt>
+                            <dd>{value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </AlertDescription>
+                  </Alert>
+                ) : undefined}
+              >
+                {renderRead(key)}
+              </EditablePanel>
             );
           })}
         </div>

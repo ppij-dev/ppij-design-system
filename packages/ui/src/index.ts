@@ -99,3 +99,4 @@ export { TodoStrip, type TodoStripProps } from "./components/todo-strip";
 export { InvitationCard, type InvitationCardProps } from "./components/invitation-card";
 export { cardThemes, resolveCardTheme, type CardTheme } from "./card-themes";
 export { activeBanners, jstToday, MAX_ACTIVE, type PromoBanner } from "./banners";
+export { EditablePanel, type EditablePanelProps } from "./components/editable-panel";

@@ -11,3 +11,4 @@
 - [x] Add a short moving red trail line behind each ballistic light.
 - [x] Extend the illuminated trail back to the source and add translucent glow.
 - [x] Compose the map as a cinematic mobile hero background and stabilize the two-line rotating subtitle.
+- [x] Cover the mobile header with the veil and center the map across compact and tall phone viewports.

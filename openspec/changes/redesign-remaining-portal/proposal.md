@@ -22,6 +22,8 @@ Extend the revealed trail from the source to the projectile and render it as a t
 
 On phones, place the Japan map behind the hero headline, rotating subtitle, and actions with a dark readability veil. Reserve two lines for the subtitle at every rotation so the actions do not shift.
 
+The mobile veil also covers the header. Center the map consistently across compact and tall phones; verify 320, 375, 393, and 430 pixel viewports without horizontal overflow.
+
 ## Acceptance
 
 - Every added screen uses existing `ppij-design-system` components and tokens.

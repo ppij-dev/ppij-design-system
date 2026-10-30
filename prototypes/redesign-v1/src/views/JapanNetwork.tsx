@@ -36,9 +36,8 @@ function arc(from: Point, to: Point) {
 }
 
 function trailingSegment(point: (t: number) => Point, progress: number) {
-  const start = Math.max(0, progress - .15);
   return Array.from({ length: 13 }, (_, index) => {
-    const { x, y } = point(start + (progress - start) * index / 12);
+    const { x, y } = point(progress * index / 12);
     return `${index ? "L" : "M"} ${x.toFixed(1)} ${y.toFixed(1)}`;
   }).join(" ");
 }
@@ -97,13 +96,17 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
         const slot = slots[index];
         const progress = Math.min(1, (now - flight.started) / flight.duration);
         const line = slot.querySelector<SVGPathElement>("[data-trail-line]");
-          const glow = slot.querySelector<SVGCircleElement>("[data-glow]");
+        const lineGlow = slot.querySelector<SVGPathElement>("[data-trail-glow]");
+        const glow = slot.querySelector<SVGCircleElement>("[data-glow]");
         const projectile = slot.querySelector<SVGCircleElement>("[data-projectile]");
         const sparks = slot.querySelectorAll<SVGCircleElement>("[data-spark]");
         if (progress < 1) {
           const curve = arc(PREFECTURES[flight.from], PREFECTURES[flight.to]);
-          line?.setAttribute("d", trailingSegment(curve.point, progress));
+          const path = trailingSegment(curve.point, progress);
+          line?.setAttribute("d", path);
+          lineGlow?.setAttribute("d", path);
           if (line) line.style.opacity = "1";
+          if (lineGlow) lineGlow.style.opacity = "1";
           sparks.forEach((spark, sparkIndex) => {
           const t = progress - (sparkIndex + 1) / sparks.length * .15;
             if (t < 0) { spark.style.opacity = "0"; return; }
@@ -125,6 +128,7 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
           const fade = Math.max(0, 1 - elapsed / ARRIVAL_MS);
           if (projectile) projectile.style.opacity = "0";
           if (line) line.style.opacity = String(fade);
+          if (lineGlow) lineGlow.style.opacity = String(fade);
           if (glow) glow.style.opacity = "0";
           sparks.forEach((spark) => { spark.style.opacity = String(fade * .3); });
           nodeOpacity[flight.to] = Math.max(nodeOpacity[flight.to], fade);
@@ -170,13 +174,15 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
       <linearGradient id="land-face" x1="0" y1="0" x2="0.9" y2="1"><stop offset="0" stopColor="#ffffff" /><stop offset="0.55" stopColor="#f1f4f7" /><stop offset="1" stopColor="#c9d2dc" /></linearGradient>
       <linearGradient id="land-side" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#b9c4d0" /><stop offset="1" stopColor="#647485" /></linearGradient>
       <filter id="land-shadow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="15" /></filter>
+      <filter id="flight-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4" /></filter>
     </defs>
     <path d={JAPAN_OUTLINE} transform="translate(0 28)" fill="#020c1b" opacity=".7" filter="url(#land-shadow)" />
     <path d={JAPAN_OUTLINE} transform="translate(0 17)" fill="#687889" />
     <path d={JAPAN_OUTLINE} transform="translate(0 11)" fill="url(#land-side)" />
     <path d={JAPAN_OUTLINE} fill="url(#land-face)" stroke="#ffffff" strokeWidth="1.4" />
     {Array.from({ length: SLOT_COUNT }, (_, index) => <g key={index} data-flight={index} style={{ opacity: 0 }}>
-      <path data-trail-line fill="none" stroke="#ff4d6d" strokeWidth="2" strokeLinecap="round" opacity="0" />
+      <path data-trail-glow fill="none" stroke="#ff4d6d" strokeWidth="10" strokeLinecap="round" strokeOpacity=".45" opacity="0" filter="url(#flight-glow)" />
+      <path data-trail-line fill="none" stroke="#ff6b84" strokeWidth="1.7" strokeLinecap="round" opacity="0" strokeOpacity=".45" />
       {Array.from({ length: 20 }, (_, spark) => <circle key={spark} data-spark r={3 * (1 - spark / 20)} fill="#ff6486" opacity="0" />)}
       <circle data-glow r="12" fill="#ff4d6d" opacity="0" />
       <circle data-projectile r="5" fill="#ff4d6d" className="network-traveler" />

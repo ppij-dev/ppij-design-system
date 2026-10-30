@@ -5,3 +5,4 @@
 - [x] Add Indonesian and English controls and copy for the new screens.
 - [x] Verify desktop and phone layouts, build, and run the repository gate.
 - [x] Replace the signed-out entry preview with the dedicated Japan network landing composition and keep the existing wizard outside the prototype.
+- [x] Replace simultaneous routes with one or two random ballistic flights between prefectures, with transient origin and arrival markers.

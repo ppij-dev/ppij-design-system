@@ -27,9 +27,7 @@
 .entry-map-wrap { position: relative; width: min(100%, 730px); height: min(660px, 48vw); min-height: 500px; margin-left: -45px; }
 .entry-map-aura { position: absolute; inset: 16% 1% 10% 7%; background: radial-gradient(ellipse at 50% 52%, #496d92aa, #1b345644 45%, transparent 70%); filter: blur(24px); }
 .japan-network { position: relative; width: 100%; height: 100%; overflow: visible; transform: rotate(-7deg) scale(1.12); filter: drop-shadow(18px 24px 18px #020712a6); }
-.network-flow { stroke-dasharray: 6 23; animation: network-flow 2.8s linear infinite; }
 .network-traveler { filter: drop-shadow(0 0 5px #f3264f); }
-.network-pulse { transform-origin: center; animation: network-pulse 3.2s ease-out infinite; }
 .network-label { fill: #13243b; font-size: 13px; font-weight: 800; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
 .entry-map-caption { position: absolute; right: 8%; bottom: 12%; display: flex; align-items: center; gap: 12px; color: #dbe7f2; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
 .entry-map-caption-line { display: block; width: 36px; height: 1px; background: #e83a56; }
@@ -52,8 +50,6 @@
 .entry-process ol { display: flex; flex-wrap: wrap; gap: 15px 36px; margin: 0; padding-left: 22px; color: #526174; }
 .entry-footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 32px; color: #687587; font-size: 13px; }
 .entry-footer a { color: #a8112b; font-weight: 700; }
-@keyframes network-flow { to { stroke-dashoffset: -29; } }
-@keyframes network-pulse { 0%, 100% { opacity: .14; transform: scale(.6); } 45% { opacity: .28; transform: scale(1.25); } }
 @keyframes entry-word { from { opacity: 0; transform: translateY(9px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 @media (max-width: 900px) {
   .entry-stage { min-height: 0; }
@@ -88,6 +84,6 @@
   .entry-process ol { display: grid; gap: 9px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .network-flow, .network-pulse, .entry-changing-word { animation: none; }
+  .entry-changing-word { animation: none; }
   .network-traveler { display: none; }
 }

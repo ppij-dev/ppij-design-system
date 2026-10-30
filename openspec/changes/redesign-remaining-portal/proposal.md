@@ -10,6 +10,8 @@ Extend the local presentation prototype with verification, account, signed-out e
 
 The signed-out entry is a dedicated landing composition: PPI Jepang Portal branding, the motto “Membuka Dunia untuk Indonesia dan Membuka Indonesia untuk Dunia”, a white relief map of Japan with animated red city connections, Masuk and Daftar actions, and a rotating “Bersama” line with Peluang, Maju, and Tumbuh. Keep the registration wizard separate.
 
+Map motion uses at most two randomly selected prefecture-to-prefecture ballistic arcs at a time. Points and names are absent at rest. The origin appears at launch and fades during travel; the destination appears with a brief pulse on arrival. Reduced-motion and offscreen states keep the map still.
+
 ## Acceptance
 
 - Every added screen uses existing `ppij-design-system` components and tokens.

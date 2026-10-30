@@ -1,6 +1,6 @@
 {
   "name": "ppij-design-system",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "PPIJ branding and design system: tokens and React components on shadcn/ui and Tailwind CSS v4",
   "type": "module",
   "license": "MIT",

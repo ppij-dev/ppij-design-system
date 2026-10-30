@@ -1,7 +1,8 @@
 import * as React from "react";
 import { PortalView } from "./views/Portal";
 import { ProfileView } from "./views/Profile";
-import { AccountView, EntryView, ErrorView, GateView, InvitationView, MembershipScenario, memberStates, pick, PreviewShell, VerificationView, type ErrorState, type GateState, type InviteState, type Locale, type MemberState, type View } from "./views/Remaining";
+import { EntryView } from "./views/Landing";
+import { AccountView, ErrorView, GateView, InvitationView, MembershipScenario, memberStates, pick, PreviewShell, VerificationView, type ErrorState, type GateState, type InviteState, type Locale, type MemberState, type View } from "./views/Remaining";
 
 const VIEWS: { id: View; idLabel: string; enLabel: string }[] = [
   { id: "portal", idLabel: "Beranda", enLabel: "Home" },
@@ -15,7 +16,7 @@ const VIEWS: { id: View; idLabel: string; enLabel: string }[] = [
 ];
 
 export function App() {
-  const [view, setView] = React.useState<View>("portal");
+  const [view, setView] = React.useState<View>("entry");
   const [locale, setLocale] = React.useState<Locale>("id");
   const [memberState, setMemberState] = React.useState<MemberState>("active");
   const [gate, setGate] = React.useState<GateState>("verify_email");
@@ -39,7 +40,7 @@ export function App() {
     {view === "profile" && <ProfileView onNavigate={setView} locale={locale} onLocale={setLocale} />}
     {view === "verification" && shell(<VerificationView locale={locale} state={memberState} onView={setView} />)}
     {view === "account" && shell(<AccountView locale={locale} state={memberState} />)}
-    {view === "entry" && shell(<EntryView locale={locale} onView={setView} />)}
+    {view === "entry" && <EntryView locale={locale} onLocale={setLocale} onView={setView} />}
     {view === "gate" && shell(<GateView locale={locale} gate={gate} onView={setView} />)}
     {view === "invitation" && shell(<InvitationView locale={locale} state={invite} onView={setView} />)}
     {view === "error" && shell(<ErrorView locale={locale} state={error} onView={setView} />)}

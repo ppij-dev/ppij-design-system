@@ -8,6 +8,8 @@ The `redesign-v1` prototype demonstrates active Beranda and Profil, but cannot b
 
 Extend the local presentation prototype with verification, account, signed-out entry, access gates, invitation states, and non-active membership states. Add a language and scenario switch so the same Storybook-derived composition can be reviewed in Indonesian and English. Use sample data and local interactions only; do not add API or authentication logic.
 
+The signed-out entry is a dedicated landing composition: PPI Jepang Portal branding, the motto “Membuka Dunia untuk Indonesia dan Membuka Indonesia untuk Dunia”, a white relief map of Japan with animated red city connections, Masuk and Daftar actions, and a rotating “Bersama” line with Peluang, Maju, and Tumbuh. Keep the registration wizard separate.
+
 ## Acceptance
 
 - Every added screen uses existing `ppij-design-system` components and tokens.

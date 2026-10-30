@@ -2,6 +2,7 @@ import * as React from "react";
 import { IconCheck, IconClockHour4, IconEye, IconEyeOff, IconHistory, IconHome, IconIdBadge2, IconPencil, IconShieldLock } from "@tabler/icons-react";
 import { AdminDrawer, Alert, AlertDescription, AlertTitle, Badge, Button, Card, EditablePanel, FundingPicker, Input, Label, MonthPicker, PageHeader, PhoneField, PillRadio, PortalShell, PostcodeField, Spinner, TagInput, Textarea, TypeAhead } from "ppij-design-system";
 import logoUrl from "../../../../brand/ppij-logo.png";
+import { pick, type Locale, type View } from "./Remaining";
 
 /**
  * The member Profil page, aligned with the profile change policy
@@ -325,7 +326,7 @@ function ProfileContent() {
                 { value: "d3", label: "D3 / Diploma" }, { value: "s1", label: "S1 / Sarjana" }, { value: "s2", label: "S2 / Magister" }, { value: "s3", label: "S3 / Doktor" },
               ]} />
             </F>
-            <F label="Perkiraan bulan lulus"><MonthPicker value={draft.expectedGraduation} onChange={(v) => set("expectedGraduation", v)} /></F>
+            <F label="Perkiraan bulan lulus"><MonthPicker label="Perkiraan bulan lulus" value={draft.expectedGraduation} onChange={(v) => set("expectedGraduation", v)} /></F>
           </div>
         );
       case "funding":
@@ -478,8 +479,8 @@ function ProfileContent() {
 }
 
 
-export function ProfileView({ onNavigate }: { onNavigate: (view: "portal" | "profile") => void }) {
-  const go = (view: "portal" | "profile") => (event: React.MouseEvent<HTMLAnchorElement>) => {
+export function ProfileView({ onNavigate, locale, onLocale }: { onNavigate: (view: View) => void; locale: Locale; onLocale: (locale: Locale) => void }) {
+  const go = (view: View) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     onNavigate(view);
   };
@@ -487,13 +488,13 @@ export function ProfileView({ onNavigate }: { onNavigate: (view: "portal" | "pro
     <PortalShell
       logoSrc={logoUrl}
       navItems={[
-        { label: "Beranda", href: "#", icon: <IconHome className="size-5" stroke={1.75} />, onClick: go("portal") },
-        { label: "Profil", href: "#", icon: <IconIdBadge2 className="size-5" stroke={1.75} />, current: true },
+        { label: pick(locale, "Beranda", "Home"), href: "#", icon: <IconHome className="size-5" stroke={1.75} />, onClick: go("portal") },
+        { label: pick(locale, "Profil", "Profile"), href: "#", icon: <IconIdBadge2 className="size-5" stroke={1.75} />, current: true },
       ]}
-      languages={[{ label: "Bahasa Indonesia", current: true }, { label: "English" }]}
-      accountItems={[{ label: "Akun", href: "#" }, { label: "Kebijakan Privasi", href: "#" }, { label: "Syarat Layanan", href: "#" }]}
-      helpText="Butuh bantuan? Hubungi pengurus komsatmu atau sekretariat PPI Jepang."
-      legalItems={[{ label: "Kebijakan Privasi", href: "#" }, { label: "Syarat Layanan", href: "#" }]}
+      languages={[{ label: "Bahasa Indonesia", current: locale === "id", onSelect: () => onLocale("id") }, { label: "English", current: locale === "en", onSelect: () => onLocale("en") }]}
+      accountItems={[{ label: pick(locale, "Akun", "Account"), href: "#akun" }, { label: pick(locale, "Kebijakan Privasi", "Privacy policy"), href: "#privasi" }, { label: pick(locale, "Syarat Layanan", "Terms of service"), href: "#syarat" }]}
+      helpText={pick(locale, "Butuh bantuan? Hubungi pengurus komsatmu atau sekretariat PPI Jepang.", "Need help? Contact your local PPI committee or the PPI Japan secretariat.")}
+      legalItems={[{ label: pick(locale, "Kebijakan Privasi", "Privacy policy"), href: "#privasi" }, { label: pick(locale, "Syarat Layanan", "Terms of service"), href: "#syarat" }]}
     >
       <ProfileContent />
     </PortalShell>

@@ -72,11 +72,11 @@ export function DataTable({
           {footerText ? <p className="text-xs text-brand-muted">{footerText}</p> : null}
           {hasPagination ? (
             <nav aria-label="Halaman tabel" className="ml-auto flex items-center gap-1">
-              {pageLabel ? <span className="mr-1 text-xs text-brand-muted">{pageLabel}</span> : null}
-              <Button size="icon-sm" variant="outline" onClick={onPrevious} disabled={previousDisabled || !onPrevious} aria-label={previousLabel} title={previousLabel}>
+              {pageLabel ? <span className={cn("mr-1 text-xs text-brand-muted", footerText && "sr-only sm:not-sr-only")}>{pageLabel}</span> : null}
+              <Button size="icon-sm" className="size-11 sm:size-8" variant="outline" onClick={onPrevious} disabled={previousDisabled || !onPrevious} aria-label={previousLabel} title={previousLabel}>
                 <IconChevronLeft size={16} />
               </Button>
-              <Button size="icon-sm" variant="outline" onClick={onNext} disabled={nextDisabled || !onNext} aria-label={nextLabel} title={nextLabel}>
+              <Button size="icon-sm" className="size-11 sm:size-8" variant="outline" onClick={onNext} disabled={nextDisabled || !onNext} aria-label={nextLabel} title={nextLabel}>
                 <IconChevronRight size={16} />
               </Button>
             </nav>

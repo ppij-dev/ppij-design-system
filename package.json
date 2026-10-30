@@ -5,7 +5,8 @@
   "type": "module",
   "workspaces": [
     "packages/ui",
-    "prototypes/redesign-v1"
+    "prototypes/redesign-v1",
+    "prototypes/redesign-adminv1"
   ],
   "scripts": {
     "tokens": "node scripts/generate-tokens.mjs",

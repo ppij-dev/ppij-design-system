@@ -38,7 +38,7 @@ export function EntryView({ locale, onLocale, onView }: { locale: Locale; onLoca
       <div className="entry-hero">
         <div className="entry-copy">
           <h1 id="entry-title">{locale === "id" ? <>Membuka Dunia untuk Indonesia <span>dan Membuka Indonesia untuk Dunia</span></> : <>Opening the World to Indonesia <span>and Indonesia to the World</span></>}</h1>
-          <p className="entry-intro">{pick(locale, "Dari Jepang, pelajar Indonesia saling ", "From Japan, Indonesian students ")}<span key={`${locale}-${word}`} className="entry-changing-word" aria-live="off">{pick(locale, WORDS[word].id, WORDS[word].en)}</span>.</p>
+          <p className="entry-intro"><span className="entry-intro-lead">{pick(locale, "Dari Jepang, pelajar Indonesia saling", "From Japan, Indonesian students")}</span>{" "}<span className="entry-intro-rotating"><span key={`${locale}-${word}`} className="entry-changing-word" aria-live="off">{pick(locale, WORDS[word].id, WORDS[word].en)}</span>.</span></p>
           <div className="entry-actions">
             <Button className="entry-primary" onClick={() => onView("portal")}>{pick(locale, "Masuk", "Sign in")}<IconArrowRight size={18} aria-hidden="true" /></Button>
             <Button variant="outline" className="entry-secondary" onClick={() => setNotice(true)}>{pick(locale, "Daftar sebagai anggota", "Register as a member")}</Button>

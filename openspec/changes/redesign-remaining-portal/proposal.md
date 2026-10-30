@@ -20,6 +20,8 @@ Show a red line following each projectile as part of its tail. The route ahead o
 
 Extend the revealed trail from the source to the projectile and render it as a translucent red line with a soft glow. No line appears ahead of the moving light.
 
+On phones, place the Japan map behind the hero headline, rotating subtitle, and actions with a dark readability veil. Reserve two lines for the subtitle at every rotation so the actions do not shift.
+
 ## Acceptance
 
 - Every added screen uses existing `ppij-design-system` components and tokens.

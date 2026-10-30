@@ -20,7 +20,7 @@ const PREFECTURES = [
   place("Osaka", 135.50, 34.69), place("Okayama", 133.93, 34.66),
   place("Hiroshima", 132.46, 34.40), place("Ehime", 132.77, 33.84),
   place("Fukuoka", 130.42, 33.59), place("Kumamoto", 130.71, 32.80),
-  place("Kagoshima", 130.56, 31.60),
+  place("Kagoshima", 130.56, 31.60), place("Okinawa", 127.68, 26.22),
 ];
 const ARRIVAL_MS = 540;
 const SLOT_COUNT = 4;
@@ -57,6 +57,7 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
     let frame = 0;
     let nextLaunch = 0;
     let previousPair = "";
+    let launchCount = 0;
 
     const clear = () => {
       active.fill(null);
@@ -66,9 +67,10 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
     const launch = (now: number) => {
       const slotIndex = active.findIndex((flight) => flight === null);
       if (slotIndex < 0) return;
+      launchCount += 1;
       let pair: [number, number] | null = null;
       for (let attempt = 0; attempt < 24; attempt++) {
-        const from = Math.floor(Math.random() * PREFECTURES.length);
+        const from = launchCount % 9 === 0 ? PREFECTURES.length - 1 : Math.floor(Math.random() * PREFECTURES.length);
         const to = Math.floor(Math.random() * PREFECTURES.length);
         const distance = Math.hypot(PREFECTURES[from].x - PREFECTURES[to].x, PREFECTURES[from].y - PREFECTURES[to].y);
         if (from !== to && distance > 105 && distance < 480 && `${from}-${to}` !== previousPair

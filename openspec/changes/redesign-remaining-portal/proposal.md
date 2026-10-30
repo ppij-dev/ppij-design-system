@@ -24,6 +24,8 @@ On phones, place the Japan map behind the hero headline, rotating subtitle, and 
 
 The mobile veil also covers the header. Center the map consistently across compact and tall phones; verify 320, 375, 393, and 430 pixel viewports without horizontal overflow.
 
+On taller phones, center the hero content vertically and size the map from both viewport width and height so the lower screen remains part of the composition. On tablets, the hero fills the viewport before the next section begins. Include Okinawa as a prefecture endpoint and send a flight from it periodically.
+
 ## Acceptance
 
 - Every added screen uses existing `ppij-design-system` components and tokens.

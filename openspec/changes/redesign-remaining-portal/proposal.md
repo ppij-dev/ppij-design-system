@@ -32,3 +32,4 @@ On taller phones, center the hero content vertically and size the map from both 
 - The prototype lets reviewers reach each state without changing code.
 - The wizard and the production portal are unchanged.
 - The prototype builds, and `scripts/gate.sh` passes on a clean tree before any merge.
+- A source-to-target integration handoff documents how to apply the reviewed preview to the existing identity portal without replacing its behavior.

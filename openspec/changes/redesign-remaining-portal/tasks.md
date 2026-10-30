@@ -13,3 +13,4 @@
 - [x] Compose the map as a cinematic mobile hero background and stabilize the two-line rotating subtitle.
 - [x] Cover the mobile header with the veil and center the map across compact and tall phone viewports.
 - [x] Balance tall-phone and tablet hero heights and add periodic Okinawa-origin flights.
+- [x] Document the production portal integration path, behavior boundaries, and verification.

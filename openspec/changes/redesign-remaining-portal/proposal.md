@@ -16,6 +16,8 @@ Refine the arc to follow the supplied canvas reference: red circular markers and
 
 Increase launch frequency to roughly two flights per second, with up to four in progress. Keep the moving ballistic light and particle tail; remove the static trajectory line. Remove the "Cara bergabung" steps from the landing page.
 
+Show a short red line following each projectile as part of its tail. The full route remains hidden.
+
 ## Acceptance
 
 - Every added screen uses existing `ppij-design-system` components and tokens.

@@ -8,3 +8,4 @@
 - [x] Replace simultaneous routes with one or two random ballistic flights between prefectures, with transient origin and arrival markers.
 - [x] Match the supplied red-circle ballistic reference, revise rotating introduction and service copy, remove redundant captions, and add a short FAQ.
 - [x] Increase ballistic frequency, hide the static trajectory, and remove the joining steps.
+- [x] Add a short moving red trail line behind each ballistic light.

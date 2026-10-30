@@ -10,9 +10,11 @@ Extend the local presentation prototype with verification, account, signed-out e
 
 The signed-out entry is a dedicated landing composition: PPI Jepang Portal branding, the motto “Membuka Dunia untuk Indonesia dan Membuka Indonesia untuk Dunia”, a white relief map of Japan with animated red city connections, Masuk and Daftar actions, and a rotating “Bersama” line with Peluang, Maju, and Tumbuh. Keep the registration wizard separate.
 
-Map motion uses at most two randomly selected prefecture-to-prefecture ballistic arcs at a time. Points and names are absent at rest. The origin appears at launch and fades during travel; the destination appears with a brief pulse on arrival. Reduced-motion and offscreen states keep the map still.
+Map motion uses randomly selected prefecture-to-prefecture ballistic arcs. Points and names are absent at rest. The origin appears at launch and fades during travel; the destination appears with a brief pulse on arrival. Reduced-motion and offscreen states keep the map still.
 
-Refine the arc to follow the supplied canvas reference: red circular markers, a visible red trajectory, and a tapered particle tail. The introductory line rotates five ways to complete “Dari Jepang, pelajar Indonesia saling …”. Remove the map caption and bottom motto. The lower section explains the single account across national, korda, and komsat services and includes a short FAQ.
+Refine the arc to follow the supplied canvas reference: red circular markers and a tapered particle tail. The introductory line rotates five ways to complete “Dari Jepang, pelajar Indonesia saling …”. Remove the map caption and bottom motto. The lower section explains the single account across national, korda, and komsat services and includes a short FAQ.
+
+Increase launch frequency to roughly two flights per second, with up to four in progress. Keep the moving ballistic light and particle tail; remove the static trajectory line. Remove the "Cara bergabung" steps from the landing page.
 
 ## Acceptance
 

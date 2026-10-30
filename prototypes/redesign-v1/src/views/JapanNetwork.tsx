@@ -23,7 +23,7 @@ const PREFECTURES = [
   place("Kagoshima", 130.56, 31.60),
 ];
 const ARRIVAL_MS = 540;
-const SLOT_COUNT = 2;
+const SLOT_COUNT = 4;
 
 function arc(from: Point, to: Point) {
   const distance = Math.hypot(to.x - from.x, to.y - from.y);
@@ -32,7 +32,7 @@ function arc(from: Point, to: Point) {
     x: (1 - t) ** 2 * from.x + 2 * (1 - t) * t * control.x + t ** 2 * to.x,
     y: (1 - t) ** 2 * from.y + 2 * (1 - t) * t * control.y + t ** 2 * to.y,
   });
-  return { path: `M ${from.x} ${from.y} Q ${control.x} ${control.y} ${to.x} ${to.y}`, point };
+  return { point };
 }
 
 /** Public-domain Natural Earth geography with illustrative prefecture connections. */
@@ -75,13 +75,12 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
       previousPair = `${from}-${to}`;
       const distance = Math.hypot(PREFECTURES[from].x - PREFECTURES[to].x, PREFECTURES[from].y - PREFECTURES[to].y);
       active[slotIndex] = { from, to, started: now, duration: 1550 + distance * 1.35 };
-      slots[slotIndex].querySelector<SVGPathElement>("[data-arc]")?.setAttribute("d", arc(PREFECTURES[from], PREFECTURES[to]).path);
       slots[slotIndex].style.opacity = "1";
     };
     const tick = (now: number) => {
       if (now >= nextLaunch) {
         launch(now);
-        nextLaunch = now + 850 + Math.random() * 1150;
+        nextLaunch = now + 420 + Math.random() * 320;
       }
       const nodeOpacity = Array(PREFECTURES.length).fill(0) as number[];
       const arrival = Array(PREFECTURES.length).fill(0) as number[];
@@ -89,7 +88,6 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
         if (!flight) return;
         const slot = slots[index];
         const progress = Math.min(1, (now - flight.started) / flight.duration);
-        const arcPath = slot.querySelector<SVGPathElement>("[data-arc]");
           const glow = slot.querySelector<SVGCircleElement>("[data-glow]");
         const projectile = slot.querySelector<SVGCircleElement>("[data-projectile]");
         const sparks = slot.querySelectorAll<SVGCircleElement>("[data-spark]");
@@ -110,7 +108,6 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
           glow?.setAttribute("cy", String(y));
           if (projectile) projectile.style.opacity = "1";
           if (glow) glow.style.opacity = ".38";
-          if (arcPath) arcPath.style.opacity = ".38";
           nodeOpacity[flight.from] = Math.max(nodeOpacity[flight.from], Math.max(0, 1 - progress * 2.4));
         } else {
           const elapsed = now - flight.started - flight.duration;
@@ -118,7 +115,6 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
           if (projectile) projectile.style.opacity = "0";
           if (glow) glow.style.opacity = "0";
           sparks.forEach((spark) => { spark.style.opacity = String(fade * .3); });
-          if (arcPath) arcPath.style.opacity = String(.38 * fade);
           nodeOpacity[flight.to] = Math.max(nodeOpacity[flight.to], fade);
           arrival[flight.to] = Math.max(arrival[flight.to], elapsed / ARRIVAL_MS);
           if (elapsed >= ARRIVAL_MS) {
@@ -168,7 +164,6 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
     <path d={JAPAN_OUTLINE} transform="translate(0 11)" fill="url(#land-side)" />
     <path d={JAPAN_OUTLINE} fill="url(#land-face)" stroke="#ffffff" strokeWidth="1.4" />
     {Array.from({ length: SLOT_COUNT }, (_, index) => <g key={index} data-flight={index} style={{ opacity: 0 }}>
-      <path data-arc fill="none" stroke="#ff4d6d" strokeWidth="2" opacity="0" />
       {Array.from({ length: 20 }, (_, spark) => <circle key={spark} data-spark r={3 * (1 - spark / 20)} fill="#ff6486" opacity="0" />)}
       <circle data-glow r="12" fill="#ff4d6d" opacity="0" />
       <circle data-projectile r="5" fill="#ff4d6d" className="network-traveler" />

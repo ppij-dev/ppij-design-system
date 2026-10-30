@@ -22,7 +22,7 @@ const PREFECTURES = [
   place("Fukuoka", 130.42, 33.59), place("Kumamoto", 130.71, 32.80),
   place("Kagoshima", 130.56, 31.60),
 ];
-const ARRIVAL_MS = 680;
+const ARRIVAL_MS = 540;
 const SLOT_COUNT = 2;
 
 function arc(from: Point, to: Point) {
@@ -33,14 +33,6 @@ function arc(from: Point, to: Point) {
     y: (1 - t) ** 2 * from.y + 2 * (1 - t) * t * control.y + t ** 2 * to.y,
   });
   return { path: `M ${from.x} ${from.y} Q ${control.x} ${control.y} ${to.x} ${to.y}`, point };
-}
-
-function trail(point: (t: number) => Point, progress: number) {
-  const start = Math.max(0, progress - .18);
-  return Array.from({ length: 17 }, (_, index) => {
-    const { x, y } = point(start + (progress - start) * index / 16);
-    return `${index ? "L" : "M"} ${x.toFixed(1)} ${y.toFixed(1)}`;
-  }).join(" ");
 }
 
 /** Public-domain Natural Earth geography with illustrative prefecture connections. */
@@ -98,44 +90,40 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
         const slot = slots[index];
         const progress = Math.min(1, (now - flight.started) / flight.duration);
         const arcPath = slot.querySelector<SVGPathElement>("[data-arc]");
-        const glow = slot.querySelector<SVGPathElement>("[data-glow]");
-        const streak = slot.querySelector<SVGPathElement>("[data-streak]");
+          const glow = slot.querySelector<SVGCircleElement>("[data-glow]");
         const projectile = slot.querySelector<SVGCircleElement>("[data-projectile]");
         const sparks = slot.querySelectorAll<SVGCircleElement>("[data-spark]");
         if (progress < 1) {
           const curve = arc(PREFECTURES[flight.from], PREFECTURES[flight.to]);
-          const path = trail(curve.point, progress);
-          glow?.setAttribute("d", path);
-          streak?.setAttribute("d", path);
           sparks.forEach((spark, sparkIndex) => {
-            const t = progress - (sparkIndex + 1) / sparks.length * .18;
+          const t = progress - (sparkIndex + 1) / sparks.length * .15;
             if (t < 0) { spark.style.opacity = "0"; return; }
             const point = curve.point(t);
             spark.setAttribute("cx", String(point.x));
             spark.setAttribute("cy", String(point.y));
-            spark.style.opacity = String((1 - sparkIndex / sparks.length) * .85);
+            spark.style.opacity = String((1 - sparkIndex / sparks.length) * .9);
           });
           const { x, y } = curve.point(progress);
           projectile?.setAttribute("cx", String(x));
           projectile?.setAttribute("cy", String(y));
+          glow?.setAttribute("cx", String(x));
+          glow?.setAttribute("cy", String(y));
           if (projectile) projectile.style.opacity = "1";
-          if (arcPath) arcPath.style.opacity = String(Math.min(.18, .05 + progress * .2));
+          if (glow) glow.style.opacity = ".38";
+          if (arcPath) arcPath.style.opacity = ".38";
           nodeOpacity[flight.from] = Math.max(nodeOpacity[flight.from], Math.max(0, 1 - progress * 2.4));
         } else {
           const elapsed = now - flight.started - flight.duration;
           const fade = Math.max(0, 1 - elapsed / ARRIVAL_MS);
           if (projectile) projectile.style.opacity = "0";
+          if (glow) glow.style.opacity = "0";
           sparks.forEach((spark) => { spark.style.opacity = String(fade * .3); });
-          if (glow) glow.style.opacity = String(fade);
-          if (streak) streak.style.opacity = String(fade);
-          if (arcPath) arcPath.style.opacity = String(.18 * fade);
+          if (arcPath) arcPath.style.opacity = String(.38 * fade);
           nodeOpacity[flight.to] = Math.max(nodeOpacity[flight.to], fade);
           arrival[flight.to] = Math.max(arrival[flight.to], elapsed / ARRIVAL_MS);
           if (elapsed >= ARRIVAL_MS) {
             active[index] = null;
             slot.style.opacity = "0";
-            if (glow) glow.style.opacity = "1";
-            if (streak) streak.style.opacity = "1";
           }
         }
       });
@@ -174,24 +162,21 @@ export function JapanNetwork({ locale }: { locale: "id" | "en" }) {
       <linearGradient id="land-face" x1="0" y1="0" x2="0.9" y2="1"><stop offset="0" stopColor="#ffffff" /><stop offset="0.55" stopColor="#f1f4f7" /><stop offset="1" stopColor="#c9d2dc" /></linearGradient>
       <linearGradient id="land-side" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#b9c4d0" /><stop offset="1" stopColor="#647485" /></linearGradient>
       <filter id="land-shadow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="15" /></filter>
-      <filter id="route-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" /></filter>
     </defs>
     <path d={JAPAN_OUTLINE} transform="translate(0 28)" fill="#020c1b" opacity=".7" filter="url(#land-shadow)" />
     <path d={JAPAN_OUTLINE} transform="translate(0 17)" fill="#687889" />
     <path d={JAPAN_OUTLINE} transform="translate(0 11)" fill="url(#land-side)" />
     <path d={JAPAN_OUTLINE} fill="url(#land-face)" stroke="#ffffff" strokeWidth="1.4" />
     {Array.from({ length: SLOT_COUNT }, (_, index) => <g key={index} data-flight={index} style={{ opacity: 0 }}>
-      <path data-arc fill="none" stroke="#d61b3a" strokeWidth="1.5" opacity="0" />
-      <path data-glow fill="none" stroke="#ff3d62" strokeWidth="9" strokeLinecap="round" filter="url(#route-glow)" opacity=".8" />
-      <path data-streak fill="none" stroke="#ff526e" strokeWidth="2.5" strokeLinecap="round" />
-      {Array.from({ length: 12 }, (_, spark) => <circle key={spark} data-spark r={2.5 * (1 - spark / 12)} fill="#ff8a9c" opacity="0" />)}
-      <circle data-projectile r="5" fill="#fff" className="network-traveler" />
+      <path data-arc fill="none" stroke="#ff4d6d" strokeWidth="2" opacity="0" />
+      {Array.from({ length: 20 }, (_, spark) => <circle key={spark} data-spark r={3 * (1 - spark / 20)} fill="#ff6486" opacity="0" />)}
+      <circle data-glow r="12" fill="#ff4d6d" opacity="0" />
+      <circle data-projectile r="5" fill="#ff4d6d" className="network-traveler" />
     </g>)}
     {PREFECTURES.map((prefecture, index) => <g key={prefecture.name} data-node={index} transform={`translate(${prefecture.x.toFixed(1)} ${prefecture.y.toFixed(1)})`} style={{ opacity: 0 }}>
-      <circle data-ripple r="8" fill="none" stroke="#e32749" strokeWidth="2" opacity="0" />
-      <circle r="12" fill="#d71d3d" opacity=".18" />
-      <circle r="5.5" fill="#bd1333" stroke="#fff" strokeWidth="2" />
-      <circle r="2" fill="#fff" />
+      <circle data-ripple r="8" fill="none" stroke="#ff4d6d" strokeWidth="2" opacity="0" />
+      <circle r="11" fill="#ff4d6d" opacity=".18" />
+      <circle r="5" fill="#ff4d6d" />
       <text x={prefecture.x > 525 ? -11 : 11} y="-11" textAnchor={prefecture.x > 525 ? "end" : "start"} className="network-label">{prefecture.name}</text>
     </g>)}
   </svg>;

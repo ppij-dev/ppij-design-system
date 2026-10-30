@@ -12,6 +12,8 @@ The signed-out entry is a dedicated landing composition: PPI Jepang Portal brand
 
 Map motion uses at most two randomly selected prefecture-to-prefecture ballistic arcs at a time. Points and names are absent at rest. The origin appears at launch and fades during travel; the destination appears with a brief pulse on arrival. Reduced-motion and offscreen states keep the map still.
 
+Refine the arc to follow the supplied canvas reference: red circular markers, a visible red trajectory, and a tapered particle tail. The introductory line rotates five ways to complete “Dari Jepang, pelajar Indonesia saling …”. Remove the map caption and bottom motto. The lower section explains the single account across national, korda, and komsat services and includes a short FAQ.
+
 ## Acceptance
 
 - Every added screen uses existing `ppij-design-system` components and tokens.

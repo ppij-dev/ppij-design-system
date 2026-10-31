@@ -14,6 +14,8 @@ The review timeline shows the three latest dated milestones first and can reveal
 
 At tablet widths, the verification quick filters use equal-height controls without a separate kind caption. The student-card viewer includes a nearby summary of the submitted name, education level, institution/faculty, and month/year residence range for document comparison.
 
+Anggota now uses the same white workspace island and search/advanced-filter pattern. Its synthetic directory mirrors the production list fields: name/email, member number, komsat, education, status, and validity date. The advanced drawer models the production directory's komsat, institution, degree, major, scholarship, source, activation, and expiry filters; komsat selection is searchable. The member detail remains a safe sample and explains that sensitive fields require the production audited reveal flow.
+
 The implementation imports Storybook components from `ppij-design-system`: `PageHeader`, `StatCard`, `DataTable`, `Table`, `Badge`, `Button`, `UnitCard`, `BottomBar`, `AdminDrawer`, and form inputs. Local CSS handles the composition and responsive layout; no library component is copied into the prototype.
 
 Production integration should map each preview screen to its existing admin route and retain server-side authorization, real data loaders, audit logging, encrypted field reveal, and action validation in `ppij-identity`. Replace each local sample dataset and demo callback with the corresponding production state and handler; the confirmation step and responsive navigation can be adapted without moving business logic into this package.

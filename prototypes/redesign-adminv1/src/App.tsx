@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import {
   IconActivity, IconAlertCircle, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
@@ -12,6 +12,7 @@ import {
   TableRow, UnitCard,
 } from "ppij-design-system";
 import { ReviewWorkspace, reviewSamples } from "./ReviewWorkspace";
+import { MemberWorkspace } from "./MemberWorkspace";
 import previewPackage from "../package.json";
 import designSystemPackage from "../../../packages/ui/package.json";
 
@@ -40,13 +41,6 @@ const scopePhrase: Record<Scope, string> = {
 
 const reviews = reviewSamples;
 
-const members: { id: string; name: string; unit: string; region: string; role: string; joined: string; status: string; initials: string }[] = [
-  { id: "PPIJ-02941", name: "Contoh Anggota A", unit: "Tokyo", region: "Kanto", role: "Anggota", joined: "24 Okt 2026", status: "Aktif", initials: "AA" },
-  { id: "PPIJ-02940", name: "Contoh Anggota E", unit: "Tokyo", region: "Kanto", role: "Pengurus", joined: "21 Okt 2026", status: "Aktif", initials: "AE" },
-  { id: "PPIJ-02939", name: "Contoh Anggota F", unit: "Yokohama", region: "Kanto", role: "Anggota", joined: "18 Okt 2026", status: "Aktif", initials: "AF" },
-  { id: "PPIJ-02938", name: "Contoh Anggota G", unit: "Osaka", region: "Kansai", role: "Anggota", joined: "15 Okt 2026", status: "Aktif", initials: "AG" },
-  { id: "PPIJ-02937", name: "Contoh Anggota H", unit: "Nagoya", region: "Chubu", role: "Anggota", joined: "11 Okt 2026", status: "Nonaktif", initials: "AH" },
-];
 
 const admins = [
   { name: "Contoh Pengurus A", initials: "PA", role: "Admin nasional", scope: "PPI Jepang", appointed: "12 Sep 2026", status: "Aktif" },
@@ -128,10 +122,7 @@ export function App() {
   const visibleNav = scope === "komsat" ? nav.filter((n) => n.id !== "units") : nav;
   const queueCount = reviews.filter((r) => !["menunggu_anggota", "selesai"].includes(r.tab) && (scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo"))).length;
   const scopedAdmins = admins.filter((a) => scope === "national" || (scope === "korda" ? ["Kanto", "Tokyo", "Yokohama", "Chiba", "Saitama"].includes(a.scope) : a.scope === "Tokyo"));
-  const filteredMembers = useMemo(() => members.filter((m) => {
-    const inScope = scope === "national" || (scope === "korda" ? m.region === "Kanto" : m.unit === "Tokyo");
-    return inScope && (filter === "Semua" || m.status === filter) && `${m.name} ${m.id} ${m.unit}`.toLowerCase().includes(search.toLowerCase());
-  }), [scope, filter, search]);
+
 
   const pageTitle = nav.find((n) => n.id === page)?.label ?? "Dashboard";
   const bottomItems = visibleNav.slice(0, 4).map((n) => ({ label: n.label === "Admin & Peran" ? "Peran" : n.label, href: `#${n.id}`, icon: <n.icon size={21} stroke={1.8} />, current: page === n.id, badge: n.id === "review" ? queueCount : undefined }));
@@ -155,13 +146,7 @@ export function App() {
         {page === "review" && <div className="verification-page-island"><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran dan perubahan data untuk ${scopePhrase[scope]}.`} />
           <ReviewWorkspace scope={scope} initialSelectedId={reviewInitialId} onNotice={demo} />
         </div>}
-        {page === "members" && <><PageHeader title="Anggota" description={`Direktori anggota untuk ${scopePhrase[scope]}. Cari, buka detail, atau lihat status keanggotaan.`} actions={<Button onClick={() => { setDrawerStep(1); setDrawer({ title: "Undang anggota", kind: "Alur undangan", details: [{ label: "Tujuan", value: "Undang anggota ke komisariat melalui email." }, { label: "Status", value: "Contoh alur — belum terhubung ke layanan undangan." }] }); }}><IconPlus size={17} /> Undang anggota</Button>} />
-          <div className="compact-stats"><StatCard label="Anggota aktif" value={scope === "national" ? "1.284" : scope === "korda" ? "452" : "218"} icon={<IconUsers />} hint="terdaftar" /><StatCard label="Bergabung bulan ini" value={scope === "national" ? "48" : scope === "korda" ? "17" : "8"} icon={<IconArrowDownRight />} hint="anggota baru" /><StatCard label="Perlu pembaruan" value={scope === "national" ? "16" : scope === "korda" ? "5" : "2"} icon={<IconActivity />} hint="data profil" /></div>
-          <SectionHead title="Direktori anggota" caption="Pilih anggota untuk membuka ringkasan keanggotaan." />
-          <div className="table-section"><DataTable searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama, ID, atau komisariat" actions={<FilterPills options={["Semua", "Aktif", "Nonaktif"]} current={filter} onChange={setFilter} />} footerText={`${filteredMembers.length} anggota contoh`} pageLabel="Halaman 1 dari 1" previousDisabled nextDisabled><Table><TableHeader><TableRow><TableHead>Anggota</TableHead><TableHead>Komisariat</TableHead><TableHead>Peran</TableHead><TableHead>Bergabung</TableHead><TableHead>Status</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{filteredMembers.map((m) => <TableRow key={m.id}><TableCell><Person initials={m.initials} name={m.name} detail={m.id} /></TableCell><TableCell>{m.unit}</TableCell><TableCell>{m.role}</TableCell><TableCell>{m.joined}</TableCell><TableCell><StatusBadge value={m.status} /></TableCell><TableCell><Button size="sm" variant="ghost" onClick={() => openPerson(m.name, "Profil anggota", [{ label: "ID anggota", value: m.id }, { label: "Komisariat", value: m.unit }, { label: "Peran", value: m.role }, { label: "Status", value: m.status }])}>Lihat <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></DataTable>{filteredMembers.length === 0 && <EmptyResult term={search || filter} />}</div>
-          <MobileFilters search={search} setSearch={setSearch} filter={filter} setFilter={setFilter} options={["Semua", "Aktif", "Nonaktif"]} />
-          <div className="mobile-list">{filteredMembers.map((m) => <button key={m.id} className="mobile-row" onClick={() => openPerson(m.name, "Profil anggota", [{ label: "ID anggota", value: m.id }, { label: "Komisariat", value: m.unit }, { label: "Peran", value: m.role }, { label: "Status", value: m.status }])}><div><Person initials={m.initials} name={m.name} detail={`${m.id} · ${m.unit}`} /><StatusBadge value={m.status} /></div><p>{m.role}<span>{m.joined}</span></p></button>)}{filteredMembers.length === 0 && <EmptyResult term={search || filter} />}</div>
-        </>}
+        {page === "members" && <div className="verification-page-island member-page-island"><PageHeader title="Anggota" description={`Direktori anggota untuk ${scopePhrase[scope]}. Cari, buka detail, atau lihat status keanggotaan.`} actions={<Button onClick={() => { setDrawerStep(1); setDrawer({ title: "Undang anggota", kind: "Alur undangan", details: [{ label: "Tujuan", value: "Undang anggota ke komisariat melalui email." }, { label: "Status", value: "Contoh alur — belum terhubung ke layanan undangan." }] }); }}><IconPlus size={17} /> Undang anggota</Button>} /><MemberWorkspace scope={scope} /></div>}
         {page === "roles" && <><PageHeader title="Admin & Peran" description="Kelola siapa yang dapat membantu anggota, meninjau pengajuan, dan mengelola unit sesuai cakupan tugas." actions={<Button onClick={() => { setDrawerStep(1); setDrawer({ title: "Tunjuk pengurus", kind: "Alur penunjukan", details: [{ label: "Langkah 1", value: "Pilih anggota aktif." }, { label: "Langkah 2", value: "Pilih peran dan cakupan." }, { label: "Langkah 3", value: "Tinjau sebelum konfirmasi." }] }); }}><IconPlus size={17} /> Tunjuk pengurus</Button>} />
           <div className="role-explainer"><div className="role-icon"><IconShieldCheck size={23} /></div><div><strong>Hak akses mengikuti cakupan organisasi</strong><p>Admin nasional melihat seluruh jaringan. Admin korda dan komsat hanya mengelola unit dalam wilayahnya.</p></div></div>
           <SectionHead title="Penugasan aktif" caption="Periksa peran dan cakupan sebelum membuat perubahan." />

@@ -261,7 +261,7 @@ function HistoryDetail({ detail }: { detail: string }) {
   return <><span className={expanded ? "verification-history-detail" : "verification-history-detail is-clamped"}>{detail}</span>{canExpand && <button className="verification-history-toggle" type="button" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)}>{expanded ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}</button>}</>;
 }
 
-function SearchableUnitMenu({ label, values, options, onChange, multiple = false }: { label: string; values: string[]; options: string[]; onChange: (values: string[]) => void; multiple?: boolean }) {
+export function SearchableUnitMenu({ label, values, options, onChange, multiple = false }: { label: string; values: string[]; options: string[]; onChange: (values: string[]) => void; multiple?: boolean }) {
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const matches = options.filter((option) => option.toLocaleLowerCase("id").includes(query.trim().toLocaleLowerCase("id")));
@@ -279,7 +279,7 @@ function SearchableUnitMenu({ label, values, options, onChange, multiple = false
   </div>;
 }
 
-function FilterMenu({ label, value, allLabel, options, onChange, hideLabel = false }: { label: string; value: string; allLabel: string; options: { value: string; label: string }[]; onChange: (value: string) => void; hideLabel?: boolean }) {
+export function FilterMenu({ label, value, allLabel, options, onChange, hideLabel = false }: { label: string; value: string; allLabel: string; options: { value: string; label: string }[]; onChange: (value: string) => void; hideLabel?: boolean }) {
   const selectedLabel = options.find((option) => option.value === value)?.label ?? allLabel;
   return <div className="verification-filter-control">{!hideLabel && <span>{label}</span>}<DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" className="verification-filter-trigger" aria-label={`${label}: ${selectedLabel}`}>{selectedLabel}<IconChevronDown size={16} /></Button></DropdownMenuTrigger><DropdownMenuContent align="start" className="verification-filter-content"><DropdownMenuItem onSelect={() => onChange("")}><IconCheck size={16} className={value ? "verification-menu-check-hidden" : ""} />{allLabel}</DropdownMenuItem>{options.map((option) => <DropdownMenuItem key={option.value} onSelect={() => onChange(option.value)}><IconCheck size={16} className={value === option.value ? "" : "verification-menu-check-hidden"} />{option.label}</DropdownMenuItem>)}</DropdownMenuContent></DropdownMenu></div>;
 }

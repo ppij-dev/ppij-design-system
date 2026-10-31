@@ -75,7 +75,7 @@ export const reviewSamples: Review[] = [
     { title: "Menunggu anggota", detail: "Perbaikan telah dikirim kepada anggota." },
   ], front: "pdf", back: "image" },
   { id: "REG-2403", name: "Contoh Anggota F", initials: "AF", unit: "Tokyo", kind: "Pendaftaran", received: "19 Okt, 11.03", tab: "selesai", round: 1, daysWaiting: 12, binding: "Institusi", flags: [], groups: fieldGroups("Contoh Anggota F", "Tokyo"), history: [
-    { title: "Putaran 1 · Disetujui", detail: "Pengajuan selesai diperiksa." },
+    { title: "Putaran 1 · Disetujui", detail: "Pengajuan selesai diperiksa. Data pendidikan dan masa berlaku kartu pelajar telah dicocokkan dengan informasi yang dikirim anggota. Tidak ada perbaikan tambahan yang diperlukan pada putaran ini." },
   ], front: "image", back: "image" },
 ];
 
@@ -189,7 +189,7 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
   return <section className="verification-workspace" aria-label="Antrean verifikasi">
     <div className="verification-intro"><span>{filtered.length === scopedCount ? `${scopedCount} pengajuan contoh` : `${filtered.length} dari ${scopedCount} pengajuan contoh`}</span></div>
     <div className="verification-tabs" role="tablist" aria-label="Tab antrean">{tabs.map((entry) => <button key={entry.id} role="tab" aria-selected={tab === entry.id} className={tab === entry.id ? "active" : ""} onClick={() => setTab(entry.id)}>{entry.label}<span>{counts[entry.id]}</span></button>)}</div>
-    <SearchFilter className="verification-filters" searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama, ID, jenis, atau komsat" filters={<FilterMenu label="Jenis" value={kind} allLabel="Semua jenis" options={kinds.map((value) => ({ value, label: value }))} onChange={(value) => setKind(value as Kind | "")} />} advancedTitle="Filter verifikasi lanjutan" advancedActiveCount={Number(Boolean(unit)) + Number(older) + Number(flags)} advancedFilters={<>
+    <SearchFilter className="verification-filters" searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama atau ID pengajuan" filters={<FilterMenu label="Jenis" value={kind} allLabel="Semua jenis" options={kinds.map((value) => ({ value, label: value }))} onChange={(value) => setKind(value as Kind | "")} />} advancedTitle="Filter verifikasi lanjutan" advancedActiveCount={Number(Boolean(unit)) + Number(older) + Number(flags)} advancedFilters={<>
       <FilterMenu label="Komsat" value={unit} allLabel="Semua komsat" options={units.map((value) => ({ value, label: value }))} onChange={setUnit} />
       <label className="verification-check"><input type="checkbox" checked={older} onChange={(event) => setOlder(event.target.checked)} /> Lebih dari 7 hari</label>
       <label className="verification-check"><input type="checkbox" checked={flags} onChange={(event) => setFlags(event.target.checked)} /> Ada tanda</label>
@@ -226,7 +226,7 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
         {selected.kind === "Permintaan komsat" && <div className="verification-claim"><strong>Permintaan ganti komsat</strong><p>Anggota meminta komsat lain karena domisili dan kampus berada di wilayah berbeda.</p></div>}
         <section className="verification-section"><h3>Data pendaftaran</h3><p>Diurutkan seperti langkah registrasi anggota.</p>{selected.groups.map((group) => <div className="verification-field-group" key={group.title}><h4>{group.title}</h4><dl>{group.fields.map((field) => <div key={field.label}><dt>{field.label}</dt><dd>{field.value}</dd></div>)}</dl></div>)}</section>
         <section className="verification-section"><h3>Kartu pelajar</h3><p>Dokumen yang dikumpulkan pada registrasi. Pratinjau ini memakai berkas contoh.</p><div className="verification-doc-tabs" role="group" aria-label="Sisi kartu pelajar"><button className={documentSide === "front" ? "active" : ""} aria-pressed={documentSide === "front"} onClick={() => setDocumentSide("front")}>Sisi depan</button><button className={documentSide === "back" ? "active" : ""} aria-pressed={documentSide === "back"} onClick={() => setDocumentSide("back")}>Sisi belakang</button></div><div className="verification-document-island"><div className="verification-file-row">{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={22} /> : <IconPhoto size={22} />}<div><strong>Kartu pelajar · {documentSide === "front" ? "sisi depan" : "sisi belakang"}</strong><span>Berkas contoh · {(documentSide === "front" ? selected.front : selected.back) === "pdf" ? "PDF" : "JPG"}</span></div></div><div className="verification-document-stage"><div className="verification-document-paper"><span>PRATINJAU BERKAS CONTOH</span>{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={45} stroke={1.4} /> : <IconId size={45} stroke={1.4} />}<strong>KARTU PELAJAR</strong><i /><i /><small>Tanpa data pribadi</small></div></div></div></section>
-        <section className="verification-section"><h3>Riwayat pemeriksaan</h3>{selected.history.length ? <ol className="verification-history">{selected.history.map((entry, index) => <li key={index}><strong>{entry.title}</strong><span>{entry.detail}</span></li>)}</ol> : <p>Belum ada keputusan atau umpan balik pada putaran ini.</p>}</section>
+        <section className="verification-section"><h3>Riwayat pemeriksaan</h3>{selected.history.length ? <ol className="verification-history">{selected.history.map((entry, index) => <li key={`${selected.id}-${index}`}><strong>{entry.title}</strong><HistoryDetail detail={entry.detail} /></li>)}</ol> : <p>Belum ada keputusan atau umpan balik pada putaran ini.</p>}</section>
         {actionsHidden && <div className="verification-readonly"><IconCircleCheck size={18} /> {selected.tab === "selesai" ? "Pengajuan ini sudah selesai. Keputusan tidak tersedia." : "Menunggu perbaikan dari anggota. Keputusan tersedia setelah pengiriman ulang."}</div>}
       </div>)}
     </AdminDrawer>
@@ -234,6 +234,12 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
 }
 
 function inScope(item: Review, scope: Scope) { return scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(item.unit) : item.unit === "Tokyo"); }
+
+function HistoryDetail({ detail }: { detail: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const canExpand = detail.length > 70;
+  return <><span className={expanded ? "verification-history-detail" : "verification-history-detail is-clamped"}>{detail}</span>{canExpand && <button className="verification-history-toggle" type="button" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)}>{expanded ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}</button>}</>;
+}
 
 function FilterMenu({ label, value, allLabel, options, onChange }: { label: string; value: string; allLabel: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
   const selectedLabel = options.find((option) => option.value === value)?.label ?? allLabel;

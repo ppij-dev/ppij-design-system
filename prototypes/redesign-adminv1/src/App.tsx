@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
-  IconActivity, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
+  IconActivity, IconAlertCircle, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
   IconChartBar, IconChevronDown, IconChevronRight, IconCircleCheck, IconClock,
   IconFilter, IconId, IconLayoutDashboard, IconMenu2, IconPlus,
   IconSearch, IconSettings, IconShieldCheck, IconSparkles, IconUsers, IconX,
@@ -88,16 +88,16 @@ export function App() {
   const [drawer, setDrawer] = useState<{ title: string; kind: string; details: { label: string; value: string }[] } | null>(null);
   const [drawerStep, setDrawerStep] = useState<1 | 2>(1);
   const [drawerAction, setDrawerAction] = useState("");
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState<{ message: string; tone: "success" | "error" } | null>(null);
 
   function go(next: Page) {
     setPage(next); setSearch(""); setFilter("Semua"); setReviewInitialId(null); setMobileMore(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function demo(message: string) {
-    setNotice(message);
-    window.setTimeout(() => setNotice(""), 4200);
+  function demo(message: string, tone: "success" | "error" = "success") {
+    setNotice({ message, tone });
+    window.setTimeout(() => setNotice(null), 4200);
   }
 
   function openPerson(name: string, kind: string, fields: { label: string; value: string }[]) {
@@ -143,9 +143,9 @@ export function App() {
       <main id="main" className="content">
         <div className="preview-banner"><span><IconSparkles size={16} /> PRATINJAU ADMIN V1</span><p>Seluruh nama dan angka di halaman ini adalah data contoh.</p></div>
         {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} openReview={goReview} />}
-        {page === "review" && <><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran dan perubahan data untuk ${scopePhrase[scope]}.`} />
+        {page === "review" && <div className="verification-page-island"><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran dan perubahan data untuk ${scopePhrase[scope]}.`} />
           <ReviewWorkspace scope={scope} initialSelectedId={reviewInitialId} onNotice={demo} />
-        </>}
+        </div>}
         {page === "members" && <><PageHeader title="Anggota" description={`Direktori anggota untuk ${scopePhrase[scope]}. Cari, buka detail, atau lihat status keanggotaan.`} actions={<Button onClick={() => { setDrawerStep(1); setDrawer({ title: "Undang anggota", kind: "Alur undangan", details: [{ label: "Tujuan", value: "Undang anggota ke komisariat melalui email." }, { label: "Status", value: "Contoh alur — belum terhubung ke layanan undangan." }] }); }}><IconPlus size={17} /> Undang anggota</Button>} />
           <div className="compact-stats"><StatCard label="Anggota aktif" value={scope === "national" ? "1.284" : scope === "korda" ? "452" : "218"} icon={<IconUsers />} hint="terdaftar" /><StatCard label="Bergabung bulan ini" value={scope === "national" ? "48" : scope === "korda" ? "17" : "8"} icon={<IconArrowDownRight />} hint="anggota baru" /><StatCard label="Perlu pembaruan" value={scope === "national" ? "16" : scope === "korda" ? "5" : "2"} icon={<IconActivity />} hint="data profil" /></div>
           <SectionHead title="Direktori anggota" caption="Pilih anggota untuk membuka ringkasan keanggotaan." />
@@ -176,7 +176,7 @@ export function App() {
     <AdminDrawer open={drawer !== null} onOpenChange={(open) => { if (!open) setDrawer(null); }} title={drawer?.title ?? "Detail"} description={drawer?.kind} locale="id" step={drawerStep} onBack={() => setDrawerStep(1)} footer={drawerStep === 2 ? <Button onClick={() => { setDrawer(null); demo(`${drawerAction} adalah contoh alur. Tidak ada data yang berubah.`); }}>Konfirmasi {drawerAction.toLowerCase()} <IconArrowRight size={16} /></Button> : drawer?.kind.startsWith("Pengajuan") ? <><Button variant="outline" onClick={() => previewAction("Minta perbaikan")}>Minta perbaikan</Button><Button onClick={() => previewAction("Setujui")}>Setujui</Button></> : drawer?.kind === "Penugasan pengurus" ? <><Button variant="outline" onClick={() => previewAction("Cabut akses")}>Cabut akses</Button><Button onClick={() => previewAction("Ubah peran")}>Ubah peran</Button></> : drawer?.kind === "Profil anggota" ? <Button onClick={() => previewAction("Lihat kartu")}>Lihat kartu <IconArrowRight size={16} /></Button> : drawer?.kind === "Korda" || drawer?.kind === "Komsat" ? <Button onClick={() => previewAction("Ubah unit")}>Ubah unit <IconArrowRight size={16} /></Button> : <Button onClick={() => previewAction("Lanjutkan")}>Lanjutkan <IconArrowRight size={16} /></Button>}>
       {drawer && (drawerStep === 1 ? <div className="drawer-body"><div className="drawer-stamp"><IconShieldCheck size={21} /><span>Informasi contoh untuk peninjauan desain</span></div><dl>{drawer.details.map((d) => <div key={d.label}><dt>{d.label}</dt><dd>{d.value}</dd></div>)}</dl>{drawer.kind.startsWith("Pengajuan") && <div className="review-checklist"><h3>Kelengkapan pengajuan</h3><div><IconCircleCheck size={17} /> Identitas anggota terisi</div><div><IconCircleCheck size={17} /> Komisariat dipilih</div><div><IconCircleCheck size={17} /> Dokumen pendukung tersedia</div><p>Periksa dokumen asli dan ketentuan izin sebelum membuat keputusan di aplikasi terintegrasi.</p></div>}{drawer.kind === "Alur undangan" && <div className="drawer-form"><label htmlFor="invite-email">Email calon anggota</label><Input id="invite-email" type="email" placeholder="nama@contoh.com" /></div>}{drawer.kind === "Alur penunjukan" && <div className="drawer-form"><label htmlFor="appoint-name">Nama anggota aktif</label><Input id="appoint-name" placeholder="Cari anggota" /><label htmlFor="appoint-role">Peran yang ditunjuk</label><select id="appoint-role" defaultValue="Verifikator"><option>Verifikator</option><option>Admin komsat</option><option>Admin korda</option></select></div>}{drawer.kind === "Alur organisasi" && <div className="drawer-form"><label htmlFor="unit-name">Nama unit</label><Input id="unit-name" placeholder="Nama korda atau komisariat" /></div>}<div className="drawer-note"><strong>Pratinjau alur</strong><p>Langkah dan izin akhir mengikuti aturan di aplikasi admin yang terintegrasi.</p></div></div> : <div className="confirm-panel"><span className="confirm-icon"><IconShieldCheck size={24} /></span><h3>Konfirmasi {drawerAction.toLowerCase()}?</h3><p>Anda sedang melihat rancangan alur untuk <strong>{drawer.title}</strong>. Konfirmasi di sini hanya memperlihatkan umpan balik desain; data tidak berubah.</p><div className="confirm-summary"><span>Tindakan</span><strong>{drawerAction}</strong><span>Cakupan</span><strong>{scopes[scope].label}</strong></div></div>)}
     </AdminDrawer>
-    {notice && <div className="toast" role="status"><IconCircleCheck size={19} />{notice}<button onClick={() => setNotice("")} aria-label="Tutup notifikasi"><IconX size={17} /></button></div>}
+    {notice && <div className="toast" data-tone={notice.tone} role={notice.tone === "error" ? "alert" : "status"}>{notice.tone === "error" ? <IconAlertCircle size={19} /> : <IconCircleCheck size={19} />}{notice.message}<button onClick={() => setNotice(null)} aria-label="Tutup notifikasi"><IconX size={17} /></button></div>}
   </div>;
 }
 

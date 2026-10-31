@@ -1,9 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  IconAlertCircle, IconArrowRight, IconChevronDown, IconCircleCheck,
+  IconAlertCircle, IconArrowRight, IconCheck, IconChevronDown, IconCircleCheck,
   IconFileTypePdf, IconId, IconPhoto, IconShieldCheck,
 } from "@tabler/icons-react";
-import { AdminDrawer, Badge, Button, Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "ppij-design-system";
+import {
+  AdminDrawer, Badge, Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuTrigger, Input, Skeleton, Spinner, Table, TableBody, TableCell,
+  TableHead, TableHeader, TableRow,
+} from "ppij-design-system";
 import "./ReviewWorkspace.css";
 
 type Scope = "national" | "korda" | "komsat";
@@ -82,7 +86,7 @@ const actionLabels: Record<Action, string> = {
 const feedbackTargets = ["Nama lengkap", "Tanggal lahir", "Provinsi asal", "Prefektur", "Kota/kecamatan", "Institusi", "Jenjang", "Jurusan", "Perkiraan lulus", "Kartu pelajar"];
 const feedbackReasons = ["Data tidak sesuai", "Informasi belum lengkap", "Dokumen kurang jelas", "Dokumen tidak berlaku", "Perlu konfirmasi"];
 
-export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope: Scope; initialSelectedId: string | null; onNotice: (message: string) => void }) {
+export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope: Scope; initialSelectedId: string | null; onNotice: (message: string, tone?: "success" | "error") => void }) {
   const [items, setItems] = useState(reviewSamples);
   const [tab, setTab] = useState<Tab>("baru");
   const [kind, setKind] = useState<Kind | "">("");
@@ -92,15 +96,33 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
   const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
   const [action, setAction] = useState<Action | null>(null);
   const [approveStep, setApproveStep] = useState<1 | 2>(1);
-  const [moreOpen, setMoreOpen] = useState(false);
   const [takenOver, setTakenOver] = useState<string[]>([]);
   const [documentSide, setDocumentSide] = useState<"front" | "back">("front");
-  const [ktpType, setKtpType] = useState<"pdf" | "image">("pdf");
   const [feedback, setFeedback] = useState([{ target: "Kartu pelajar", reason: "", note: "" }]);
   const [reason, setReason] = useState("");
   const [targetKomsat, setTargetKomsat] = useState("");
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
+  const [queueLoading, setQueueLoading] = useState(true);
+  const [detailLoading, setDetailLoading] = useState(Boolean(initialSelectedId));
+  const [saving, setSaving] = useState(false);
+  const [simulateFailure, setSimulateFailure] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setQueueLoading(true);
+    const timer = window.setTimeout(() => setQueueLoading(false), 520);
+    return () => window.clearTimeout(timer);
+  }, [tab, kind, unit, older, flags, scope]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    setDetailLoading(true);
+    const timer = window.setTimeout(() => setDetailLoading(false), 560);
+    return () => window.clearTimeout(timer);
+  }, [selectedId]);
+
+  useEffect(() => () => { if (saveTimer.current) window.clearTimeout(saveTimer.current); }, []);
 
   const counts = useMemo(() => Object.fromEntries(tabs.map(({ id }) => [id, items.filter((item) => item.tab === id && inScope(item, scope)).length])) as Record<Tab, number>, [items, scope]);
   const visible = useMemo(() => items.filter((item) => inScope(item, scope) && item.tab === tab && (!kind || item.kind === kind) && (!unit || item.unit === unit) && (!older || item.daysWaiting > 7) && (!flags || item.flags.length > 0)), [items, scope, tab, kind, unit, older, flags]);
@@ -109,23 +131,32 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
   const actionsHidden = selected?.tab === "menunggu_anggota" || selected?.tab === "selesai";
 
   function select(item: Review) {
-    setSelectedId(item.id); setAction(null); setDocumentSide("front"); setMoreOpen(false); setError("");
+    setSelectedId(item.id); setDetailLoading(true); setAction(null); setDocumentSide("front"); setError("");
   }
-  function close() { setSelectedId(null); setAction(null); setMoreOpen(false); setError(""); }
+  function close() { if (saveTimer.current) window.clearTimeout(saveTimer.current); saveTimer.current = null; setSaving(false); setSelectedId(null); setAction(null); setError(""); }
   function openAction(next: Action) {
-    setAction(next); setApproveStep(1); setMoreOpen(false); setError("");
-    setFeedback([{ target: "Kartu pelajar", reason: "", note: "" }]); setReason(""); setTargetKomsat(""); setNote("");
+    setAction(next); setApproveStep(1); setError("");
+    setFeedback([{ target: "Kartu pelajar", reason: "", note: "" }]); setReason(""); setTargetKomsat(""); setNote(""); setSimulateFailure(false);
   }
   function commitAction() {
     if (!selected || !action) return;
+    if (action === "requestChanges" && feedback.some((item) => !item.target)) { setError("Pilih bagian yang perlu diperbaiki."); return; }
     if (action === "requestChanges" && feedback.some((item) => !item.reason)) { setError("Pilih alasan untuk setiap bagian yang perlu diperbaiki."); return; }
     if (action === "reject" && !reason.trim()) { setError("Isi alasan penolakan."); return; }
     if ((action === "forward" || action === "assignKomsat") && !targetKomsat) { setError("Pilih komsat tujuan."); return; }
     if (action === "assignKomsat" && !note.trim()) { setError("Isi alasan penetapan komsat."); return; }
+    setError(""); setSaving(true);
+    saveTimer.current = window.setTimeout(() => {
+      saveTimer.current = null; setSaving(false);
+      if (simulateFailure) { onNotice("Gagal menyimpan keputusan contoh. Coba lagi.", "error"); return; }
+      applyAction(selected, action);
+    }, 850);
+  }
+  function applyAction(selected: Review, action: Action) {
     const nextTab: Tab = action === "approve" || action === "reject" ? "selesai" : action === "requestChanges" ? "menunggu_anggota" : "diperiksa";
     const detail = action === "requestChanges" ? feedback.map((item) => `${item.target} · ${item.reason}${item.note ? ` — ${item.note}` : ""}`).join("; ") : action === "reject" ? reason : action === "forward" || action === "assignKomsat" ? `${targetKomsat}${note ? ` · ${note}` : ""}` : "Pengajuan disetujui.";
     setItems((current) => current.map((item) => item.id === selected.id ? { ...item, tab: nextTab, owner: undefined, history: [...item.history, { title: `Putaran ${item.round} · ${actionLabels[action]}`, detail }] } : item));
-    setTab(nextTab); close(); onNotice(`${actionLabels[action]} disimulasikan. Data contoh telah berpindah ke tab ${tabs.find((entry) => entry.id === nextTab)?.label}.`);
+    setTab(nextTab); close(); onNotice(`${actionLabels[action]} disimulasikan. Data contoh telah berpindah ke tab ${tabs.find((entry) => entry.id === nextTab)?.label}.`, "success");
   }
   function release() {
     if (!selected) return;
@@ -133,36 +164,41 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
     setTab("baru"); close(); onNotice("Pemeriksaan dilepas. Pengajuan kembali ke tab Baru.");
   }
 
-  const footer = selected && !action && !readOnly && !actionsHidden ? <div className="verification-actions">
+  const footer = selected && !detailLoading && !action && !readOnly && !actionsHidden ? <div className="verification-actions">
     <Button onClick={() => openAction("approve")}>Setujui</Button>
     <Button variant="outline" onClick={() => openAction("requestChanges")}>Minta perbaikan</Button>
-    <div className="verification-more-wrap"><Button variant="outline" aria-expanded={moreOpen} onClick={() => setMoreOpen(!moreOpen)}>Lainnya <IconChevronDown size={16} /></Button>
-      {moreOpen && <div className="verification-more-menu">{(["reject", "forward", "assignKomsat"] as Action[]).map((entry) => <button key={entry} onClick={() => openAction(entry)}>{actionLabels[entry]}</button>)}<button onClick={release}>Lepas pemeriksaan</button></div>}
-    </div>
+    <DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline">Lainnya <IconChevronDown size={16} /></Button></DropdownMenuTrigger><DropdownMenuContent align="end" side="top" className="verification-action-menu">{(["reject", "forward", "assignKomsat"] as Action[]).map((entry) => <DropdownMenuItem key={entry} onSelect={() => openAction(entry)}>{actionLabels[entry]}</DropdownMenuItem>)}<DropdownMenuItem onSelect={release}>Lepas pemeriksaan</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
   </div> : action ? <div className="verification-action-footer">
-    <Button variant="outline" onClick={() => { if (action === "approve" && approveStep === 2) setApproveStep(1); else setAction(null); setError(""); }}>Kembali</Button>
-    <Button onClick={() => { if (action === "approve" && approveStep === 1) setApproveStep(2); else commitAction(); }}>{action === "approve" && approveStep === 1 ? "Lanjut" : `Konfirmasi ${actionLabels[action].toLowerCase()}`}</Button>
+    <Button variant="outline" disabled={saving} onClick={() => { if (action === "approve" && approveStep === 2) setApproveStep(1); else setAction(null); setError(""); }}>Kembali</Button>
+    <Button disabled={saving} aria-busy={saving} onClick={() => { if (action === "approve" && approveStep === 1) setApproveStep(2); else commitAction(); }}>{saving ? <><Spinner decorative size="xs" /> Menyimpan…</> : action === "approve" && approveStep === 1 ? "Lanjut" : `Konfirmasi ${actionLabels[action].toLowerCase()}`}</Button>
   </div> : null;
 
   return <section className="verification-workspace" aria-label="Antrean verifikasi">
     <div className="verification-intro"><span>{items.filter((item) => inScope(item, scope)).length} pengajuan contoh</span></div>
     <div className="verification-tabs" role="tablist" aria-label="Tab antrean">{tabs.map((entry) => <button key={entry.id} role="tab" aria-selected={tab === entry.id} className={tab === entry.id ? "active" : ""} onClick={() => setTab(entry.id)}>{entry.label}<span>{counts[entry.id]}</span></button>)}</div>
     <div className="verification-filters">
-      <label>Jenis<select value={kind} onChange={(event) => setKind(event.target.value as Kind | "")}><option value="">Semua jenis</option>{kinds.map((value) => <option key={value}>{value}</option>)}</select></label>
-      <label>Komsat<select value={unit} onChange={(event) => setUnit(event.target.value)}><option value="">Semua komsat</option>{units.map((value) => <option key={value}>{value}</option>)}</select></label>
+      <FilterMenu label="Jenis" value={kind} allLabel="Semua jenis" options={kinds.map((value) => ({ value, label: value }))} onChange={(value) => setKind(value as Kind | "")} />
+      <FilterMenu label="Komsat" value={unit} allLabel="Semua komsat" options={units.map((value) => ({ value, label: value }))} onChange={setUnit} />
       <label className="verification-check"><input type="checkbox" checked={older} onChange={(event) => setOlder(event.target.checked)} /> Lebih dari 7 hari</label>
       <label className="verification-check"><input type="checkbox" checked={flags} onChange={(event) => setFlags(event.target.checked)} /> Ada tanda</label>
     </div>
-    <div className="verification-table"><Table><TableHeader><TableRow><TableHead>Pengajuan</TableHead><TableHead>Jenis</TableHead><TableHead>Komsat</TableHead><TableHead>Putaran</TableHead><TableHead>Diterima</TableHead><TableHead>Tanda</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{visible.map((item) => <TableRow key={item.id}><TableCell><strong className="verification-name">{item.name}</strong><small className="verification-id">{item.id}</small></TableCell><TableCell>{item.kind}</TableCell><TableCell>{item.unit}</TableCell><TableCell>{item.round}</TableCell><TableCell>{item.received}</TableCell><TableCell>{item.flags.length ? <Badge variant="warning">{item.flags[0]}</Badge> : <span className="verification-muted">—</span>}</TableCell><TableCell><Button variant="ghost" size="sm" onClick={() => select(item)}>Tinjau <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
-    <div className="verification-mobile-list">{visible.map((item) => <button key={item.id} onClick={() => select(item)}><span><strong>{item.name}</strong><small>{item.id} · {item.unit} · Putaran {item.round}</small></span><span>{item.received}<IconArrowRight size={17} /></span><small>{item.kind}{item.flags.length ? ` · ${item.flags[0]}` : ""}</small></button>)}</div>
-    {visible.length === 0 && <div className="verification-empty"><IconCircleCheck size={27} /><strong>Belum ada pengajuan di tab ini</strong><span>Coba jenis, komsat, atau filter lain.</span></div>}
+    {queueLoading && <p className="verification-loading-caption" role="status"><Spinner decorative size="xs" /> Memuat pengajuan…</p>}
+    <div className="verification-table" aria-busy={queueLoading}><Table><TableHeader><TableRow><TableHead>Pengajuan</TableHead><TableHead>Jenis</TableHead><TableHead>Komsat</TableHead><TableHead>Putaran</TableHead><TableHead>Diterima</TableHead><TableHead>Tanda</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{queueLoading ? Array.from({ length: 3 }, (_, index) => <TableRow key={index}>{Array.from({ length: 7 }, (_, cell) => <TableCell key={cell}><Skeleton className={cell === 0 ? "h-9 w-36" : "h-4 w-20"} /></TableCell>)}</TableRow>) : visible.map((item) => <TableRow key={item.id}><TableCell><strong className="verification-name">{item.name}</strong><small className="verification-id">{item.id}</small></TableCell><TableCell>{item.kind}</TableCell><TableCell>{item.unit}</TableCell><TableCell>{item.round}</TableCell><TableCell>{item.received}</TableCell><TableCell>{item.flags.length ? <Badge variant="warning">{item.flags[0]}</Badge> : <span className="verification-muted">—</span>}</TableCell><TableCell><Button variant="ghost" size="sm" onClick={() => select(item)}>Tinjau <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
+    <div className="verification-mobile-list" aria-busy={queueLoading}>{queueLoading ? Array.from({ length: 3 }, (_, index) => <div className="verification-mobile-skeleton" key={index}><Skeleton className="h-4 w-36" /><Skeleton className="h-3 w-52" /><Skeleton className="h-3 w-24" /></div>) : visible.map((item) => <button key={item.id} onClick={() => select(item)}><span><strong>{item.name}</strong><small>{item.id} · {item.unit} · Putaran {item.round}</small></span><span>{item.received}<IconArrowRight size={17} /></span><small>{item.kind}{item.flags.length ? ` · ${item.flags[0]}` : ""}</small></button>)}</div>
+    {!queueLoading && visible.length === 0 && <div className="verification-empty"><IconCircleCheck size={27} /><strong>Belum ada pengajuan di tab ini</strong><span>Coba jenis, komsat, atau filter lain.</span></div>}
     <AdminDrawer open={selected !== null} onOpenChange={(open) => { if (!open) close(); }} title={action ? actionLabels[action] : selected?.name ?? "Pengajuan"} description={selected ? `${selected.id} · ${selected.kind} · Putaran ${selected.round}` : undefined} locale="id" className="verification-review-drawer" footer={footer}>
-      {selected && (action ? <div className="verification-action-screen">
+      {selected && (detailLoading ? <div className="verification-detail-loading" role="status"><span><Spinner decorative size="sm" /> Memuat detail pengajuan…</span><Skeleton className="h-16 w-full" /><Skeleton className="h-5 w-40" /><div><Skeleton className="h-4 w-44" /><Skeleton className="h-4 w-32" /><Skeleton className="h-4 w-48" /></div></div> : action ? <div className="verification-action-screen">
         {action === "approve" ? <><h3>{approveStep === 1 ? "Periksa keputusan" : "Setujui pengajuan ini?"}</h3><p>{selected.name} · {selected.unit} · {selected.kind}</p><p>{approveStep === 1 ? "Pastikan data dan kartu pelajar telah diperiksa sebelum melanjutkan." : "Anggota akan aktif dan menerima nomor anggota. Tindakan ini tidak dapat dibatalkan pada aplikasi terintegrasi."}</p></> : null}
-        {action === "requestChanges" ? <><h3>Bagian yang perlu diperbaiki</h3><p>Pilih bagian dan alasan spesifik agar anggota tahu yang perlu diubah.</p>{feedback.map((entry, index) => <div className="verification-feedback-item" key={index}><label>Bagian<select value={entry.target} onChange={(event) => setFeedback((current) => current.map((value, i) => i === index ? { ...value, target: event.target.value } : value))}>{feedbackTargets.map((target) => <option key={target}>{target}</option>)}</select></label><label>Alasan<select value={entry.reason} onChange={(event) => setFeedback((current) => current.map((value, i) => i === index ? { ...value, reason: event.target.value } : value))}><option value="">Pilih alasan</option>{feedbackReasons.map((value) => <option key={value}>{value}</option>)}</select></label><label>Catatan (opsional)<Input value={entry.note} onChange={(event) => setFeedback((current) => current.map((value, i) => i === index ? { ...value, note: event.target.value } : value))} placeholder="Jelaskan bagian yang perlu diperbaiki" /></label>{feedback.length > 1 && <Button size="sm" variant="ghost" onClick={() => setFeedback((current) => current.filter((_, i) => i !== index))}>Hapus bagian</Button>}</div>)}<Button variant="outline" size="sm" onClick={() => setFeedback((current) => [...current, { target: "Kartu pelajar", reason: "", note: "" }])}>Tambah bagian</Button></> : null}
+        {action === "requestChanges" ? <><h3>Bagian yang perlu diperbaiki</h3><p>Pilih bagian dan alasan spesifik agar anggota tahu yang perlu diubah.</p>{feedback.map((entry, index) => <div className="verification-feedback-item" key={index}>
+          <FilterMenu label="Bagian" value={entry.target} allLabel="Pilih bagian" options={feedbackTargets.map((value) => ({ value, label: value }))} onChange={(value) => setFeedback((current) => current.map((item, i) => i === index ? { ...item, target: value } : item))} />
+          <FilterMenu label="Alasan" value={entry.reason} allLabel="Pilih alasan" options={feedbackReasons.map((value) => ({ value, label: value }))} onChange={(value) => setFeedback((current) => current.map((item, i) => i === index ? { ...item, reason: value } : item))} />
+          <label>Catatan (opsional)<Input value={entry.note} onChange={(event) => setFeedback((current) => current.map((value, i) => i === index ? { ...value, note: event.target.value } : value))} placeholder="Jelaskan bagian yang perlu diperbaiki" /></label>
+          {feedback.length > 1 && <Button size="sm" variant="ghost" onClick={() => setFeedback((current) => current.filter((_, i) => i !== index))}>Hapus bagian</Button>}
+        </div>)}<Button variant="outline" size="sm" onClick={() => setFeedback((current) => [...current, { target: "Kartu pelajar", reason: "", note: "" }])}>Tambah bagian</Button></> : null}
         {action === "reject" ? <><h3>Alasan penolakan</h3><p>Berikan alasan yang jelas untuk dicatat pada pengajuan.</p><label>Alasan<textarea value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Tulis alasan penolakan" /></label></> : null}
-        {(action === "forward" || action === "assignKomsat") ? <><h3>{action === "forward" ? "Teruskan ke komsat" : "Tetapkan komsat"}</h3><p>{action === "forward" ? "Kirim pengajuan kepada pemeriksa di komsat tujuan." : "Pindahkan penetapan komsat beserta alasan peninjauannya."}</p><label>Komsat tujuan<select value={targetKomsat} onChange={(event) => setTargetKomsat(event.target.value)}><option value="">Pilih komsat</option>{units.filter((value) => value !== selected.unit).map((value) => <option key={value}>{value}</option>)}</select></label><label>{action === "forward" ? "Catatan (opsional)" : "Alasan penetapan"}<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={action === "forward" ? "Catatan untuk pemeriksa" : "Tulis alasan penetapan"} /></label></> : null}
+        {(action === "forward" || action === "assignKomsat") ? <><h3>{action === "forward" ? "Teruskan ke komsat" : "Tetapkan komsat"}</h3><p>{action === "forward" ? "Kirim pengajuan kepada pemeriksa di komsat tujuan." : "Pindahkan penetapan komsat beserta alasan peninjauannya."}</p><FilterMenu label="Komsat tujuan" value={targetKomsat} allLabel="Pilih komsat" options={units.filter((value) => value !== selected.unit).map((value) => ({ value, label: value }))} onChange={setTargetKomsat} /><label>{action === "forward" ? "Catatan (opsional)" : "Alasan penetapan"}<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={action === "forward" ? "Catatan untuk pemeriksa" : "Tulis alasan penetapan"} /></label></> : null}
         {error && <p className="verification-error" role="alert"><IconAlertCircle size={17} />{error}</p>}
+        <label className="verification-failure-toggle"><input type="checkbox" checked={simulateFailure} disabled={saving} onChange={(event) => setSimulateFailure(event.target.checked)} /> Simulasikan gagal menyimpan</label>
         <p className="verification-demo-note">Pratinjau desain: konfirmasi hanya mengubah data contoh di halaman ini.</p>
       </div> : <div className="verification-detail">
         <div className="verification-sample-note"><IconShieldCheck size={18} /> Data sintetis untuk meninjau alur admin</div>
@@ -172,8 +208,7 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
         {selected.owner && !readOnly && <div className="verification-claim"><IconCircleCheck size={18} /> Pemeriksaan diambil alih untuk pratinjau ini.</div>}
         {selected.kind === "Permintaan komsat" && <div className="verification-claim"><strong>Permintaan ganti komsat</strong><p>Anggota meminta komsat lain karena domisili dan kampus berada di wilayah berbeda.</p></div>}
         <section className="verification-section"><h3>Data pendaftaran</h3><p>Diurutkan seperti langkah registrasi anggota.</p>{selected.groups.map((group) => <div className="verification-field-group" key={group.title}><h4>{group.title}</h4><dl>{group.fields.map((field) => <div key={field.label}><dt>{field.label}</dt><dd>{field.value}</dd></div>)}</dl></div>)}</section>
-        <section className="verification-section"><h3>Kartu pelajar</h3><p>Dokumen yang dikumpulkan pada registrasi. Pratinjau ini memakai berkas contoh.</p><div className="verification-doc-tabs" role="group" aria-label="Sisi kartu pelajar"><button className={documentSide === "front" ? "active" : ""} aria-pressed={documentSide === "front"} onClick={() => setDocumentSide("front")}>Sisi depan</button><button className={documentSide === "back" ? "active" : ""} aria-pressed={documentSide === "back"} onClick={() => setDocumentSide("back")}>Sisi belakang</button></div><div className="verification-doc-preview">{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={38} /> : <IconId size={38} />}<strong>{documentSide === "front" ? "Sisi depan" : "Sisi belakang"} · {(documentSide === "front" ? selected.front : selected.back) === "pdf" ? "PDF" : "Gambar"}</strong><span>Area pratinjau dokumen contoh</span></div></section>
-        <section className="verification-section verification-ktp"><h3>KTP <Badge variant="secondary">Usulan</Badge></h3><p>Belum menjadi input di alur registrasi saat ini. Area ini memperlihatkan rancangan bila PDF atau gambar KTP kelak diperlukan.</p><div className="verification-doc-tabs" role="group" aria-label="Format placeholder KTP"><button className={ktpType === "pdf" ? "active" : ""} aria-pressed={ktpType === "pdf"} onClick={() => setKtpType("pdf")}>PDF</button><button className={ktpType === "image" ? "active" : ""} aria-pressed={ktpType === "image"} onClick={() => setKtpType("image")}>Gambar</button></div><div className="verification-doc-preview placeholder">{ktpType === "pdf" ? <IconFileTypePdf size={38} /> : <IconPhoto size={38} />}<strong>Placeholder KTP · {ktpType === "pdf" ? "PDF" : "gambar"}</strong><span>Tidak ada dokumen identitas asli di pratinjau</span></div></section>
+        <section className="verification-section"><h3>Kartu pelajar</h3><p>Dokumen yang dikumpulkan pada registrasi. Pratinjau ini memakai berkas contoh.</p><div className="verification-doc-tabs" role="group" aria-label="Sisi kartu pelajar"><button className={documentSide === "front" ? "active" : ""} aria-pressed={documentSide === "front"} onClick={() => setDocumentSide("front")}>Sisi depan</button><button className={documentSide === "back" ? "active" : ""} aria-pressed={documentSide === "back"} onClick={() => setDocumentSide("back")}>Sisi belakang</button></div><div className="verification-document-island"><div className="verification-file-row">{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={22} /> : <IconPhoto size={22} />}<div><strong>Kartu pelajar · {documentSide === "front" ? "sisi depan" : "sisi belakang"}</strong><span>Berkas contoh · {(documentSide === "front" ? selected.front : selected.back) === "pdf" ? "PDF" : "JPG"}</span></div></div><div className="verification-document-stage"><div className="verification-document-paper"><span>PRATINJAU BERKAS CONTOH</span>{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={45} stroke={1.4} /> : <IconId size={45} stroke={1.4} />}<strong>KARTU PELAJAR</strong><i /><i /><small>Tanpa data pribadi</small></div></div></div></section>
         <section className="verification-section"><h3>Riwayat pemeriksaan</h3>{selected.history.length ? <ol className="verification-history">{selected.history.map((entry, index) => <li key={index}><strong>{entry.title}</strong><span>{entry.detail}</span></li>)}</ol> : <p>Belum ada keputusan atau umpan balik pada putaran ini.</p>}</section>
         {actionsHidden && <div className="verification-readonly"><IconCircleCheck size={18} /> {selected.tab === "selesai" ? "Pengajuan ini sudah selesai. Keputusan tidak tersedia." : "Menunggu perbaikan dari anggota. Keputusan tersedia setelah pengiriman ulang."}</div>}
       </div>)}
@@ -182,3 +217,8 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
 }
 
 function inScope(item: Review, scope: Scope) { return scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(item.unit) : item.unit === "Tokyo"); }
+
+function FilterMenu({ label, value, allLabel, options, onChange }: { label: string; value: string; allLabel: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
+  const selectedLabel = options.find((option) => option.value === value)?.label ?? allLabel;
+  return <div className="verification-filter-control"><span>{label}</span><DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" className="verification-filter-trigger" aria-label={`${label}: ${selectedLabel}`}>{selectedLabel}<IconChevronDown size={16} /></Button></DropdownMenuTrigger><DropdownMenuContent align="start" className="verification-filter-content"><DropdownMenuItem onSelect={() => onChange("")}><IconCheck size={16} className={value ? "verification-menu-check-hidden" : ""} />{allLabel}</DropdownMenuItem>{options.map((option) => <DropdownMenuItem key={option.value} onSelect={() => onChange(option.value)}><IconCheck size={16} className={value === option.value ? "" : "verification-menu-check-hidden"} />{option.label}</DropdownMenuItem>)}</DropdownMenuContent></DropdownMenu></div>;
+}

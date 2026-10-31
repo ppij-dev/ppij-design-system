@@ -126,9 +126,16 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
 
   const counts = useMemo(() => Object.fromEntries(tabs.map(({ id }) => [id, items.filter((item) => item.tab === id && inScope(item, scope)).length])) as Record<Tab, number>, [items, scope]);
   const visible = useMemo(() => items.filter((item) => inScope(item, scope) && item.tab === tab && (!kind || item.kind === kind) && (!unit || item.unit === unit) && (!older || item.daysWaiting > 7) && (!flags || item.flags.length > 0)), [items, scope, tab, kind, unit, older, flags]);
-  const selected = items.find((item) => item.id === selectedId) ?? null;
+  const selected = items.find((item) => item.id === selectedId && inScope(item, scope)) ?? null;
   const readOnly = Boolean(selected?.owner && !takenOver.includes(selected.id));
   const actionsHidden = selected?.tab === "menunggu_anggota" || selected?.tab === "selesai";
+
+  useEffect(() => {
+    if (selectedId && !selected) {
+      close();
+      onNotice("Pengajuan ditutup karena berada di luar ruang kerja yang dipilih.");
+    }
+  }, [scope, selectedId, selected]);
 
   function select(item: Review) {
     setSelectedId(item.id); setDetailLoading(true); setAction(null); setDocumentSide("front"); setError("");

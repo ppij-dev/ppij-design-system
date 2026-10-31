@@ -25,6 +25,7 @@
 .verification-unit-search [data-slot=input] { min-height: 40px; font-size: 16px; }
 .verification-unit-empty { margin: 0; padding: 10px 12px; color: #69757e; font-size: 13px; }
 .verification-filter-content [data-slot=dropdown-menu-item] { min-height: 36px; gap: 6px; }
+.verification-filter-content [data-slot=dropdown-menu-checkbox-item] { min-height: 40px; }
 .verification-filter-content [data-slot=dropdown-menu-item] svg { color: #b61632; }
 .verification-filter-content .verification-menu-check-hidden { visibility: hidden; }
 .verification-action-screen textarea { min-height: 90px; border: 1px solid #d7dde1; border-radius: 8px; padding: 8px 11px; background: #fff; color: #202a32; font-size: 14px; }

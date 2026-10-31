@@ -4,7 +4,7 @@ import {
   IconClock, IconFileTypePdf, IconId, IconPhoto, IconShieldCheck,
 } from "@tabler/icons-react";
 import {
-  AdminDrawer, Badge, Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  AdminDrawer, Badge, Button, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, Input, SearchFilter, Skeleton, Spinner, Table, TableBody, TableCell, Textarea,
   TableHead, TableHeader, TableRow,
 } from "ppij-design-system";
@@ -254,9 +254,20 @@ function HistoryDetail({ detail }: { detail: string }) {
 
 function SearchableUnitMenu({ label, values, options, onChange, multiple = false }: { label: string; values: string[]; options: string[]; onChange: (values: string[]) => void; multiple?: boolean }) {
   const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
   const matches = options.filter((option) => option.toLocaleLowerCase("id").includes(query.trim().toLocaleLowerCase("id")));
   const selectedLabel = values.length === 0 ? multiple ? "Semua komsat" : "Pilih komsat" : values.length === 1 ? values[0] : `${values.length} komsat dipilih`;
-  return <div className="verification-filter-control"><span>{label}</span><DropdownMenu onOpenChange={(open) => { if (!open) setQuery(""); }}><DropdownMenuTrigger asChild><Button type="button" variant="outline" className="verification-filter-trigger" aria-label={`${label}: ${selectedLabel}`}>{selectedLabel}<IconChevronDown size={16} /></Button></DropdownMenuTrigger><DropdownMenuContent align="start" className="verification-filter-content verification-unit-menu"><div className="verification-unit-search"><Input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.stopPropagation()} placeholder="Cari komsat" aria-label="Cari komsat" /></div>{multiple && <DropdownMenuItem onSelect={(event) => { event.preventDefault(); onChange([]); }}>Semua komsat</DropdownMenuItem>}{matches.length ? matches.map((option) => <DropdownMenuItem key={option} onSelect={(event) => { if (multiple) event.preventDefault(); onChange(multiple ? values.includes(option) ? values.filter((value) => value !== option) : [...values, option] : [option]); }}><IconCheck size={16} className={values.includes(option) ? "" : "verification-menu-check-hidden"} />{option}</DropdownMenuItem>) : <p className="verification-unit-empty">Komsat tidak ditemukan.</p>}</DropdownMenuContent></DropdownMenu></div>;
+  return <div className="verification-filter-control">
+    <span>{label}</span>
+    <DropdownMenu onOpenChange={(open) => { if (open) window.requestAnimationFrame(() => searchRef.current?.focus()); else setQuery(""); }}>
+      <DropdownMenuTrigger asChild><Button type="button" variant="outline" className="verification-filter-trigger" aria-label={`${label}: ${selectedLabel}`}>{selectedLabel}<IconChevronDown size={16} /></Button></DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="verification-filter-content verification-unit-menu">
+        <div className="verification-unit-search"><Input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (!["Escape", "Tab", "ArrowDown"].includes(event.key)) event.stopPropagation(); }} placeholder="Cari komsat" aria-label="Cari komsat" /></div>
+        {multiple && <DropdownMenuItem onSelect={(event) => { event.preventDefault(); onChange([]); }}>Semua komsat</DropdownMenuItem>}
+        {matches.length ? matches.map((option) => <DropdownMenuCheckboxItem key={option} checked={values.includes(option)} onCheckedChange={(checked) => onChange(multiple ? checked ? [...values, option] : values.filter((value) => value !== option) : checked ? [option] : [])} onSelect={(event) => { if (multiple) event.preventDefault(); }}>{option}</DropdownMenuCheckboxItem>) : <p className="verification-unit-empty">Komsat tidak ditemukan.</p>}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>;
 }
 
 function FilterMenu({ label, value, allLabel, options, onChange }: { label: string; value: string; allLabel: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {

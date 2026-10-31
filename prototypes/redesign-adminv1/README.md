@@ -4,6 +4,8 @@ Run `npm run dev -w ppij-redesign-adminv1 -- --host 127.0.0.1 --port 5174` from 
 
 The sidebar or phone bottom bar reaches Dashboard, Verifikasi, Anggota, Admin & Peran, and Organisasi. The workspace selector switches between national, Korda Kanto, and Komsat Tokyo; Organisasi is omitted at komsat scope. Review queues, directories, unit cards, and detail drawers use synthetic names and numbers. Actions change only the preview's local state and reset on reload.
 
+The desktop sidebar can collapse to icons and expand again. The footer displays the preview and design-system package versions. Verification search and filters apply across all five queue tabs, updating each tab count; komsat, age, and flag controls are in the advanced filter drawer. Review feedback notes use a multiline field, and successful local actions appear in a green status toast.
+
 Verifikasi follows the five queue tabs in `ppij-identity`: Baru, Dikirim ulang, Sedang diperiksa, Menunggu anggota, and Selesai. Desktop uses a table in a white workspace and a wide right review panel; smaller screens use a list and bottom sheet. Review details follow the registration wizard's field groups, with the current student-card front/back pattern, feedback history, claim takeover, and distinct decision forms. The preview also simulates loading and saving, with a local failure switch in the action screen. KTP is not part of the registration or review preview.
 
 The implementation imports Storybook components from `ppij-design-system`: `PageHeader`, `StatCard`, `DataTable`, `Table`, `Badge`, `Button`, `UnitCard`, `BottomBar`, `AdminDrawer`, and form inputs. Local CSS handles the composition and responsive layout; no library component is copied into the prototype.

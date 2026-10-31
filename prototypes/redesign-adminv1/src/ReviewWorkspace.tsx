@@ -5,7 +5,7 @@ import {
 } from "@tabler/icons-react";
 import {
   AdminDrawer, Badge, Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuTrigger, Input, Skeleton, Spinner, Table, TableBody, TableCell,
+  DropdownMenuTrigger, SearchFilter, Skeleton, Spinner, Table, TableBody, TableCell, Textarea,
   TableHead, TableHeader, TableRow,
 } from "ppij-design-system";
 import "./ReviewWorkspace.css";
@@ -89,6 +89,7 @@ const feedbackReasons = ["Data tidak sesuai", "Informasi belum lengkap", "Dokume
 export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope: Scope; initialSelectedId: string | null; onNotice: (message: string, tone?: "success" | "error") => void }) {
   const [items, setItems] = useState(reviewSamples);
   const [tab, setTab] = useState<Tab>("baru");
+  const [search, setSearch] = useState("");
   const [kind, setKind] = useState<Kind | "">("");
   const [unit, setUnit] = useState("");
   const [older, setOlder] = useState(false);
@@ -113,7 +114,7 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
     setQueueLoading(true);
     const timer = window.setTimeout(() => setQueueLoading(false), 520);
     return () => window.clearTimeout(timer);
-  }, [tab, kind, unit, older, flags, scope]);
+  }, [tab, search, kind, unit, older, flags, scope]);
 
   useEffect(() => {
     if (!selectedId) return;
@@ -124,8 +125,13 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
 
   useEffect(() => () => { if (saveTimer.current) window.clearTimeout(saveTimer.current); }, []);
 
-  const counts = useMemo(() => Object.fromEntries(tabs.map(({ id }) => [id, items.filter((item) => item.tab === id && inScope(item, scope)).length])) as Record<Tab, number>, [items, scope]);
-  const visible = useMemo(() => items.filter((item) => inScope(item, scope) && item.tab === tab && (!kind || item.kind === kind) && (!unit || item.unit === unit) && (!older || item.daysWaiting > 7) && (!flags || item.flags.length > 0)), [items, scope, tab, kind, unit, older, flags]);
+  const filtered = useMemo(() => items.filter((item) => {
+    const query = search.trim().toLocaleLowerCase("id");
+    return inScope(item, scope) && (!query || [item.name, item.id, item.unit, item.kind, ...item.flags].some((value) => value.toLocaleLowerCase("id").includes(query))) && (!kind || item.kind === kind) && (!unit || item.unit === unit) && (!older || item.daysWaiting > 7) && (!flags || item.flags.length > 0);
+  }), [items, scope, search, kind, unit, older, flags]);
+  const counts = useMemo(() => Object.fromEntries(tabs.map(({ id }) => [id, filtered.filter((item) => item.tab === id).length])) as Record<Tab, number>, [filtered]);
+  const visible = useMemo(() => filtered.filter((item) => item.tab === tab), [filtered, tab]);
+  const scopedCount = items.filter((item) => inScope(item, scope)).length;
   const selected = items.find((item) => item.id === selectedId && inScope(item, scope)) ?? null;
   const readOnly = Boolean(selected?.owner && !takenOver.includes(selected.id));
   const actionsHidden = selected?.tab === "menunggu_anggota" || selected?.tab === "selesai";
@@ -181,25 +187,29 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
   </div> : null;
 
   return <section className="verification-workspace" aria-label="Antrean verifikasi">
-    <div className="verification-intro"><span>{items.filter((item) => inScope(item, scope)).length} pengajuan contoh</span></div>
+    <div className="verification-intro"><span>{filtered.length === scopedCount ? `${scopedCount} pengajuan contoh` : `${filtered.length} dari ${scopedCount} pengajuan contoh`}</span></div>
     <div className="verification-tabs" role="tablist" aria-label="Tab antrean">{tabs.map((entry) => <button key={entry.id} role="tab" aria-selected={tab === entry.id} className={tab === entry.id ? "active" : ""} onClick={() => setTab(entry.id)}>{entry.label}<span>{counts[entry.id]}</span></button>)}</div>
-    <div className="verification-filters">
-      <FilterMenu label="Jenis" value={kind} allLabel="Semua jenis" options={kinds.map((value) => ({ value, label: value }))} onChange={(value) => setKind(value as Kind | "")} />
+    <SearchFilter className="verification-filters" searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama, ID, jenis, atau komsat" filters={<FilterMenu label="Jenis" value={kind} allLabel="Semua jenis" options={kinds.map((value) => ({ value, label: value }))} onChange={(value) => setKind(value as Kind | "")} />} advancedTitle="Filter verifikasi lanjutan" advancedActiveCount={Number(Boolean(unit)) + Number(older) + Number(flags)} advancedFilters={<>
       <FilterMenu label="Komsat" value={unit} allLabel="Semua komsat" options={units.map((value) => ({ value, label: value }))} onChange={setUnit} />
       <label className="verification-check"><input type="checkbox" checked={older} onChange={(event) => setOlder(event.target.checked)} /> Lebih dari 7 hari</label>
       <label className="verification-check"><input type="checkbox" checked={flags} onChange={(event) => setFlags(event.target.checked)} /> Ada tanda</label>
-    </div>
+    </>} activeFilters={[
+      ...(kind ? [{ label: "Jenis", value: kind, onRemove: () => setKind("") }] : []),
+      ...(unit ? [{ label: "Komsat", value: unit, onRemove: () => setUnit("") }] : []),
+      ...(older ? [{ label: "Umur", value: "Lebih dari 7 hari", onRemove: () => setOlder(false) }] : []),
+      ...(flags ? [{ label: "Tanda", value: "Ada tanda", onRemove: () => setFlags(false) }] : []),
+    ]} onClearAll={() => { setKind(""); setUnit(""); setOlder(false); setFlags(false); }} />
     {queueLoading && <p className="verification-loading-caption" role="status"><Spinner decorative size="xs" /> Memuat pengajuan…</p>}
     <div className="verification-table" aria-busy={queueLoading}><Table><TableHeader><TableRow><TableHead>Pengajuan</TableHead><TableHead>Jenis</TableHead><TableHead>Komsat</TableHead><TableHead>Putaran</TableHead><TableHead>Diterima</TableHead><TableHead>Tanda</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{queueLoading ? Array.from({ length: 3 }, (_, index) => <TableRow key={index}>{Array.from({ length: 7 }, (_, cell) => <TableCell key={cell}><Skeleton className={cell === 0 ? "h-9 w-36" : "h-4 w-20"} /></TableCell>)}</TableRow>) : visible.map((item) => <TableRow key={item.id}><TableCell><strong className="verification-name">{item.name}</strong><small className="verification-id">{item.id}</small></TableCell><TableCell>{item.kind}</TableCell><TableCell>{item.unit}</TableCell><TableCell>{item.round}</TableCell><TableCell>{item.received}</TableCell><TableCell>{item.flags.length ? <Badge variant="warning">{item.flags[0]}</Badge> : <span className="verification-muted">—</span>}</TableCell><TableCell><Button variant="ghost" size="sm" onClick={() => select(item)}>Tinjau <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
     <div className="verification-mobile-list" aria-busy={queueLoading}>{queueLoading ? Array.from({ length: 3 }, (_, index) => <div className="verification-mobile-skeleton" key={index}><Skeleton className="h-4 w-36" /><Skeleton className="h-3 w-52" /><Skeleton className="h-3 w-24" /></div>) : visible.map((item) => <button key={item.id} onClick={() => select(item)}><span><strong>{item.name}</strong><small>{item.id} · {item.unit} · Putaran {item.round}</small></span><span>{item.received}<IconArrowRight size={17} /></span><small>{item.kind}{item.flags.length ? ` · ${item.flags[0]}` : ""}</small></button>)}</div>
-    {!queueLoading && visible.length === 0 && <div className="verification-empty"><IconCircleCheck size={27} /><strong>Belum ada pengajuan di tab ini</strong><span>Coba jenis, komsat, atau filter lain.</span></div>}
+    {!queueLoading && visible.length === 0 && <div className="verification-empty"><IconCircleCheck size={27} /><strong>Belum ada pengajuan di tab ini</strong><span>{filtered.length > 0 ? "Hasil ada di tab lain. Pilih tab yang memiliki angka." : "Coba kata kunci atau filter lain."}</span></div>}
     <AdminDrawer open={selected !== null} onOpenChange={(open) => { if (!open) close(); }} title={action ? actionLabels[action] : selected?.name ?? "Pengajuan"} description={selected ? `${selected.id} · ${selected.kind} · Putaran ${selected.round}` : undefined} locale="id" className="verification-review-drawer" footer={footer}>
       {selected && (detailLoading ? <div className="verification-detail-loading" role="status"><span><Spinner decorative size="sm" /> Memuat detail pengajuan…</span><Skeleton className="h-16 w-full" /><Skeleton className="h-5 w-40" /><div><Skeleton className="h-4 w-44" /><Skeleton className="h-4 w-32" /><Skeleton className="h-4 w-48" /></div></div> : action ? <div className="verification-action-screen">
         {action === "approve" ? <><h3>{approveStep === 1 ? "Periksa keputusan" : "Setujui pengajuan ini?"}</h3><p>{selected.name} · {selected.unit} · {selected.kind}</p><p>{approveStep === 1 ? "Pastikan data dan kartu pelajar telah diperiksa sebelum melanjutkan." : "Anggota akan aktif dan menerima nomor anggota. Tindakan ini tidak dapat dibatalkan pada aplikasi terintegrasi."}</p></> : null}
         {action === "requestChanges" ? <><h3>Bagian yang perlu diperbaiki</h3><p>Pilih bagian dan alasan spesifik agar anggota tahu yang perlu diubah.</p>{feedback.map((entry, index) => <div className="verification-feedback-item" key={index}>
           <FilterMenu label="Bagian" value={entry.target} allLabel="Pilih bagian" options={feedbackTargets.map((value) => ({ value, label: value }))} onChange={(value) => setFeedback((current) => current.map((item, i) => i === index ? { ...item, target: value } : item))} />
           <FilterMenu label="Alasan" value={entry.reason} allLabel="Pilih alasan" options={feedbackReasons.map((value) => ({ value, label: value }))} onChange={(value) => setFeedback((current) => current.map((item, i) => i === index ? { ...item, reason: value } : item))} />
-          <label>Catatan (opsional)<Input value={entry.note} onChange={(event) => setFeedback((current) => current.map((value, i) => i === index ? { ...value, note: event.target.value } : value))} placeholder="Jelaskan bagian yang perlu diperbaiki" /></label>
+          <label>Catatan (opsional)<Textarea rows={4} value={entry.note} onChange={(event) => setFeedback((current) => current.map((value, i) => i === index ? { ...value, note: event.target.value } : value))} placeholder="Jelaskan bagian yang perlu diperbaiki" /></label>
           {feedback.length > 1 && <Button size="sm" variant="ghost" onClick={() => setFeedback((current) => current.filter((_, i) => i !== index))}>Hapus bagian</Button>}
         </div>)}<Button variant="outline" size="sm" onClick={() => setFeedback((current) => [...current, { target: "Kartu pelajar", reason: "", note: "" }])}>Tambah bagian</Button></> : null}
         {action === "reject" ? <><h3>Alasan penolakan</h3><p>Berikan alasan yang jelas untuk dicatat pada pengajuan.</p><label>Alasan<textarea value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Tulis alasan penolakan" /></label></> : null}

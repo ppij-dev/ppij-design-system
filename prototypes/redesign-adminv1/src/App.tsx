@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   IconActivity, IconAlertCircle, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
-  IconChartBar, IconChevronDown, IconChevronRight, IconCircleCheck, IconClock,
+  IconChartBar, IconChevronDown, IconChevronLeft, IconChevronRight, IconCircleCheck, IconClock,
   IconFilter, IconId, IconLayoutDashboard, IconMenu2, IconPlus,
   IconSearch, IconSettings, IconShieldCheck, IconSparkles, IconUsers, IconX,
 } from "@tabler/icons-react";
@@ -12,6 +12,8 @@ import {
   TableRow, UnitCard,
 } from "ppij-design-system";
 import { ReviewWorkspace, reviewSamples } from "./ReviewWorkspace";
+import previewPackage from "../package.json";
+import designSystemPackage from "../../../packages/ui/package.json";
 
 type Page = "dashboard" | "review" | "members" | "roles" | "units";
 type Scope = "national" | "korda" | "komsat";
@@ -81,6 +83,7 @@ export function App() {
   const [page, setPage] = useState<Page>("dashboard");
   const [scope, setScope] = useState<Scope>("national");
   const [scopeOpen, setScopeOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMore, setMobileMore] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Semua");
@@ -129,13 +132,13 @@ export function App() {
   if (visibleNav.length > 4) bottomItems.push({ label: "Lainnya", href: "#more", icon: <IconMenu2 size={21} stroke={1.8} />, current: page === "units", badge: undefined });
 
   return <div className="admin-app">
-    <aside className="sidebar" aria-label="Navigasi admin">
-      <div className="sidebar-brand"><div className="brand-logo"><img src="/ppij-logo.png" alt="PPI Jepang" /></div><div><strong>PPI Jepang</strong><span>ADMIN PORTAL</span></div></div>
+    <aside className="sidebar" data-collapsed={sidebarCollapsed} aria-label="Navigasi admin">
+      <div className="sidebar-brand"><div className="brand-logo"><img src="/ppij-logo.png" alt="PPI Jepang" /></div><div className="sidebar-brand-copy"><strong>PPI Jepang</strong><span>ADMIN PORTAL</span></div><button className="sidebar-toggle" type="button" aria-label={sidebarCollapsed ? "Tampilkan navigasi" : "Sembunyikan navigasi"} aria-expanded={!sidebarCollapsed} onClick={() => { setSidebarCollapsed((value) => !value); setScopeOpen(false); }}><IconChevronLeft size={18} /></button></div>
       <div className="scope-wrap"><button className="scope-button" onClick={() => setScopeOpen(!scopeOpen)} aria-expanded={scopeOpen} aria-label={`Ruang kerja: ${scopes[scope].label}`}><span className="scope-mark"><IconBuildingCommunity size={18} /></span><span><small>RUANG KERJA</small><strong className="scope-full">{scopes[scope].label}</strong><strong className="scope-compact">{scopes[scope].short}</strong></span><IconChevronDown size={16} className={scopeOpen ? "rotate" : ""} /></button>
         {scopeOpen && <div className="scope-list" role="menu">{(Object.keys(scopes) as Scope[]).map((id) => <button key={id} role="menuitemradio" aria-checked={scope === id} onClick={() => { setScope(id); setScopeOpen(false); if (id === "komsat" && page === "units") go("dashboard"); }}><span>{scopes[id].label}<small>{scopes[id].type}</small></span>{scope === id && <IconCircleCheck size={17} />}</button>)}</div>}</div>
       <p className="nav-caption">MENU UTAMA</p>
-      <nav className="nav-list">{visibleNav.map((n) => <button key={n.id} className={page === n.id ? "nav-item active" : "nav-item"} onClick={() => go(n.id)} aria-current={page === n.id ? "page" : undefined}><n.icon size={19} stroke={1.85} /><span>{n.label}</span>{n.id === "review" && <span className="nav-count">{queueCount}</span>}</button>)}</nav>
-      <div className="sidebar-foot"><div className="sample-label"><IconSparkles size={16} /><span>PRATINJAU DESAIN</span></div><p>Data pada layar ini hanya contoh untuk meninjau pengalaman admin.</p><button onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={17} /> Bantuan & pengaturan <IconArrowRight size={16} /></button></div>
+      <nav className="nav-list">{visibleNav.map((n) => <button key={n.id} className={page === n.id ? "nav-item active" : "nav-item"} onClick={() => go(n.id)} aria-label={n.label} title={sidebarCollapsed ? n.label : undefined} aria-current={page === n.id ? "page" : undefined}><n.icon size={19} stroke={1.85} /><span>{n.label}</span>{n.id === "review" && <span className="nav-count">{queueCount}</span>}</button>)}</nav>
+      <div className="sidebar-foot"><div className="sample-label"><IconSparkles size={16} /><span>PRATINJAU DESAIN</span></div><p>Data pada layar ini hanya contoh untuk meninjau pengalaman admin.</p><button aria-label="Bantuan dan pengaturan" title={sidebarCollapsed ? "Bantuan & pengaturan" : undefined} onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={17} /><span>Bantuan & pengaturan</span><IconArrowRight size={16} /></button></div>
     </aside>
     <div className="main-wrap">
       <header className="topbar"><div className="topbar-path"><span>Admin</span><IconChevronRight size={15} /><strong>{pageTitle}</strong></div><div className="topbar-actions"><span className="today">Sabtu, 31 Oktober 2026</span><button className="icon-action" aria-label="Notifikasi" onClick={() => demo("Tidak ada notifikasi baru dalam pratinjau.")}><IconBell size={20} /></button><span className="top-avatar">PA</span><span className="top-name">Contoh Pengurus A</span></div></header>
@@ -169,7 +172,7 @@ export function App() {
             { name: "Saitama", kind: "Komsat", memberCount: 64, leadName: "Contoh Pengurus J", statusLabel: "Aktif" },
           ]).map((u) => <UnitCard key={u.name} {...u} actions={<Button variant="ghost" size="sm" onClick={() => openPerson(u.name, u.kind, [{ label: "Jenis", value: u.kind }, { label: "Jumlah anggota", value: String(u.memberCount) }, { label: "Penanggung jawab", value: u.leadName }, { label: "Status", value: u.statusLabel }])}>Lihat unit <IconArrowRight size={15} /></Button>} />)}</div>
         </>}
-        <footer className="page-footer"><span>PPI Jepang · Pratinjau desain admin v1</span><span>Data ilustratif · 31 Okt 2026</span></footer>
+        <footer className="page-footer"><span>PPI Jepang · Admin preview v{previewPackage.version} · Design system v{designSystemPackage.version}</span><span>Data ilustratif · 31 Okt 2026</span></footer>
       </main>
     </div>
     <div className="bottom-wrap" onClickCapture={(e) => { const link = (e.target as HTMLElement).closest("a[href^='#']"); if (!link) return; e.preventDefault(); const target = link.getAttribute("href")!.slice(1); if (target === "more") setMobileMore(!mobileMore); else go(target as Page); }}><BottomBar items={bottomItems} ariaLabel="Navigasi admin" />{mobileMore && <div className="more-menu"><button onClick={() => go("units")}><IconBuildingCommunity size={19} /> Organisasi</button><button onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={19} /> Bantuan & pengaturan</button></div>}</div>

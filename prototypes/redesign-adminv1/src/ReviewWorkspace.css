@@ -10,6 +10,12 @@
 .verification-tabs button:focus-visible, .verification-doc-tabs button:focus-visible { outline: 2px solid #c8102e; outline-offset: -2px; }
 .verification-tabs button span { min-width: 23px; padding: 2px 6px; border-radius: 999px; background: #f1f3f4; color: #414c54; font-size: 12px; text-align: center; }
 .verification-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 16px; padding: 18px 0; }
+.verification-filters { display: grid; align-items: stretch; gap: 10px; }
+.verification-filters > div:first-child { min-width: 0; }
+.verification-filters [data-slot=input] { min-width: 0; font-size: 16px; }
+.verification-filters .verification-filter-control { min-width: 138px; }
+.verification-filters .verification-filter-trigger { min-height: 36px; }
+.verification-feedback-item textarea { min-height: 112px; resize: vertical; font-size: 16px; line-height: 1.5; }
 .verification-action-screen label, .verification-feedback-item label, .verification-filter-control { display: grid; gap: 6px; color: #54616b; font-size: 13px; font-weight: 650; }
 .verification-filter-trigger { width: max-content; max-width: 100%; min-height: 42px; display: inline-flex; justify-content: flex-start; gap: 9px; background: #fff; padding: 8px 12px; }
 .verification-filter-trigger svg { flex: none; margin-left: 0; color: #52616b; }
@@ -19,6 +25,7 @@
 .verification-filter-content .verification-menu-check-hidden { visibility: hidden; }
 .verification-action-screen textarea { min-height: 90px; border: 1px solid #d7dde1; border-radius: 8px; padding: 8px 11px; background: #fff; color: #202a32; font-size: 14px; }
 .verification-filters .verification-check { display: flex; align-items: center; gap: 7px; min-height: 40px; color: #29343d; font-size: 13px; cursor: pointer; }
+.verification-check { display: flex; align-items: center; gap: 9px; min-height: 40px; color: #29343d; font-size: 14px; cursor: pointer; }
 .verification-check input { width: 16px; height: 16px; accent-color: #c8102e; }
 .verification-table { overflow-x: auto; border: 1px solid #e1e5e8; border-radius: 12px; background: #fff; }
 .verification-table [data-slot=table] { min-width: 790px; }
@@ -115,7 +122,7 @@
   .verification-intro span { display: block; margin-top: 4px; }
   .verification-tabs { margin: 0 -16px; padding: 0 16px; }
   .verification-tabs button { padding: 12px 11px; font-size: 13px; }
-  .verification-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 16px 0; }
+  .verification-filters { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 16px 0; }
   .verification-filter-trigger { min-width: 0; }
   .verification-filters .verification-check { min-height: 28px; font-size: 12px; }
   .verification-field-group dl { grid-template-columns: 1fr; gap: 10px; }

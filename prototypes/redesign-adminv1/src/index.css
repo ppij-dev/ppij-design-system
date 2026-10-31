@@ -37,3 +37,5 @@
 .toast[data-tone=success]>svg{flex:none;color:#d9f9e8}
 .page-footer{flex-wrap:wrap;color:#69747d}
 @media(max-width:700px){.page-footer{display:flex;gap:4px 16px}.page-footer span:last-child{display:inline}}
+.scope-list [data-slot=input],.mobile-scope-menu [data-slot=input]{width:100%;min-height:42px;margin-bottom:5px;background:#fff;font-size:14px}
+.scope-list,.mobile-scope-menu{max-height:320px;overflow-y:auto}

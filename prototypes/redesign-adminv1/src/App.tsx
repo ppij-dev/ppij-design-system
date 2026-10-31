@@ -83,6 +83,7 @@ export function App() {
   const [page, setPage] = useState<Page>("dashboard");
   const [scope, setScope] = useState<Scope>("national");
   const [scopeOpen, setScopeOpen] = useState(false);
+  const [scopeQuery, setScopeQuery] = useState("");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMore, setMobileMore] = useState(false);
   const [search, setSearch] = useState("");
@@ -96,6 +97,11 @@ export function App() {
   function go(next: Page) {
     setPage(next); setSearch(""); setFilter("Semua"); setReviewInitialId(null); setMobileMore(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function chooseScope(next: Scope) {
+    setScope(next); setScopeOpen(false); setScopeQuery("");
+    if (next === "komsat" && page === "units") go("dashboard");
   }
 
   function demo(message: string, tone: "success" | "error" = "success") {
@@ -134,15 +140,15 @@ export function App() {
   return <div className="admin-app">
     <aside className="sidebar" data-collapsed={sidebarCollapsed} aria-label="Navigasi admin">
       <div className="sidebar-brand"><div className="brand-logo"><img src="/ppij-logo.png" alt="PPI Jepang" /></div><div className="sidebar-brand-copy"><strong>PPI Jepang</strong><span>ADMIN PORTAL</span></div><button className="sidebar-toggle" type="button" aria-label={sidebarCollapsed ? "Tampilkan navigasi" : "Sembunyikan navigasi"} aria-expanded={!sidebarCollapsed} onClick={() => { setSidebarCollapsed((value) => !value); setScopeOpen(false); }}><IconChevronLeft size={18} /></button></div>
-      <div className="scope-wrap"><button className="scope-button" onClick={() => setScopeOpen(!scopeOpen)} aria-expanded={scopeOpen} aria-label={`Ruang kerja: ${scopes[scope].label}`}><span className="scope-mark"><IconBuildingCommunity size={18} /></span><span><small>RUANG KERJA</small><strong className="scope-full">{scopes[scope].label}</strong><strong className="scope-compact">{scopes[scope].short}</strong></span><IconChevronDown size={16} className={scopeOpen ? "rotate" : ""} /></button>
-        {scopeOpen && <div className="scope-list" role="menu">{(Object.keys(scopes) as Scope[]).map((id) => <button key={id} role="menuitemradio" aria-checked={scope === id} onClick={() => { setScope(id); setScopeOpen(false); if (id === "komsat" && page === "units") go("dashboard"); }}><span>{scopes[id].label}<small>{scopes[id].type}</small></span>{scope === id && <IconCircleCheck size={17} />}</button>)}</div>}</div>
+      <div className="scope-wrap"><button className="scope-button" onClick={() => { setScopeOpen(!scopeOpen); setScopeQuery(""); }} aria-expanded={scopeOpen} aria-label={`Ruang kerja: ${scopes[scope].label}`}><span className="scope-mark"><IconBuildingCommunity size={18} /></span><span><small>RUANG KERJA</small><strong className="scope-full">{scopes[scope].label}</strong><strong className="scope-compact">{scopes[scope].short}</strong></span><IconChevronDown size={16} className={scopeOpen ? "rotate" : ""} /></button>
+        {scopeOpen && <div className="scope-list" role="group" aria-label="Pilih ruang kerja"><Input value={scopeQuery} onChange={(event) => setScopeQuery(event.target.value)} placeholder="Cari korda atau komsat" aria-label="Cari korda atau komsat" />{(Object.keys(scopes) as Scope[]).filter((id) => `${scopes[id].label} ${scopes[id].type}`.toLocaleLowerCase("id").includes(scopeQuery.toLocaleLowerCase("id"))).map((id) => <button key={id} aria-pressed={scope === id} onClick={() => chooseScope(id)}><span>{scopes[id].label}<small>{scopes[id].type}</small></span>{scope === id && <IconCircleCheck size={17} />}</button>)}</div>}</div>
       <p className="nav-caption">MENU UTAMA</p>
       <nav className="nav-list">{visibleNav.map((n) => <button key={n.id} className={page === n.id ? "nav-item active" : "nav-item"} onClick={() => go(n.id)} aria-label={n.label} title={sidebarCollapsed ? n.label : undefined} aria-current={page === n.id ? "page" : undefined}><n.icon size={19} stroke={1.85} /><span>{n.label}</span>{n.id === "review" && <span className="nav-count">{queueCount}</span>}</button>)}</nav>
       <div className="sidebar-foot"><div className="sample-label"><IconSparkles size={16} /><span>PRATINJAU DESAIN</span></div><p>Data pada layar ini hanya contoh untuk meninjau pengalaman admin.</p><button aria-label="Bantuan dan pengaturan" title={sidebarCollapsed ? "Bantuan & pengaturan" : undefined} onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={17} /><span>Bantuan & pengaturan</span><IconArrowRight size={16} /></button></div>
     </aside>
     <div className="main-wrap">
       <header className="topbar"><div className="topbar-path"><span>Admin</span><IconChevronRight size={15} /><strong>{pageTitle}</strong></div><div className="topbar-actions"><span className="today">Sabtu, 31 Oktober 2026</span><button className="icon-action" aria-label="Notifikasi" onClick={() => demo("Tidak ada notifikasi baru dalam pratinjau.")}><IconBell size={20} /></button><span className="top-avatar">PA</span><span className="top-name">Contoh Pengurus A</span></div></header>
-      <div className="mobile-topbar"><div className="mobile-brand"><img src="/ppij-logo.png" alt="PPI Jepang" /><span>Admin PPIJ</span></div><button className="mobile-scope" onClick={() => setScopeOpen(!scopeOpen)}>{scopes[scope].short}<IconChevronDown size={15} /></button>{scopeOpen && <div className="mobile-scope-menu">{(Object.keys(scopes) as Scope[]).map((id) => <button key={id} onClick={() => { setScope(id); setScopeOpen(false); if (id === "komsat" && page === "units") go("dashboard"); }}>{scopes[id].label}</button>)}</div>}</div>
+      <div className="mobile-topbar"><div className="mobile-brand"><img src="/ppij-logo.png" alt="PPI Jepang" /><span>Admin PPIJ</span></div><button className="mobile-scope" onClick={() => { setScopeOpen(!scopeOpen); setScopeQuery(""); }}>{scopes[scope].short}<IconChevronDown size={15} /></button>{scopeOpen && <div className="mobile-scope-menu"><Input value={scopeQuery} onChange={(event) => setScopeQuery(event.target.value)} placeholder="Cari korda atau komsat" aria-label="Cari korda atau komsat" />{(Object.keys(scopes) as Scope[]).filter((id) => `${scopes[id].label} ${scopes[id].type}`.toLocaleLowerCase("id").includes(scopeQuery.toLocaleLowerCase("id"))).map((id) => <button key={id} onClick={() => chooseScope(id)}>{scopes[id].label}</button>)}</div>}</div>
       <main id="main" className="content">
         <div className="preview-banner"><span><IconSparkles size={16} /> PRATINJAU ADMIN V1</span><p>Seluruh nama dan angka di halaman ini adalah data contoh.</p></div>
         {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} openReview={goReview} />}

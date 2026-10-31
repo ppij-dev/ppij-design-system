@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { IconArrowRight, IconSearch, IconUsers } from "@tabler/icons-react";
+import { IconAdjustmentsHorizontal, IconArrowRight, IconSearch, IconUsers } from "@tabler/icons-react";
 import { AdminDrawer, Badge, Button, Input, SearchFilter, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "ppij-design-system";
 import { FilterMenu, SearchableUnitMenu } from "./ReviewWorkspace";
 import "./MemberWorkspace.css";
@@ -29,6 +29,7 @@ export function MemberWorkspace({ scope }: { scope: Scope }) {
   const [activation, setActivation] = useState("");
   const [expiry, setExpiry] = useState("");
   const [selected, setSelected] = useState<Member | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const scoped = useMemo(() => members.filter((member) => scope === "national" || (scope === "korda" ? member.region === "Kanto" : member.komsat === "Tokyo")), [scope]);
   const visible = scoped.filter((member) => {
     const q = search.trim().toLocaleLowerCase("id");
@@ -53,16 +54,19 @@ export function MemberWorkspace({ scope }: { scope: Scope }) {
   ];
   return <section className="member-workspace" aria-label="Direktori anggota">
     <div className="member-workspace-intro"><div><h2>Direktori anggota</h2><p>Cari anggota dan periksa keanggotaan dalam ruang kerja ini.</p></div><span>{visible.length === scoped.length ? `${scoped.length} anggota contoh` : `${visible.length} dari ${scoped.length} anggota contoh`}</span></div>
-    <SearchFilter className="verification-filters member-filters" searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama, nomor, email, atau komsat" filters={<FilterMenu label="Status" hideLabel value={status} allLabel="Semua status" options={["Aktif", "Kedaluwarsa", "Ditangguhkan", "Dicabut"].map((value) => ({ value, label: value }))} onChange={setStatus} />} advancedTitle="Filter anggota lanjutan" advancedActiveCount={active.length - Number(Boolean(status))} advancedFilters={<>
-      <SearchableUnitMenu label="Komsat" values={komsat} options={units} multiple onChange={setKomsat} />
-      <label className="member-filter-field">Institusi<Input value={institution} onChange={(event) => setInstitution(event.target.value)} placeholder="Cari institusi" /></label>
-      <FilterMenu label="Jenjang" value={degree} allLabel="Semua jenjang" options={["S1", "S2", "S3"].map((value) => ({ value, label: value }))} onChange={setDegree} />
-      <label className="member-filter-field">Jurusan<Input value={major} onChange={(event) => setMajor(event.target.value)} placeholder="Cari jurusan" /></label>
-      <FilterMenu label="Pendanaan" value={scholarship} allLabel="Semua pendanaan" options={["LPDP", "MEXT", "Mandiri"].map((value) => ({ value, label: value }))} onChange={setScholarship} />
-      <FilterMenu label="Sumber" value={source} allLabel="Semua sumber" options={["Pendaftaran mandiri", "Impor anggota", "Pendaftaran terbantu"].map((value) => ({ value, label: value }))} onChange={setSource} />
-      <FilterMenu label="Aktivasi" value={activation} allLabel="Semua aktivasi" options={["Sudah aktivasi", "Belum aktivasi", "Email bermasalah"].map((value) => ({ value, label: value }))} onChange={setActivation} />
-      <FilterMenu label="Masa berlaku" value={expiry} allLabel="Semua masa berlaku" options={[{ value: "30d", label: "30 hari ke depan" }, { value: "60d", label: "60 hari ke depan" }, { value: "expired", label: "Kedaluwarsa" }]} onChange={setExpiry} />
-    </>} activeFilters={active} onClearAll={clear} />
+    <SearchFilter className="verification-filters member-filters" searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama, nomor, email, atau komsat" filters={<><FilterMenu label="Status" hideLabel value={status} allLabel="Semua status" options={["Aktif", "Kedaluwarsa", "Ditangguhkan", "Dicabut"].map((value) => ({ value, label: value }))} onChange={setStatus} /><Button type="button" variant="outline" className="member-filter-open" onClick={() => setFiltersOpen(true)} aria-label="Filter anggota lanjutan"><IconAdjustmentsHorizontal size={17} /><span>Filter</span>{active.length > Number(Boolean(status)) && <span className="member-filter-count">{active.length - Number(Boolean(status))}</span>}</Button></>} activeFilters={active} onClearAll={clear} />
+    <AdminDrawer open={filtersOpen} onOpenChange={setFiltersOpen} title="Filter anggota" description="Pilih kriteria untuk mempersempit direktori." locale="id" className="member-filter-drawer" footer={<div className="member-filter-footer"><Button variant="outline" onClick={clear}>Hapus semua</Button><Button onClick={() => setFiltersOpen(false)}>Lihat {visible.length} anggota</Button></div>}>
+      <div className="member-filter-form">
+        <SearchableUnitMenu label="Komsat" values={komsat} options={units} multiple onChange={setKomsat} />
+        <label className="member-filter-field">Institusi<Input value={institution} onChange={(event) => setInstitution(event.target.value)} placeholder="Cari institusi" /></label>
+        <FilterMenu label="Jenjang" value={degree} allLabel="Semua jenjang" options={["S1", "S2", "S3"].map((value) => ({ value, label: value }))} onChange={setDegree} />
+        <label className="member-filter-field">Jurusan<Input value={major} onChange={(event) => setMajor(event.target.value)} placeholder="Cari jurusan" /></label>
+        <FilterMenu label="Pendanaan" value={scholarship} allLabel="Semua pendanaan" options={["LPDP", "MEXT", "Mandiri"].map((value) => ({ value, label: value }))} onChange={setScholarship} />
+        <FilterMenu label="Sumber" value={source} allLabel="Semua sumber" options={["Pendaftaran mandiri", "Impor anggota", "Pendaftaran terbantu"].map((value) => ({ value, label: value }))} onChange={setSource} />
+        <FilterMenu label="Aktivasi" value={activation} allLabel="Semua aktivasi" options={["Sudah aktivasi", "Belum aktivasi", "Email bermasalah"].map((value) => ({ value, label: value }))} onChange={setActivation} />
+        <FilterMenu label="Masa berlaku" value={expiry} allLabel="Semua masa berlaku" options={[{ value: "30d", label: "30 hari ke depan" }, { value: "60d", label: "60 hari ke depan" }, { value: "expired", label: "Kedaluwarsa" }]} onChange={setExpiry} />
+      </div>
+    </AdminDrawer>
     <div className="member-table"><Table><TableHeader><TableRow><TableHead>Anggota</TableHead><TableHead>No. anggota</TableHead><TableHead>Komsat</TableHead><TableHead>Pendidikan</TableHead><TableHead>Status</TableHead><TableHead>Berlaku sampai</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{visible.map((member) => <TableRow key={member.id}><TableCell><strong>{member.name}</strong><small>{member.email}</small></TableCell><TableCell>{member.id}</TableCell><TableCell>{member.komsat}</TableCell><TableCell><strong>{member.institution}</strong><small>{member.degree} · {member.major}</small></TableCell><TableCell><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge>{member.badge && <small>{member.badge}</small>}</TableCell><TableCell>{member.validUntil}</TableCell><TableCell><Button size="sm" variant="ghost" onClick={() => setSelected(member)}>Detail <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
     <div className="member-mobile-list">{visible.map((member) => <button type="button" key={member.id} onClick={() => setSelected(member)}><span className="member-mobile-top"><strong>{member.name}</strong><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge></span><small>{member.email}</small><span>No. {member.id} · {member.komsat}</span><span>{member.institution} · {member.degree}</span><span>Berlaku sampai {member.validUntil}<IconArrowRight size={17} /></span></button>)}</div>
     {visible.length === 0 && <div className="member-empty"><IconSearch size={25} /><strong>Tidak ada anggota yang cocok</strong><p>Coba kata kunci atau filter lain.</p><Button variant="outline" size="sm" onClick={clear}>Hapus filter</Button></div>}

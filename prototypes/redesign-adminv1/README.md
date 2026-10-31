@@ -12,6 +12,8 @@ Long review-history notes start at three lines and can be expanded or collapsed.
 
 The review timeline shows the three latest dated milestones first and can reveal earlier events. Komsat filtering supports searched, multiple selections; the target-komsat action and the shell's korda/komsat workspace selector are searchable. Ownership is an additional advanced filter. Waiting records use a clock status, and claim takeover is labeled explicitly.
 
+At tablet widths, the verification quick filters use equal-height controls without a separate kind caption. The student-card viewer includes a nearby summary of the submitted name, education level, institution/faculty, and month/year residence range for document comparison.
+
 The implementation imports Storybook components from `ppij-design-system`: `PageHeader`, `StatCard`, `DataTable`, `Table`, `Badge`, `Button`, `UnitCard`, `BottomBar`, `AdminDrawer`, and form inputs. Local CSS handles the composition and responsive layout; no library component is copied into the prototype.
 
 Production integration should map each preview screen to its existing admin route and retain server-side authorization, real data loaders, audit logging, encrypted field reveal, and action validation in `ppij-identity`. Replace each local sample dataset and demo callback with the corresponding production state and handler; the confirmation step and responsive navigation can be adapted without moving business logic into this package.

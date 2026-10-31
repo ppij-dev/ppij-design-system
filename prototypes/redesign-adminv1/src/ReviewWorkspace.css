@@ -13,8 +13,10 @@
 .verification-filters { display: grid; align-items: stretch; gap: 10px; }
 .verification-filters > div:first-child { min-width: 0; }
 .verification-filters [data-slot=input] { min-width: 0; font-size: 16px; }
+.verification-filters > div:first-child { align-items: center; }
+.verification-filters > div:first-child [data-slot=input], .verification-filters > div:first-child > span > button { min-height: 44px; }
 .verification-filters .verification-filter-control { min-width: 138px; }
-.verification-filters .verification-filter-trigger { min-height: 36px; }
+.verification-filters .verification-filter-trigger { min-height: 44px; }
 .verification-feedback-item textarea { min-height: 112px; resize: vertical; font-size: 16px; line-height: 1.5; }
 .verification-action-screen label, .verification-feedback-item label, .verification-filter-control { display: grid; gap: 6px; color: #54616b; font-size: 13px; font-weight: 650; }
 .verification-filter-trigger { width: max-content; max-width: 100%; min-height: 42px; display: inline-flex; justify-content: flex-start; gap: 9px; background: #fff; padding: 8px 12px; }
@@ -49,6 +51,8 @@
 .verification-review-drawer [data-admin-drawer-body] { padding: 24px; }
 .verification-review-drawer [data-slot=drawer-header] { padding: 19px 24px; }
 .verification-review-drawer [data-admin-drawer-footer] { padding: 14px 24px; }
+.verification-review-drawer[data-vaul-drawer-direction=bottom] > div:first-child { width: 56px; height: 5px; margin-top: 8px; }
+.verification-review-drawer[data-vaul-drawer-direction=bottom] [data-slot=drawer-header] { padding-top: 10px; }
 .verification-detail-loading { display: grid; gap: 18px; padding-top: 4px; }
 .verification-detail-loading > span { display: flex; align-items: center; justify-content: flex-start; }
 .verification-detail-loading > div:last-child { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -85,6 +89,10 @@
 .verification-file-row > div { display: grid; gap: 2px; }
 .verification-file-row strong { color: #25313a; font-size: 14px; }
 .verification-file-row span { color: #61707b; font-size: 12px; }
+.verification-document-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; margin: 0; border-top: 1px solid #e4e9ec; padding: 15px 16px; background: #fbfcfc; }
+.verification-document-facts > div { min-width: 0; }
+.verification-document-facts dt { color: #65717b; font-size: 12px; }
+.verification-document-facts dd { margin: 3px 0 0; color: #24313a; font-size: 14px; font-weight: 650; line-height: 1.45; overflow-wrap: anywhere; }
 .verification-document-stage { display: grid; place-items: center; min-height: 220px; padding: 20px; background: #fff; }
 .verification-document-paper { width: min(100%, 300px); min-height: 178px; display: grid; justify-items: start; align-content: start; gap: 7px; padding: 18px 20px; border: 1px solid #d9e0e5; border-radius: 8px; background: #fff; box-shadow: 0 7px 20px rgba(24, 34, 43, .08); }
 .verification-document-paper > span { color: #9d2940; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
@@ -151,6 +159,7 @@
   .verification-filter-trigger { min-width: 0; }
   .verification-filters .verification-check { min-height: 28px; font-size: 12px; }
   .verification-field-group dl { grid-template-columns: 1fr; gap: 10px; }
+  .verification-document-facts { grid-template-columns: 1fr; gap: 10px; }
   .verification-summary { display: grid; }
   .verification-actions { display: grid; grid-template-columns: 1fr 1fr auto; }
   .verification-actions button { min-height: 42px; font-size: 12px; white-space: nowrap; }

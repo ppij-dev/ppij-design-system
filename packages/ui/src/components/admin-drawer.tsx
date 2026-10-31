@@ -91,7 +91,7 @@ export function AdminDrawer({
         onCloseAutoFocus={onCloseAutoFocus}
         data-step={step}
         className={cn(
-          "min-h-0 gap-0 p-0 text-foreground",
+          "min-h-0 gap-0 bg-card p-0 text-foreground",
           "data-[vaul-drawer-direction=bottom]:max-h-[85vh]",
           "data-[vaul-drawer-direction=right]:w-[440px] data-[vaul-drawer-direction=right]:sm:max-w-[440px]",
           className,

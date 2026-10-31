@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import {
   IconActivity, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
   IconChartBar, IconChevronDown, IconChevronRight, IconCircleCheck, IconClock,
-  IconDownload, IconFilter, IconId, IconLayoutDashboard, IconMenu2, IconPlus,
+  IconFilter, IconId, IconLayoutDashboard, IconMenu2, IconPlus,
   IconSearch, IconSettings, IconShieldCheck, IconSparkles, IconUsers, IconX,
 } from "@tabler/icons-react";
 import {
@@ -11,10 +11,10 @@ import {
   PageHeader, StatCard, Table, TableBody, TableCell, TableHead, TableHeader,
   TableRow, UnitCard,
 } from "ppij-design-system";
+import { ReviewWorkspace, reviewSamples } from "./ReviewWorkspace";
 
 type Page = "dashboard" | "review" | "members" | "roles" | "units";
 type Scope = "national" | "korda" | "komsat";
-type ReviewStatus = "Menunggu" | "Perlu perbaikan" | "Disetujui";
 
 const nav: { id: Page; label: string; icon: typeof IconActivity }[] = [
   { id: "dashboard", label: "Dashboard", icon: IconLayoutDashboard },
@@ -36,13 +36,7 @@ const scopePhrase: Record<Scope, string> = {
   komsat: "Komsat Tokyo",
 };
 
-const reviews: { id: string; name: string; unit: string; kind: string; received: string; status: ReviewStatus; initials: string }[] = [
-  { id: "REG-2408", name: "Contoh Anggota A", unit: "Tokyo", kind: "Pendaftaran baru", received: "Hari ini, 09.42", status: "Menunggu", initials: "AA" },
-  { id: "REG-2407", name: "Contoh Anggota B", unit: "Yokohama", kind: "Pendaftaran baru", received: "Hari ini, 08.16", status: "Menunggu", initials: "AB" },
-  { id: "REG-2406", name: "Contoh Anggota C", unit: "Osaka", kind: "Perubahan data", received: "Kemarin, 17.30", status: "Perlu perbaikan", initials: "AC" },
-  { id: "REG-2405", name: "Contoh Anggota D", unit: "Nagoya", kind: "Pendaftaran baru", received: "Kemarin, 13.10", status: "Menunggu", initials: "AD" },
-  { id: "REG-2404", name: "Contoh Anggota E", unit: "Tokyo", kind: "Pendaftaran baru", received: "29 Okt, 14.22", status: "Disetujui", initials: "AE" },
-];
+const reviews = reviewSamples;
 
 const members: { id: string; name: string; unit: string; region: string; role: string; joined: string; status: string; initials: string }[] = [
   { id: "PPIJ-02941", name: "Contoh Anggota A", unit: "Tokyo", region: "Kanto", role: "Anggota", joined: "24 Okt 2026", status: "Aktif", initials: "AA" },
@@ -90,14 +84,14 @@ export function App() {
   const [mobileMore, setMobileMore] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Semua");
-  const [tab, setTab] = useState("Antrean");
+  const [reviewInitialId, setReviewInitialId] = useState<string | null>(null);
   const [drawer, setDrawer] = useState<{ title: string; kind: string; details: { label: string; value: string }[] } | null>(null);
   const [drawerStep, setDrawerStep] = useState<1 | 2>(1);
   const [drawerAction, setDrawerAction] = useState("");
   const [notice, setNotice] = useState("");
 
   function go(next: Page) {
-    setPage(next); setSearch(""); setFilter("Semua"); setTab("Antrean"); setMobileMore(false);
+    setPage(next); setSearch(""); setFilter("Semua"); setReviewInitialId(null); setMobileMore(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -117,13 +111,14 @@ export function App() {
     setDrawerStep(2);
   }
 
+  function goReview(id: string) {
+    setReviewInitialId(id); setPage("review"); setMobileMore(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   const visibleNav = scope === "komsat" ? nav.filter((n) => n.id !== "units") : nav;
-  const queueCount = reviews.filter((r) => r.status !== "Disetujui" && (scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo"))).length;
+  const queueCount = reviews.filter((r) => !["menunggu_anggota", "selesai"].includes(r.tab) && (scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo"))).length;
   const scopedAdmins = admins.filter((a) => scope === "national" || (scope === "korda" ? ["Kanto", "Tokyo", "Yokohama", "Chiba", "Saitama"].includes(a.scope) : a.scope === "Tokyo"));
-  const filteredReviews = useMemo(() => reviews.filter((r) => {
-    const inScope = scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo");
-    return inScope && (tab === "Riwayat" ? r.status === "Disetujui" : r.status !== "Disetujui") && (filter === "Semua" || r.status === filter) && `${r.name} ${r.id} ${r.unit}`.toLowerCase().includes(search.toLowerCase());
-  }), [scope, filter, search, tab]);
   const filteredMembers = useMemo(() => members.filter((m) => {
     const inScope = scope === "national" || (scope === "korda" ? m.region === "Kanto" : m.unit === "Tokyo");
     return inScope && (filter === "Semua" || m.status === filter) && `${m.name} ${m.id} ${m.unit}`.toLowerCase().includes(search.toLowerCase());
@@ -147,14 +142,9 @@ export function App() {
       <div className="mobile-topbar"><div className="mobile-brand"><img src="/ppij-logo.png" alt="PPI Jepang" /><span>Admin PPIJ</span></div><button className="mobile-scope" onClick={() => setScopeOpen(!scopeOpen)}>{scopes[scope].short}<IconChevronDown size={15} /></button>{scopeOpen && <div className="mobile-scope-menu">{(Object.keys(scopes) as Scope[]).map((id) => <button key={id} onClick={() => { setScope(id); setScopeOpen(false); if (id === "komsat" && page === "units") go("dashboard"); }}>{scopes[id].label}</button>)}</div>}</div>
       <main id="main" className="content">
         <div className="preview-banner"><span><IconSparkles size={16} /> PRATINJAU ADMIN V1</span><p>Seluruh nama dan angka di halaman ini adalah data contoh.</p></div>
-        {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} openPerson={openPerson} />}
-        {page === "review" && <><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran dan perubahan data untuk ${scopePhrase[scope]}.`} actions={<Button variant="outline" onClick={() => demo("Ekspor antrean tersedia pada portal terintegrasi.")}><IconDownload size={16} /> Ekspor daftar</Button>} />
-          <div className="tabs" role="tablist" aria-label="Tampilan verifikasi">{["Antrean", "Riwayat"].map((t) => <button key={t} role="tab" aria-selected={tab === t} className={tab === t ? "selected" : ""} onClick={() => { setTab(t); setFilter(t === "Riwayat" ? "Disetujui" : "Semua"); }}>{t}{t === "Antrean" && <span>{queueCount}</span>}</button>)}</div>
-          <div className="section-note"><IconClock size={18} /><span>Prioritaskan berkas terlama. Buka satu pengajuan untuk melihat ringkasan dan langkah berikutnya.</span></div>
-          <div className="table-section"><DataTable searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama, ID, atau komisariat" actions={<FilterPills options={tab === "Riwayat" ? ["Disetujui"] : ["Semua", "Menunggu", "Perlu perbaikan"]} current={filter} onChange={setFilter} />} footerText={`${filteredReviews.length} pengajuan contoh`} pageLabel="Halaman 1 dari 1" previousDisabled nextDisabled>
-            <Table><TableHeader><TableRow><TableHead>Pengajuan</TableHead><TableHead>Jenis</TableHead><TableHead>Komisariat</TableHead><TableHead>Diterima</TableHead><TableHead>Status</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{filteredReviews.map((r) => <TableRow key={r.id}><TableCell><Person initials={r.initials} name={r.name} detail={r.id} /></TableCell><TableCell>{r.kind}</TableCell><TableCell>{r.unit}</TableCell><TableCell>{r.received}</TableCell><TableCell><StatusBadge value={r.status} /></TableCell><TableCell><Button variant="ghost" size="sm" onClick={() => openPerson(r.name, "Pengajuan " + r.id, [{ label: "Jenis", value: r.kind }, { label: "Komisariat", value: r.unit }, { label: "Diterima", value: r.received }, { label: "Status", value: r.status }])}>Tinjau <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></DataTable>{filteredReviews.length === 0 && <EmptyResult term={search || filter} />}</div>
-          <MobileFilters search={search} setSearch={setSearch} filter={filter} setFilter={setFilter} options={tab === "Riwayat" ? ["Disetujui"] : ["Semua", "Menunggu", "Perlu perbaikan"]} />
-          <div className="mobile-list">{filteredReviews.map((r) => <button key={r.id} className="mobile-row" onClick={() => openPerson(r.name, "Pengajuan " + r.id, [{ label: "Jenis", value: r.kind }, { label: "Komisariat", value: r.unit }, { label: "Diterima", value: r.received }, { label: "Status", value: r.status }])}><div><Person initials={r.initials} name={r.name} detail={`${r.id} · ${r.unit}`} /><StatusBadge value={r.status} /></div><p>{r.kind} <span>{r.received}</span></p></button>)}{filteredReviews.length === 0 && <EmptyResult term={search || filter} />}</div>
+        {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} openReview={goReview} />}
+        {page === "review" && <><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran dan perubahan data untuk ${scopePhrase[scope]}.`} />
+          <ReviewWorkspace scope={scope} initialSelectedId={reviewInitialId} onNotice={demo} />
         </>}
         {page === "members" && <><PageHeader title="Anggota" description={`Direktori anggota untuk ${scopePhrase[scope]}. Cari, buka detail, atau lihat status keanggotaan.`} actions={<Button onClick={() => { setDrawerStep(1); setDrawer({ title: "Undang anggota", kind: "Alur undangan", details: [{ label: "Tujuan", value: "Undang anggota ke komisariat melalui email." }, { label: "Status", value: "Contoh alur — belum terhubung ke layanan undangan." }] }); }}><IconPlus size={17} /> Undang anggota</Button>} />
           <div className="compact-stats"><StatCard label="Anggota aktif" value={scope === "national" ? "1.284" : scope === "korda" ? "452" : "218"} icon={<IconUsers />} hint="terdaftar" /><StatCard label="Bergabung bulan ini" value={scope === "national" ? "48" : scope === "korda" ? "17" : "8"} icon={<IconArrowDownRight />} hint="anggota baru" /><StatCard label="Perlu pembaruan" value={scope === "national" ? "16" : scope === "korda" ? "5" : "2"} icon={<IconActivity />} hint="data profil" /></div>
@@ -198,13 +188,13 @@ function MobileFilters({ search, setSearch, filter, setFilter, options }: { sear
   return <div className="mobile-filters"><div className="mobile-search"><IconSearch size={16} /><Input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Cari daftar" placeholder="Cari nama atau ID" /></div><FilterPills options={options} current={filter} onChange={setFilter} /></div>;
 }
 
-function Dashboard({ scope, queueCount, go, openPerson }: { scope: Scope; queueCount: number; go: (page: Page) => void; openPerson: (name: string, kind: string, fields: { label: string; value: string }[]) => void }) {
+function Dashboard({ scope, queueCount, go, openReview }: { scope: Scope; queueCount: number; go: (page: Page) => void; openReview: (id: string) => void }) {
   const national = scope === "national";
   return <><div className="dashboard-intro"><div><span className="date-label">SABTU, 31 OKTOBER 2026</span><h1>Selamat datang, Pengurus.</h1><p>Ini yang perlu perhatian hari ini di {scopes[scope].label}.</p></div><Button variant="outline" onClick={() => go("review")}>Buka antrean <IconArrowRight size={17} /></Button></div>
     <div className="stats-grid"><StatCard label="Anggota aktif" value={national ? "1.284" : scope === "korda" ? "452" : "218"} icon={<IconUsers />} delta="+12" deltaTone="success" hint="bulan ini" /><StatCard label="Menunggu verifikasi" value={String(queueCount)} icon={<IconClock />} hint="butuh peninjauan" /><StatCard label={national ? "Komsat aktif" : "Anggota baru"} value={national ? "26" : scope === "korda" ? "17" : "8"} icon={<IconBuildingCommunity />} hint={national ? "di 9 korda" : "bulan ini"} /><StatCard label="Kartu diterbitkan" value={national ? "1.102" : scope === "korda" ? "390" : "183"} icon={<IconId />} delta="+48" deltaTone="success" hint="bulan ini" /></div>
-    <div className="dashboard-columns"><section className="work-panel"><SectionHead title="Perlu perhatian" caption="Mulai dari pekerjaan yang paling mendesak." /><div className="priority-list"><button onClick={() => go("review")}><span className="priority-icon red"><IconShieldCheck size={19} /></span><span><strong>{queueCount} pengajuan menunggu verifikasi</strong><small>Berkas tertua diterima 3 hari lalu</small></span><IconArrowRight size={17} /></button><button onClick={() => go("members")}><span className="priority-icon amber"><IconUsers size={19} /></span><span><strong>Data anggota perlu pembaruan</strong><small>Tinjau profil dengan informasi yang belum lengkap</small></span><IconArrowRight size={17} /></button></div></section>
+    <div className="dashboard-columns"><section className="work-panel"><SectionHead title="Perlu perhatian" caption="Mulai dari pekerjaan yang paling mendesak." /><div className="priority-list"><button onClick={() => go("review")}><span className="priority-icon red"><IconShieldCheck size={19} /></span><span><strong>{queueCount} pengajuan menunggu verifikasi</strong><small>Berkas tertua diterima 8 hari lalu</small></span><IconArrowRight size={17} /></button><button onClick={() => go("members")}><span className="priority-icon amber"><IconUsers size={19} /></span><span><strong>Data anggota perlu pembaruan</strong><small>Tinjau profil dengan informasi yang belum lengkap</small></span><IconArrowRight size={17} /></button></div></section>
       <section className="work-panel pulse-panel"><SectionHead title="Aktivitas bulan ini" caption="Gambaran singkat pergerakan anggota." /><div className="chart-top"><div><strong>+48</strong><span>anggota baru</span></div><Badge variant="success">Naik 12%</Badge></div><div className="bar-chart" aria-label="Grafik ilustratif anggota baru selama enam bulan">{[42, 56, 49, 72, 61, 86].map((h, i) => <span key={i} style={{ height: `${h}%` }} />)}</div><div className="chart-axis"><span>Mei</span><span>Jun</span><span>Jul</span><span>Agu</span><span>Sep</span><span>Okt</span></div></section></div>
-    <section className="recent-section"><SectionHead title="Pengajuan terbaru" caption="Ringkasan pendaftaran yang masuk ke antrean." action={<Button variant="ghost" size="sm" onClick={() => go("review")}>Lihat semua <IconArrowRight size={16} /></Button>} /><div className="recent-list">{reviews.slice(0, 3).filter((r) => scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo")).map((r) => <button key={r.id} onClick={() => openPerson(r.name, "Pengajuan " + r.id, [{ label: "Jenis", value: r.kind }, { label: "Komisariat", value: r.unit }, { label: "Status", value: r.status }])}><Person initials={r.initials} name={r.name} detail={`${r.id} · ${r.unit}`} /><span>{r.received}</span><StatusBadge value={r.status} /><IconChevronRight size={18} /></button>)}</div></section>
+    <section className="recent-section"><SectionHead title="Pengajuan terbaru" caption="Ringkasan pendaftaran yang masuk ke antrean." action={<Button variant="ghost" size="sm" onClick={() => go("review")}>Lihat semua <IconArrowRight size={16} /></Button>} /><div className="recent-list">{reviews.slice(0, 3).filter((r) => scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo")).map((r) => <button key={r.id} onClick={() => openReview(r.id)}><Person initials={r.initials} name={r.name} detail={`${r.id} · ${r.unit}`} /><span>{r.received}</span><Badge variant={r.tab === "dikirim_ulang" ? "warning" : "secondary"}>{r.tab === "dikirim_ulang" ? "Dikirim ulang" : "Baru"}</Badge><IconChevronRight size={18} /></button>)}</div></section>
     <section className="network-section"><SectionHead title={national ? "Jaringan PPI Jepang" : "Cakupan anggota"} caption={national ? "Sebaran anggota dan kelengkapan data di seluruh jaringan." : `Ringkasan unit dalam ${scopes[scope].label}.`} action={scope !== "komsat" && <Button variant="ghost" size="sm" onClick={() => go("units")}>Lihat organisasi <IconArrowRight size={16} /></Button>} /><div className="network-strip"><div><strong>{national ? "9" : scope === "korda" ? "4" : "1"}</strong><span>{national ? "Koordinator daerah" : "Unit aktif"}</span></div><div><strong>{national ? "26" : scope === "korda" ? "4" : "218"}</strong><span>{national || scope === "korda" ? "Komisariat aktif" : "Anggota terdaftar"}</span></div><div><strong>{national ? "74%" : scope === "korda" ? "79%" : "82%"}</strong><span>Profil lengkap</span></div></div><div className="coverage"><div className="coverage-head"><strong>{scope === "komsat" ? "Kelengkapan data anggota" : "Sebaran anggota"}</strong><span>Data contoh</span></div>{(scope === "national" ? [{ name: "Kanto", value: 452, width: 100 }, { name: "Kansai", value: 306, width: 68 }, { name: "Chubu", value: 183, width: 40 }, { name: "Kyushu", value: 104, width: 23 }] : scope === "korda" ? [{ name: "Tokyo", value: 218, width: 100 }, { name: "Yokohama", value: 96, width: 44 }, { name: "Chiba", value: 74, width: 34 }, { name: "Saitama", value: 64, width: 29 }] : [{ name: "Profil lengkap", value: 179, width: 82 }, { name: "Perlu pembaruan", value: 39, width: 18 }]).map((item) => <div className="coverage-row" key={item.name}><span>{item.name}</span><div aria-hidden="true"><i style={{ width: `${item.width}%` }} /></div><strong>{item.value}</strong></div>)}</div></section>
   </>;
 }

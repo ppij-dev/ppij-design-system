@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { IconAdjustmentsHorizontal, IconArrowRight, IconSearch, IconUsers } from "@tabler/icons-react";
+import { IconAdjustmentsHorizontal, IconArrowRight, IconEye, IconFileText, IconLock, IconSearch, IconShield, IconUsers } from "@tabler/icons-react";
 import { AdminDrawer, Badge, Button, SearchFilter, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "ppij-design-system";
 import { SearchableMultiSelect } from "./SearchableMultiSelect";
 import "./MemberWorkspace.css";
@@ -68,6 +68,25 @@ export function MemberWorkspace({ scope }: { scope: Scope }) {
     <div className="member-table"><Table><TableHeader><TableRow><TableHead>Anggota</TableHead><TableHead>No. anggota</TableHead><TableHead>Komsat</TableHead><TableHead>Pendidikan</TableHead><TableHead>Status</TableHead><TableHead>Berlaku sampai</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{visible.map((member) => <TableRow key={member.id}><TableCell><strong>{member.name}</strong><small>{member.email}</small></TableCell><TableCell>{member.id}</TableCell><TableCell>{member.komsat}</TableCell><TableCell><strong>{member.institution}</strong><small>{member.degree} · {member.major}</small></TableCell><TableCell><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge>{member.badge && <small>{member.badge}</small>}</TableCell><TableCell>{member.validUntil}</TableCell><TableCell><Button size="sm" variant="ghost" onClick={() => setSelected(member)}>Detail <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
     <div className="member-mobile-list">{visible.map((member) => <button type="button" key={member.id} onClick={() => setSelected(member)}><span className="member-mobile-top"><strong>{member.name}</strong><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge></span><small>{member.email}</small><span>No. {member.id} · {member.komsat}</span><span>{member.institution} · {member.degree}</span><span>Berlaku sampai {member.validUntil}<IconArrowRight size={17} /></span></button>)}</div>
     {visible.length === 0 && <div className="member-empty"><IconSearch size={25} /><strong>Tidak ada anggota yang cocok</strong><p>Coba kata kunci atau filter lain.</p><Button variant="outline" size="sm" onClick={clear}>Hapus filter</Button></div>}
-    <AdminDrawer open={Boolean(selected)} onOpenChange={(open) => { if (!open) setSelected(null); }} title={selected?.name ?? "Detail anggota"} description={selected?.id} locale="id" className="member-detail-drawer"><div className="member-detail"><div className="member-detail-note"><IconUsers size={17} /> Data sintetis untuk meninjau tampilan direktori</div>{selected && <><section><h3>Keanggotaan</h3><dl>{[["Nama", selected.name], ["Email", selected.email], ["Nomor anggota", selected.id], ["Komsat", selected.komsat], ["Status", selected.status], ["Berlaku sampai", selected.validUntil], ["Sumber", selected.source], ["Aktivasi", selected.activation]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section><section><h3>Pendidikan</h3><dl>{[["Institusi", selected.institution], ["Jenjang", selected.degree], ["Jurusan", selected.major], ["Pendanaan", selected.scholarship]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section><p>Data pribadi sensitif tetap disembunyikan. Portal terintegrasi memakai alur buka data yang tercatat dalam audit.</p></>}</div></AdminDrawer>
+    <AdminDrawer open={Boolean(selected)} onOpenChange={(open) => { if (!open) setSelected(null); }} title={selected?.name ?? "Detail anggota"} description={selected?.id} locale="id" className="member-detail-drawer">
+      {selected && <MemberDetail member={selected} />}
+    </AdminDrawer>
   </section>;
+}
+
+function MemberDetail({ member }: { member: Member }) {
+  const [revealed, setRevealed] = useState(false);
+  const delivery = member.activation === "Email bermasalah" ? "Gagal dikirim" : member.activation === "Belum aktivasi" ? "Belum dikonfirmasi" : "Terkirim";
+  const lastEmail = member.activation === "Belum aktivasi" ? "Belum ada email tercatat" : "Informasi keanggotaan · 30 Okt 2026";
+  const FieldList = ({ rows }: { rows: [string, string][] }) => <dl>{rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>;
+  return <div className="member-detail">
+    <div className="member-detail-note"><IconUsers size={17} /> Data sintetis untuk meninjau tampilan direktori</div>
+    <section><h3>Keanggotaan</h3><FieldList rows={[["Nama", member.name], ["Email", member.email], ["Nomor anggota", member.id], ["Komsat", member.komsat], ["Status", member.status], ["Berlaku sampai", member.validUntil], ["Sumber", member.source], ...(member.badge ? [["Catatan", member.badge] as [string, string]] : [])]} /></section>
+    <section><h3>Komunikasi</h3><FieldList rows={[["Status email", delivery], ["Email terakhir", lastEmail], ["Aktivasi", member.activation]]} />{member.activation === "Email bermasalah" && <p className="member-detail-alert">Pengiriman email contoh gagal. Periksa alamat sebelum mengirim ulang di portal terintegrasi.</p>}</section>
+    <section><h3>Pendidikan</h3><FieldList rows={[["Institusi", member.institution], ["Jenjang", member.degree], ["Jurusan", member.major], ["Pendanaan", member.scholarship]]} /></section>
+    <section className="member-sensitive"><div className="member-sensitive-head"><IconShield size={18} /><h3>Data pribadi sensitif</h3>{revealed && <span><IconLock size={13} /> Contoh terbuka</span>}</div>
+      <FieldList rows={[["Tanggal lahir", revealed ? "17 Agustus 1999" : "••/••/1999"], ["Telepon", revealed ? "+81 90 0000 0000" : "+81 •• •••• ••••"], ["Kontak darurat", revealed ? "Kontak Contoh (keluarga) · +62 800 0000 0000" : "Kontak Contoh (keluarga) · nomor disembunyikan"], ["Dokumen", revealed ? "Kartu pelajar contoh · JPG · 31 Okt 2026" : "Berkas tersedia · detail disembunyikan"]]} />
+      {revealed ? <p className="member-sensitive-note"><IconFileText size={15} /> Nilai ini hanya data contoh. Di portal terintegrasi, akses dokumen dan data sensitif dicatat dalam audit.</p> : <><p className="member-sensitive-note">Membuka data sensitif di portal terintegrasi akan dicatat dalam audit.</p><Button type="button" className="member-reveal-button" onClick={() => setRevealed(true)}><IconEye size={16} /> Buka data contoh</Button></>}
+    </section>
+  </div>;
 }

@@ -24,6 +24,8 @@ The invitation detail should present a dated vertical timeline for invitation cr
 
 The member detail opens from a row with the selected member's real data, accessible close/back behavior, and loading/error handling. Respect field masking, audited reveal, and action permissions. Search/filter changes reset pagination appropriately; scope changes clear stale selected members and refetch the directory. Provide a useful no-results state with a way to clear filters. Keep both locales and locale-aware dates.
 
+The preview detail now groups membership, email delivery/last send, education, and personal data. Production should fill these from `MemberDirectoryDetail`, including optional badge, email failure reason, last email, and spam complaint when present. Date of birth, phone, emergency contact, and document metadata remain masked or summarized until the existing `POST /v1/admin/members/{id}/reveal` succeeds. Preserve its authorization, audit record, loading/error states, and the rule that the revealed phone alone enables WhatsApp. The preview's reveal shows only synthetic examples and must not be copied as production data or as an unaudited local toggle.
+
 ## Acceptance
 
 - Directory, invitation, and detail remain functional with live scoped data.

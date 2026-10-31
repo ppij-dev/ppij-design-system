@@ -22,6 +22,8 @@ Directory filters now use searchable multiple-selection menus with checkmarks. S
 
 Invitation detail shows a dated vertical history with email delivery state. The synthetic invite form has a consistent phone text scale, and admin bottom sheets use a compact handle and title spacing.
 
+Member detail includes sample communication and masked personal-data sections, with a local reveal of synthetic examples to review the layout. Real sensitive-data reveal remains an audited production action in `ppij-identity`.
+
 The implementation imports Storybook components from `ppij-design-system`: `PageHeader`, `StatCard`, `DataTable`, `Table`, `Badge`, `Button`, `UnitCard`, `BottomBar`, `AdminDrawer`, and form inputs. Local CSS handles the composition and responsive layout; no library component is copied into the prototype.
 
 Production integration should map each preview screen to its existing admin route and retain server-side authorization, real data loaders, audit logging, encrypted field reveal, and action validation in `ppij-identity`. Replace each local sample dataset and demo callback with the corresponding production state and handler; the confirmation step and responsive navigation can be adapted without moving business logic into this package.

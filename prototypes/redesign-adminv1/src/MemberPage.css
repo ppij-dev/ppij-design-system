@@ -15,17 +15,18 @@
 .member-invite-empty { margin: 0; padding: 36px 16px; color: #65717b; text-align: center; font-size: 13px; }
 .member-invite-actions { display: flex; justify-content: flex-end; gap: 10px; width: 100%; }
 .member-invite-actions [data-slot=button] { min-height: 44px; }
-.member-invite-form { display: grid; gap: 18px; padding: 4px 0 20px; }
-.member-invite-form > label, .member-invite-recipients label { display: grid; gap: 7px; color: #54616b; font-size: 13px; font-weight: 650; }
+.member-invite-form { display: grid; align-content: start; gap: 20px; padding: 4px 0 20px; color: #26323a; font-size: 14px; line-height: 1.5; }
+.member-invite-form > p { margin: 0; }
+.member-invite-form > label, .member-invite-recipients label { display: grid; gap: 7px; color: #4e5c66; font-size: 14px; font-weight: 650; }
 .member-invite-form [data-slot=input], .member-invite-form textarea, .member-invite-form .verification-filter-trigger { min-height: 44px; width: 100%; font-size: 16px; }
 .member-invite-form > label > [data-slot=button] { justify-self: start; }
 .member-invite-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border-radius: 9px; background: #f1f3f4; }
-.member-invite-mode button { min-height: 40px; border: 0; border-radius: 7px; background: transparent; color: #5c6973; font-size: 13px; font-weight: 650; }
+.member-invite-mode button { min-height: 44px; border: 0; border-radius: 7px; background: transparent; color: #5c6973; font-size: 14px; font-weight: 650; }
 .member-invite-mode button[aria-pressed=true] { background: #fff; color: #27333b; box-shadow: 0 2px 6px rgba(24,34,43,.08); }
 .member-invite-form .member-vouched { display: flex; align-items: start; gap: 10px; border: 1px solid #e1e5e8; border-radius: 9px; padding: 13px; }
 .member-vouched input { width: 18px; height: 18px; margin-top: 1px; accent-color: #c8102e; }
 .member-vouched span { display: grid; gap: 3px; }
-.member-vouched small { color: #64717c; font-size: 12px; font-weight: 400; }
+.member-vouched small { color: #64717c; font-size: 13px; font-weight: 400; line-height: 1.45; }
 .member-invite-recipients { display: grid; gap: 12px; }
 .member-invite-recipients > button { justify-self: start; }
 .member-invite-error { margin: 0; color: #ad1732; font-size: 13px; font-weight: 650; }
@@ -40,4 +41,15 @@
 .member-invite-result { display: grid; justify-items: start; gap: 9px; color: #315e47; }
 .member-invite-result strong { color: #25313a; font-size: 17px; }
 .member-invite-result p { margin: 0; color: #64717c; line-height: 1.5; }
+.member-invite-timeline { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.member-invite-timeline li { position: relative; display: grid; grid-template-columns: 18px minmax(0,1fr); gap: 12px; min-height: 78px; padding-bottom: 18px; }
+.member-invite-timeline li:not(:last-child)::before { content: ""; position: absolute; top: 19px; bottom: 0; left: 8px; width: 2px; background: #dbe2e5; }
+.member-timeline-dot { position: relative; z-index: 1; width: 18px; height: 18px; margin-top: 2px; border: 3px solid #fff; border-radius: 50%; background: #4f9c6c; box-shadow: 0 0 0 1px #4f9c6c; }
+.member-timeline-dot.attention { background: #c88b2c; box-shadow: 0 0 0 1px #c88b2c; }
+.member-timeline-dot.muted { background: #9aa6ad; box-shadow: 0 0 0 1px #9aa6ad; }
+.member-invite-timeline time { display: block; margin-bottom: 3px; color: #66727c; font-size: 12px; }
+.member-invite-timeline strong { display: block; color: #26323a; font-size: 14px; line-height: 1.35; }
+.member-invite-timeline p { margin: 4px 0 0; color: #65717b; font-size: 13px; line-height: 1.45; }
+[data-admin-drawer][data-vaul-drawer-direction=bottom] > div:first-child { width: 56px; height: 5px; margin-top: 8px; }
+[data-admin-drawer][data-vaul-drawer-direction=bottom] [data-slot=drawer-header] { padding-top: 10px; padding-bottom: 12px; }
 @media (max-width: 600px) { .member-view-tabs { margin-top: 20px; } .member-invite-list > button { gap: 9px; padding: 12px; } .member-invite-list > button > span:nth-child(2) { justify-items: end; } .member-invite-actions [data-slot=button] { flex: 1; } }

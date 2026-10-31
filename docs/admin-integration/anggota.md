@@ -18,6 +18,8 @@ The UI also needs scoped option discovery for searchable institution and field-o
 
 The invitation status preview also allows multiple status and komsat selections. `useAdminInvitations` currently serializes one `status` and one `komsatId`; extend that list contract and its server query if this view is integrated with multi-select. Invitation creation remains one destination komsat per batch. Its resend, renew, correction, and cancellation actions retain their distinct production rules.
 
+The invitation detail should present a dated vertical timeline for invitation creation, email delivery attempts, and membership progress. Show the latest email state and each attempt's date from `send_log`, while using the real invitation/member timestamps for status milestones. The preview's dated events are illustrative; do not infer a status-change date from `sent_at` or fabricate a send attempt when the production record lacks one.
+
 ## Detail and state
 
 The member detail opens from a row with the selected member's real data, accessible close/back behavior, and loading/error handling. Respect field masking, audited reveal, and action permissions. Search/filter changes reset pagination appropriately; scope changes clear stale selected members and refetch the directory. Provide a useful no-results state with a way to clear filters. Keep both locales and locale-aware dates.

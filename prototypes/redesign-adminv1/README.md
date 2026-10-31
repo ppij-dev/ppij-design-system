@@ -18,6 +18,8 @@ Anggota now uses the same white workspace island and search/advanced-filter patt
 
 The Anggota island also has a separate Status undangan view and a local invitation flow with single or multiple recipients, searchable komsat assignment, a vouched option, review, and result. Its invitation list and resend/cancel actions are synthetic and send no email. Directory advanced filters use a consistent full-width form on phones.
 
+Directory filters now use searchable multiple-selection menus with checkmarks. Selections are combined within each category and shown as removable chips. The current identity directory API is scalar per filter; the page-specific integration guide records the API and option-discovery work needed for production parity.
+
 The implementation imports Storybook components from `ppij-design-system`: `PageHeader`, `StatCard`, `DataTable`, `Table`, `Badge`, `Button`, `UnitCard`, `BottomBar`, `AdminDrawer`, and form inputs. Local CSS handles the composition and responsive layout; no library component is copied into the prototype.
 
 Production integration should map each preview screen to its existing admin route and retain server-side authorization, real data loaders, audit logging, encrypted field reveal, and action validation in `ppij-identity`. Replace each local sample dataset and demo callback with the corresponding production state and handler; the confirmation step and responsive navigation can be adapted without moving business logic into this package.

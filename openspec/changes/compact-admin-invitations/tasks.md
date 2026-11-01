@@ -17,3 +17,4 @@ Follow-up validation: admin typecheck, preview build, and full repository gate p
 - [x] Make the appoint-drawer unit picker a searchable single-select; locked text for komsat scope.
 - [x] Update admin-drawer story text/classes to the 600px touch rule and re-run typecheck, preview build, story check, design scan, and gate.
 - [x] Show success toasts for Tunjuk, Cabut peran, and Berlaku sampai saves via the shared onNotice/demo toast.
+- [x] Audit action-feedback coverage across all five admin pages and shared drawers; toast the silent Ambil alih pemeriksaan claim action.

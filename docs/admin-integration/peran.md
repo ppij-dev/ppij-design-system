@@ -14,6 +14,10 @@ The preview's **Tunjuk pengurus** drawer presents unit selection, active-member 
 
 Do not copy the preview's four assignments, local generic detail drawer, or fixed dates. Keep real role names and permission logic from identity specs and APIs. Translate all copy and format dates per locale.
 
+## Valid-until update (API gap)
+
+The role detail drawer in the preview now lets the admin edit an assignment's **Berlaku sampai** date and save it; the save is local to the prototype. Production `RolesAdmin` only has appoint (`POST /v1/admin/roles`) and remove (`POST /v1/admin/roles/{id}/remove`), so there is no endpoint that changes an existing assignment's validity. Before integrating this edit, add an approved API contract — for example `PATCH /v1/admin/roles/{assignment_id}` accepting only `valid_until` (ISO date; empty/null allowed only where appoint already permits no end date). The contract must specify: scoped authorization identical to appoint/remove (national admin edits any assignment in view; korda admin only assignments inside their korda subtree; komsat admin only their own komsat); validation that the new date is not in the past and not beyond the member's residence-permit expiry for strict units, reusing the appoint date rules and error codes; audit logging of admin, assignment, old value, new value, and timestamp; and link semantics — the update mutates the existing assignment in place (member-role link, id, and appointer stay intact, no re-appointment or duplicate row), and shortening a date to a past value must define whether expiry is immediate or scheduler-driven, returning a conflict/expired error consistent with the existing appointment errors.
+
 ## Acceptance
 
 - Search/filter and assignment actions respect server scope and permissions.

@@ -2,14 +2,12 @@
 .member-page-header > div:first-child { flex: 1 1 280px; }
 .member-page-header > div:last-child { flex: none; }
 .member-invite-button { font-size: 14px; }
-@media (max-width:899px) { .member-invite-button { min-height: 44px; } }
 .member-workspace { min-width: 0; }
 .member-workspace-intro { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 32px 0 10px; }
 .member-workspace-intro h2 { margin: 0 0 4px; color: #20282e; font-size: 18px; }
 .member-workspace-intro p { margin: 0; color: #66727c; font-size: 13px; line-height: 1.5; }
 .member-workspace-intro > span { flex: none; color: #64717c; font-size: 13px; }
 .member-filters { margin-bottom: 8px; }
-.member-filter-open { min-height: 44px; }
 .member-filters > div:first-child > .member-filter-open { min-width: 120px; }
 .member-filter-count { display: grid; place-items: center; min-width: 19px; height: 19px; border-radius: 10px; padding: 0 5px; background: #b61632; color: #fff; font-size: 11px; font-weight: 700; }
 .member-filter-drawer[data-vaul-drawer-direction=right] { width: min(520px, calc(100vw - 48px)); max-width: 520px; }
@@ -17,9 +15,8 @@
 .member-filter-form > * { min-width: 0; }
 .member-filter-form .member-multi-control { width: 100%; }
 .member-filter-footer { display: flex; justify-content: space-between; gap: 10px; width: 100%; }
-.member-filter-footer [data-slot=button] { min-height: 44px; }
 .member-filter-field { display: grid; gap: 6px; color: #54616b; font-size: 13px; font-weight: 650; }
-.member-filter-field input { min-height: 42px; font-size: 16px; }
+.member-filter-field input { min-height: 32px; font-size: 13px; }
 .member-table { overflow-x: auto; border: 1px solid #e1e5e8; border-radius: 12px; }
 .member-table [data-slot=table] { min-width: 860px; }
 .member-table [data-slot=table-head], .member-table [data-slot=table-cell] { padding: 13px 14px; }
@@ -50,6 +47,6 @@
 .member-sensitive-head > span { display: inline-flex; align-items: center; gap: 4px; color: #2f7751; font-size: 11px; font-weight: 700; }
 .member-sensitive-note { display: flex; align-items: start; gap: 7px; margin: 16px 0 12px; color: #685026; font-size: 12px; line-height: 1.5; }
 .member-sensitive-note svg { flex: none; margin-top: 1px; }
-.member-reveal-button { min-height: 44px; }
+.member-reveal-button { font-weight: 650; }
 @media (max-width: 899px) { .member-table { display: none; } .member-mobile-list { display: grid; gap: 9px; } .member-mobile-list > button { display: grid; gap: 6px; width: 100%; border: 1px solid #e1e5e8; border-radius: 10px; padding: 14px; background: #fff; color: #35424b; text-align: left; font-size: 13px; } .member-mobile-list > button:hover { background: #fafbfb; } .member-mobile-list > button:focus-visible { outline: 2px solid #c8102e; outline-offset: 2px; } .member-mobile-list small { color: #69757e; font-size: 12px; } .member-mobile-top { display: flex; justify-content: space-between; align-items: start; gap: 10px; } .member-mobile-top strong { color: #20282e; font-size: 14px; } .member-mobile-list > button > span:last-child { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: #66727c; } }
-@media (max-width: 600px) { .member-page-header { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 16px; } .member-page-header > div:first-child, .member-page-header > div:last-child { width: 100%; min-width: 0; } .member-invite-button { width: 100%; } .member-workspace-intro { display: grid; gap: 8px; margin-top: 28px; } .member-filters > div:first-child > .member-multi-control, .member-filters > div:first-child > .member-filter-open { width: 100%; min-width: 0; } .member-filter-form { grid-template-columns: minmax(0, 1fr); gap: 18px; } .member-filter-footer [data-slot=button] { flex: 1; } .member-detail dl { grid-template-columns: 1fr; } .member-mobile-list > button { min-height: 44px; } }
+@media (max-width: 600px) { .member-page-header { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 16px; } .member-page-header > div:first-child, .member-page-header > div:last-child { width: 100%; min-width: 0; } .member-invite-button { width: 100%; min-height: 44px; } .member-workspace-intro { display: grid; gap: 8px; margin-top: 28px; } .member-filters > div:first-child > .member-multi-control, .member-filters > div:first-child > .member-filter-open { width: 100%; min-width: 0; } .member-filter-open { min-height: 44px; } .member-filter-form { grid-template-columns: minmax(0, 1fr); gap: 18px; } .member-filter-field input { min-height: 44px; font-size: 16px; } .member-filter-footer [data-slot=button] { flex: 1; min-height: 44px; } .member-reveal-button { min-height: 44px; } .member-detail dl { grid-template-columns: 1fr; } .member-mobile-list > button { min-height: 44px; } }

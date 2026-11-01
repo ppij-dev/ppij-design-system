@@ -105,7 +105,7 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
   const [flags, setFlags] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
   const [action, setAction] = useState<Action | null>(null);
-  const [approveStep, setApproveStep] = useState<1 | 2>(1);
+  const [actionStep, setActionStep] = useState<1 | 2>(1);
   const [takenOver, setTakenOver] = useState<string[]>([]);
   const [documentSide, setDocumentSide] = useState<"front" | "back">("front");
   const [historyExpanded, setHistoryExpanded] = useState(false);
@@ -158,7 +158,7 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
   }
   function close() { if (saveTimer.current) window.clearTimeout(saveTimer.current); saveTimer.current = null; setSaving(false); setSelectedId(null); setAction(null); setError(""); }
   function openAction(next: Action) {
-    setAction(next); setApproveStep(1); setError("");
+    setAction(next); setActionStep(1); setError("");
     setFeedback([{ target: "Kartu pelajar", reason: "", note: "" }]); setReason(""); setTargetKomsat(""); setNote(""); setSimulateFailure(false);
   }
   function commitAction() {
@@ -190,10 +190,10 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
   const footer = selected && !detailLoading && !action && !readOnly && !actionsHidden ? <div className="verification-actions">
     <Button onClick={() => openAction("approve")}>Setujui</Button>
     <Button variant="outline" onClick={() => openAction("requestChanges")}>Minta perbaikan</Button>
-    <DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline">Lainnya <IconChevronDown size={16} /></Button></DropdownMenuTrigger><DropdownMenuContent align="end" side="top" className="verification-action-menu">{(["reject", "forward", "assignKomsat"] as Action[]).map((entry) => <DropdownMenuItem key={entry} onSelect={() => openAction(entry)}>{actionLabels[entry]}</DropdownMenuItem>)}<DropdownMenuItem onSelect={release}>Lepas pemeriksaan</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
+    <DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline">Lainnya <IconChevronDown size={16} /></Button></DropdownMenuTrigger><DropdownMenuContent align="end" side="top" className="verification-action-menu">{(["reject", "forward", "assignKomsat"] as Action[]).map((entry) => <DropdownMenuItem key={entry} onSelect={() => openAction(entry)}>{actionLabels[entry]}</DropdownMenuItem>)}{selected?.owner && <DropdownMenuItem onSelect={release}>Lepas pemeriksaan</DropdownMenuItem>}</DropdownMenuContent></DropdownMenu>
   </div> : action ? <div className="verification-action-footer">
-    <Button variant="outline" disabled={saving} onClick={() => { if (action === "approve" && approveStep === 2) setApproveStep(1); else setAction(null); setError(""); }}>Kembali</Button>
-    <Button disabled={saving} aria-busy={saving} onClick={() => { if (action === "approve" && approveStep === 1) setApproveStep(2); else commitAction(); }}>{saving ? <><Spinner decorative size="xs" /> Menyimpan…</> : action === "approve" && approveStep === 1 ? "Lanjut" : `Konfirmasi ${actionLabels[action].toLowerCase()}`}</Button>
+    <Button variant="outline" disabled={saving} onClick={() => { if ((action === "approve" || action === "reject") && actionStep === 2) setActionStep(1); else setAction(null); setError(""); }}>Kembali</Button>
+    <Button disabled={saving || (action === "reject" && actionStep === 1 && !reason.trim())} aria-busy={saving} onClick={() => { if (actionStep === 1 && (action === "approve" || action === "reject")) setActionStep(2); else commitAction(); }}>{saving ? <><Spinner decorative size="xs" /> Menyimpan…</> : actionStep === 1 && (action === "approve" || action === "reject") ? "Lanjut" : `Konfirmasi ${actionLabels[action].toLowerCase()}`}</Button>
   </div> : null;
 
   return <section className="verification-workspace" aria-label="Antrean verifikasi">
@@ -217,14 +217,15 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
     {!queueLoading && visible.length === 0 && <div className="verification-empty"><IconCircleCheck size={27} /><strong>Belum ada pengajuan di tab ini</strong><span>{filtered.length > 0 ? "Hasil ada di tab lain. Pilih tab yang memiliki angka." : "Coba kata kunci atau filter lain."}</span></div>}
     <AdminDrawer open={selected !== null} onOpenChange={(open) => { if (!open) close(); }} title={action ? actionLabels[action] : selected?.name ?? "Pengajuan"} description={selected ? `${selected.id} · ${selected.kind} · Putaran ${selected.round}` : undefined} locale="id" className="verification-review-drawer" footer={footer}>
       {selected && (detailLoading ? <div className="verification-detail-loading" role="status"><span><Spinner decorative size="sm" /> Memuat detail pengajuan…</span><Skeleton className="h-16 w-full" /><Skeleton className="h-5 w-40" /><div><Skeleton className="h-4 w-44" /><Skeleton className="h-4 w-32" /><Skeleton className="h-4 w-48" /></div></div> : action ? <div className="verification-action-screen">
-        {action === "approve" ? <><h3>{approveStep === 1 ? "Periksa keputusan" : "Setujui pengajuan ini?"}</h3><p>{selected.name} · {selected.unit} · {selected.kind}</p><p>{approveStep === 1 ? "Pastikan data dan kartu pelajar telah diperiksa sebelum melanjutkan." : "Anggota akan aktif dan menerima nomor anggota. Tindakan ini tidak dapat dibatalkan pada aplikasi terintegrasi."}</p></> : null}
+        {action === "approve" ? <><h3>{actionStep === 1 ? "Periksa keputusan" : "Setujui pengajuan ini?"}</h3><p>{selected.name} · {selected.unit} · {selected.kind}</p><p>{actionStep === 1 ? "Pastikan data dan kartu pelajar telah diperiksa sebelum melanjutkan." : "Anggota akan aktif dan menerima nomor anggota. Tindakan ini tidak dapat dibatalkan pada aplikasi terintegrasi."}</p></> : null}
+        {action === "reject" && actionStep === 2 ? <><h3>Tolak pengajuan ini?</h3><p>{selected.name} · {selected.unit} · {selected.kind}</p><p>Alasan yang akan dicatat: “{reason.trim()}”</p><p>Anggota menerima pemberitahuan dengan alasan ini. Tindakan ini tidak dapat dibatalkan pada aplikasi terintegrasi.</p></> : null}
         {action === "requestChanges" ? <><h3>Bagian yang perlu diperbaiki</h3><p>Pilih bagian dan alasan spesifik agar anggota tahu yang perlu diubah.</p>{feedback.map((entry, index) => <div className="verification-feedback-item" key={index}>
           <FilterMenu label="Bagian" value={entry.target} allLabel="Pilih bagian" options={feedbackTargets.map((value) => ({ value, label: value }))} onChange={(value) => setFeedback((current) => current.map((item, i) => i === index ? { ...item, target: value } : item))} />
           <FilterMenu label="Alasan" value={entry.reason} allLabel="Pilih alasan" options={feedbackReasons.map((value) => ({ value, label: value }))} onChange={(value) => setFeedback((current) => current.map((item, i) => i === index ? { ...item, reason: value } : item))} />
           <label>Catatan (opsional)<Textarea rows={4} value={entry.note} onChange={(event) => setFeedback((current) => current.map((value, i) => i === index ? { ...value, note: event.target.value } : value))} placeholder="Jelaskan bagian yang perlu diperbaiki" /></label>
           {feedback.length > 1 && <Button size="sm" variant="ghost" onClick={() => setFeedback((current) => current.filter((_, i) => i !== index))}>Hapus bagian</Button>}
         </div>)}<Button variant="outline" size="sm" onClick={() => setFeedback((current) => [...current, { target: "Kartu pelajar", reason: "", note: "" }])}>Tambah bagian</Button></> : null}
-        {action === "reject" ? <><h3>Alasan penolakan</h3><p>Berikan alasan yang jelas untuk dicatat pada pengajuan.</p><label>Alasan<textarea value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Tulis alasan penolakan" /></label></> : null}
+        {action === "reject" && actionStep === 1 ? <><h3>Alasan penolakan</h3><p>Berikan alasan yang jelas untuk dicatat pada pengajuan.</p><label>Alasan<textarea value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Tulis alasan penolakan" /></label></> : null}
         {(action === "forward" || action === "assignKomsat") ? <><h3>{action === "forward" ? "Teruskan ke komsat" : "Tetapkan komsat"}</h3><p>{action === "forward" ? "Kirim pengajuan kepada pemeriksa di komsat tujuan." : "Pindahkan penetapan komsat beserta alasan peninjauannya."}</p><SearchableUnitMenu label="Komsat tujuan" values={targetKomsat ? [targetKomsat] : []} options={units.filter((value) => value !== selected.unit)} onChange={(values) => setTargetKomsat(values[0] ?? "")} /><label>{action === "forward" ? "Catatan (opsional)" : "Alasan penetapan"}<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={action === "forward" ? "Catatan untuk pemeriksa" : "Tulis alasan penetapan"} /></label></> : null}
         {error && <p className="verification-error" role="alert"><IconAlertCircle size={17} />{error}</p>}
         <label className="verification-failure-toggle"><input type="checkbox" checked={simulateFailure} disabled={saving} onChange={(event) => setSimulateFailure(event.target.checked)} /> Simulasikan gagal menyimpan</label>

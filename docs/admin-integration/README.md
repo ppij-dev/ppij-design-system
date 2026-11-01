@@ -18,6 +18,8 @@ Production owners are `ppij-identity/web/src/layouts/Admin.astro` and `web/src/c
 
 Use the preview's collapsible desktop sidebar, searchable workspace selector, top bar, phone bottom navigation, and visible version footer as presentation targets. Every korda/komsat picker must be searchable; multi-select only where the task needs multiple units. Make collapse and menu controls keyboard accessible, with focus returned when a drawer closes. Keep labels available to screen readers when the sidebar is collapsed. Avoid a second header inside a page.
 
+Shared management detail and action drawers use `AdminDrawer size="sm" density="compact"`: 380px desktop width, 13px body/values, 12px field labels, 14px headings, and 32px controls. Compact the actual content styles as well as the outer drawer. Below 900px use full-width bottom sheets, 44px input/action targets, and 16px editable input text. Keep long values wrapping and the body scrollable, with header and footer fixed.
+
 Use `ppij-design-system` as a pinned dependency and import its published presentation components; do not copy prototype component code or move app business logic into the design-system package. Reconcile styles with canonical tokens. Keep Indonesian and English strings in the production i18n catalog. Keep real dates and versions rather than the preview's fixed October 2026 data. The green check toast is for completed actions; errors need distinct failure feedback. Do not expose personal data in logs or synthetic examples in production.
 
 ## Working sequence and checks

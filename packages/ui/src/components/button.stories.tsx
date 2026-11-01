@@ -88,3 +88,11 @@ export const AdminPageActions: Story = {
     <div className="grid max-w-sm gap-2"><Button size="sm" className="min-h-11"><IconPlus />Undang anggota</Button><p className="text-sm text-muted-foreground">Phone action: 44px touch target with the same label and icon scale.</p></div>
   </div>,
 };
+
+export const AdminDrawerActions: Story = {
+  render: () => <div className="grid justify-items-start gap-6">
+    <div className="grid justify-items-start gap-2"><Button size="sm">Periksa undangan</Button><p className="text-xs text-muted-foreground">Compact desktop drawer: 32px height, 14px label.</p></div>
+    <div className="grid justify-items-start gap-2"><Button>Periksa undangan</Button><p className="text-xs text-muted-foreground">Standard drawer: 36px height, 14px label.</p></div>
+    <div className="grid justify-items-start gap-2"><Button size="sm" className="min-h-11">Periksa undangan</Button><p className="text-xs text-muted-foreground">Phone drawer: 44px touch target, 14px label.</p></div>
+  </div>,
+};

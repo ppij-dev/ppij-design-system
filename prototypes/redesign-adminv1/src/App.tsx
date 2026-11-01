@@ -13,6 +13,7 @@ import {
 } from "ppij-design-system";
 import { ReviewWorkspace, reviewSamples } from "./ReviewWorkspace";
 import { MemberPage } from "./MemberPage";
+import { ManagementPage } from "./ManagementPage";
 import previewPackage from "../package.json";
 import designSystemPackage from "../../../packages/ui/package.json";
 
@@ -147,22 +148,7 @@ export function App() {
           <ReviewWorkspace scope={scope} initialSelectedId={reviewInitialId} onNotice={demo} />
         </div>}
         {page === "members" && <MemberPage scope={scope} scopePhrase={scopePhrase[scope]} onNotice={demo} />}
-        {page === "roles" && <><PageHeader title="Admin & Peran" description="Kelola siapa yang dapat membantu anggota, meninjau pengajuan, dan mengelola unit sesuai cakupan tugas." actions={<Button onClick={() => { setDrawerStep(1); setDrawer({ title: "Tunjuk pengurus", kind: "Alur penunjukan", details: [{ label: "Langkah 1", value: "Pilih anggota aktif." }, { label: "Langkah 2", value: "Pilih peran dan cakupan." }, { label: "Langkah 3", value: "Tinjau sebelum konfirmasi." }] }); }}><IconPlus size={17} /> Tunjuk pengurus</Button>} />
-          <div className="role-explainer"><div className="role-icon"><IconShieldCheck size={23} /></div><div><strong>Hak akses mengikuti cakupan organisasi</strong><p>Admin nasional melihat seluruh jaringan. Admin korda dan komsat hanya mengelola unit dalam wilayahnya.</p></div></div>
-          <SectionHead title="Penugasan aktif" caption="Periksa peran dan cakupan sebelum membuat perubahan." />
-          <div className="table-section"><DataTable searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari pengurus atau unit" footerText="Penugasan contoh" pageLabel="Halaman 1 dari 1" previousDisabled nextDisabled><Table><TableHeader><TableRow><TableHead>Pengurus</TableHead><TableHead>Peran</TableHead><TableHead>Cakupan</TableHead><TableHead>Ditunjuk</TableHead><TableHead>Status</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{scopedAdmins.filter((a) => `${a.name} ${a.scope} ${a.role}`.toLowerCase().includes(search.toLowerCase())).map((a) => <TableRow key={a.name}><TableCell><Person initials={a.initials} name={a.name} /></TableCell><TableCell>{a.role}</TableCell><TableCell>{a.scope}</TableCell><TableCell>{a.appointed}</TableCell><TableCell><StatusBadge value={a.status} /></TableCell><TableCell><Button size="sm" variant="ghost" onClick={() => openPerson(a.name, "Penugasan pengurus", [{ label: "Peran", value: a.role }, { label: "Cakupan", value: a.scope }, { label: "Ditunjuk", value: a.appointed }, { label: "Status", value: a.status }])}>Kelola <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></DataTable></div>
-          <div className="mobile-list">{scopedAdmins.map((a) => <button key={a.name} className="mobile-row" onClick={() => openPerson(a.name, "Penugasan pengurus", [{ label: "Peran", value: a.role }, { label: "Cakupan", value: a.scope }, { label: "Status", value: a.status }])}><div><Person initials={a.initials} name={a.name} detail={a.role} /><IconChevronRight size={18} /></div><p>{a.scope}<span>{a.status}</span></p></button>)}</div>
-        </>}
-        {page === "units" && <><PageHeader title="Organisasi" description="Lihat struktur korda dan komisariat, penanggung jawab, serta cakupan anggota di jaringan PPI Jepang." actions={<Button onClick={() => { setDrawerStep(1); setDrawer({ title: "Tambah unit", kind: "Alur organisasi", details: [{ label: "Jenis", value: scope === "national" ? "Korda atau komisariat" : "Komisariat" }, { label: "Langkah", value: "Isi nama, wilayah induk, dan penanggung jawab." }, { label: "Status", value: "Contoh alur — belum menyimpan unit." }] }); }}><IconPlus size={17} /> Tambah unit</Button>} />
-          <div className="unit-overview"><div><small>STRUKTUR ORGANISASI</small><strong>{scope === "national" ? "Nasional" : "Korda Kanto"}</strong><p>{scope === "national" ? "9 korda · 26 komisariat" : "4 komisariat · 452 anggota"}</p></div><IconBuildingCommunity size={66} stroke={1} /></div>
-          <SectionHead title={scope === "national" ? "Koordinator daerah" : "Komisariat di Kanto"} caption="Buka unit untuk melihat penanggung jawab dan rincian organisasi." action={<Button variant="outline" size="sm" onClick={() => demo("Filter wilayah tersedia pada portal terintegrasi.")}><IconFilter size={16} /> Semua wilayah</Button>} />
-          <div className="unit-grid">{(scope === "national" ? units : [
-            { name: "Tokyo", kind: "Komsat", memberCount: 218, leadName: "Contoh Pengurus C", statusLabel: "Aktif" },
-            { name: "Yokohama", kind: "Komsat", memberCount: 96, leadName: "Contoh Pengurus H", statusLabel: "Aktif" },
-            { name: "Chiba", kind: "Komsat", memberCount: 74, leadName: "Contoh Pengurus I", statusLabel: "Aktif" },
-            { name: "Saitama", kind: "Komsat", memberCount: 64, leadName: "Contoh Pengurus J", statusLabel: "Aktif" },
-          ]).map((u) => <UnitCard key={u.name} {...u} actions={<Button variant="ghost" size="sm" onClick={() => openPerson(u.name, u.kind, [{ label: "Jenis", value: u.kind }, { label: "Jumlah anggota", value: String(u.memberCount) }, { label: "Penanggung jawab", value: u.leadName }, { label: "Status", value: u.statusLabel }])}>Lihat unit <IconArrowRight size={15} /></Button>} />)}</div>
-        </>}
+        {(page === "roles" || page === "units") && <ManagementPage key={`${page}-${scope}`} kind={page} scope={scope} open={openPerson} />}
         <footer className="page-footer"><span>PPI Jepang · Admin preview v{previewPackage.version} · Design system v{designSystemPackage.version}</span><span>Data ilustratif · 31 Okt 2026</span></footer>
       </main>
     </div>

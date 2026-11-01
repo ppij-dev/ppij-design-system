@@ -81,3 +81,10 @@ export const ActionIntents: Story = {
     </div>
   ),
 };
+
+export const AdminPageActions: Story = {
+  render: () => <div className="grid gap-6">
+    <div className="grid justify-items-start gap-2"><Button size="sm"><IconPlus />Undang anggota</Button><p className="text-sm text-muted-foreground">Desktop page action: 32px height, 14px label, 16px icon.</p></div>
+    <div className="grid max-w-sm gap-2"><Button size="sm" className="min-h-11"><IconPlus />Undang anggota</Button><p className="text-sm text-muted-foreground">Phone action: 44px touch target with the same label and icon scale.</p></div>
+  </div>,
+};

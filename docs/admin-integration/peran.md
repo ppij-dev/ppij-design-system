@@ -18,3 +18,5 @@ Do not copy the preview's four assignments, local generic detail drawer, or fixe
 - Appointment and removal retain their full production validation and confirmation.
 - Long role/scope labels and drawers work at phone and tablet sizes.
 - No illustrative assignment is migrated.
+
+The management preview now uses a white page island, search, and searchable multiple unit selections with checkmarks. Selecting a Korda includes assignments in that Korda and its Komsat subtree. The production role response already includes scoped units and assignments: client filtering can implement this if the response is complete. If pagination is introduced, add array unit filters and matching server totals rather than filtering only a loaded page.

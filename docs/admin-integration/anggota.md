@@ -32,3 +32,5 @@ The preview detail now groups membership, email delivery/last send, education, a
 - Single/bulk invitation validation and result feedback are preserved.
 - Phone and tablet rows, filters, drawers, and empty states remain readable.
 - No sample members or local-only invitation behavior reaches production.
+
+Invitation cancellation and resend now require a confirmation that names the affected email. The preview also supports editing name/email with validation and local save. Production currently has an email correction action for failed delivery; before integrating general name/email editing, add an approved API contract for pending invitations with full-name and email fields, scoped authorization, conflict handling, audit logging, and explicit rules for invalidating/resending links after an address changes. Accepted invitations must not edit the member profile through this action.

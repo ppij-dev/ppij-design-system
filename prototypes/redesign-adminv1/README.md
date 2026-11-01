@@ -27,3 +27,5 @@ Member detail includes sample communication and masked personal-data sections, w
 The implementation imports Storybook components from `ppij-design-system`: `PageHeader`, `StatCard`, `DataTable`, `Table`, `Badge`, `Button`, `UnitCard`, `BottomBar`, `AdminDrawer`, and form inputs. Local CSS handles the composition and responsive layout; no library component is copied into the prototype.
 
 Production integration should map each preview screen to its existing admin route and retain server-side authorization, real data loaders, audit logging, encrypted field reveal, and action validation in `ppij-identity`. Replace each local sample dataset and demo callback with the corresponding production state and handler; the confirmation step and responsive navigation can be adapted without moving business logic into this package.
+
+Admin & Peran and Organisasi share the white management workspace, search, and checked multi-select unit filters. Invitation cancel/resend require confirmation, and name/email editing saves validated synthetic values. Production API gaps are recorded in the page-specific handoffs.

@@ -18,3 +18,5 @@ The preview's **Tambah unit** drawer is only a summary. Preserve production crea
 - Direct route access and every write remain server-authorized.
 - Searchable selectors, long names, empty/error states, and forms work on phone and tablet.
 - No sample counts, units, or local-only create behavior reaches production.
+
+The management preview now shows Korda and Komsat together with parent labels, search, and searchable multiple unit/type selections. A selected Korda includes its direct children. Use the scoped production unit list when complete; if the list becomes paginated, define array unit/type filters and server pagination totals in OpenAPI. Preserve the current prefecture assignment and activation/deactivation rules.

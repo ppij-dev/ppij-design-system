@@ -1,7 +1,8 @@
 .member-page-header { align-items: center; gap: 16px; }
 .member-page-header > div:first-child { flex: 1 1 280px; }
 .member-page-header > div:last-child { flex: none; }
-.member-invite-button { min-height: 44px; padding-inline: 18px; }
+.member-invite-button { font-size: 14px; }
+@media (max-width:899px) { .member-invite-button { min-height: 44px; } }
 .member-workspace { min-width: 0; }
 .member-workspace-intro { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 32px 0 10px; }
 .member-workspace-intro h2 { margin: 0 0 4px; color: #20282e; font-size: 18px; }

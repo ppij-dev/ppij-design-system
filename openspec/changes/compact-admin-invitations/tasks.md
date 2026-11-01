@@ -16,3 +16,4 @@ Follow-up validation: admin typecheck, preview build, and full repository gate p
 - [x] Add local valid-until editing to the role detail drawer and record the production API gap contract in docs/admin-integration/peran.md.
 - [x] Make the appoint-drawer unit picker a searchable single-select; locked text for komsat scope.
 - [x] Update admin-drawer story text/classes to the 600px touch rule and re-run typecheck, preview build, story check, design scan, and gate.
+- [x] Show success toasts for Tunjuk, Cabut peran, and Berlaku sampai saves via the shared onNotice/demo toast.

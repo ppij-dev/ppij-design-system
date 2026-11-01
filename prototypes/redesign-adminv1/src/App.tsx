@@ -148,7 +148,7 @@ export function App() {
           <ReviewWorkspace scope={scope} initialSelectedId={reviewInitialId} onNotice={demo} />
         </div>}
         {page === "members" && <MemberPage scope={scope} scopePhrase={scopePhrase[scope]} onNotice={demo} />}
-        {(page === "roles" || page === "units") && <ManagementPage key={`${page}-${scope}`} kind={page} scope={scope} open={openPerson} />}
+        {(page === "roles" || page === "units") && <ManagementPage key={`${page}-${scope}`} kind={page} scope={scope} open={openPerson} onNotice={demo} />}
         <footer className="page-footer"><span>PPI Jepang · Admin preview v{previewPackage.version} · Design system v{designSystemPackage.version}</span><span>Data ilustratif · 31 Okt 2026</span></footer>
       </main>
     </div>

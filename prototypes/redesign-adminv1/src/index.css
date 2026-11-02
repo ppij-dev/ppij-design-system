@@ -39,7 +39,7 @@
 .scope-list [data-slot=input],.mobile-scope-menu [data-slot=input]{width:100%;min-height:42px;margin-bottom:5px;background:#fff;font-size:14px}
 .scope-list,.mobile-scope-menu{max-height:320px;overflow-y:auto}
 
-@media(max-width:600px){.admin-detail-drawer .drawer-form input,.admin-detail-drawer .drawer-form select{height:44px;font-size:16px}.admin-detail-drawer [data-admin-drawer-footer] [data-slot=button]{min-height:44px}}
+@media(max-width:600px){[data-admin-drawer-body] input,[data-admin-drawer-body] select,[data-admin-drawer-body] textarea,[data-admin-drawer-body] [data-slot=input]{height:44px;min-height:44px;font-size:16px}[data-admin-drawer-footer] [data-slot=button]{min-height:44px}}
 
 /* --- Dashboard: map-first hero (Leaflet over OpenStreetMap, synthetic points) --- */
 .map-card{position:relative;background:#fff;border:1px solid #e7e9eb;border-radius:11px;padding:20px;margin-bottom:22px}

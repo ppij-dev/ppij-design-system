@@ -29,17 +29,17 @@
 .member-empty strong { color: #26323a; }
 .member-empty p { margin: 0 0 9px; font-size: 13px; }
 .member-detail-drawer[data-vaul-drawer-direction=right] { width: min(560px, calc(100vw - 48px)); max-width: 560px; }
-.member-detail-drawer [data-admin-drawer-body], .member-filter-drawer [data-admin-drawer-body] { font-size: 14px; line-height: 1.45; }
-.member-detail { display: grid; gap: 20px; padding: 4px 0 18px; }
+.member-detail-drawer [data-admin-drawer-body], .member-filter-drawer [data-admin-drawer-body] { font-size: 13px; line-height: 1.45; }
+.member-detail { display: grid; gap: 14px; padding: 2px 0 12px; }
 .member-detail-note { display: flex; align-items: center; gap: 8px; color: #56636d; font-size: 13px; }
 .member-detail-note svg { color: #b61632; }
-.member-detail section { border-top: 1px solid #e6eaed; padding-top: 18px; }
-.member-detail h3 { margin: 0 0 13px; color: #20282e; font-size: 15px; line-height: 1.35; }
-.member-detail dl { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; margin: 0; }
+.member-detail section { border-top: 1px solid #e6eaed; padding-top: 14px; }
+.member-detail h3 { margin: 0 0 10px; color: #20282e; font-size: 14px; line-height: 1.35; }
+.member-detail dl { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin: 0; }
 .member-detail dt { color: #66727c; font-size: 12px; }
 .member-detail dd { margin: 3px 0 0; color: #26323a; font-size: 13px; font-weight: 650; line-height: 1.45; overflow-wrap: anywhere; }
 .member-detail > p { margin: 0; color: #66727c; font-size: 13px; line-height: 1.5; }
-.member-detail-alert { margin: 13px 0 0; border-radius: 8px; padding: 10px 12px; background: #fff3e0; color: #704a16; font-size: 12px; line-height: 1.5; }
+.member-detail-alert { margin: 10px 0 0; border-radius: 8px; padding: 10px 12px; background: #fff3e0; color: #704a16; font-size: 12px; line-height: 1.5; }
 .member-sensitive { border: 1px solid #e3e8eb; border-radius: 10px; padding: 16px; background: #f8fafb; }
 .member-detail .member-sensitive { border-top: 1px solid #e3e8eb; padding-top: 16px; }
 .member-sensitive-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; color: #b61632; }
@@ -70,3 +70,6 @@
   .member-action-pane .member-action-buttons { grid-template-columns: 1fr; }
   .member-action-pane .member-action-buttons [data-slot=button] { min-height: 44px; }
 }
+
+.member-detail-note { font-size: 12px; }
+.member-actions-note { font-size: 12px; }

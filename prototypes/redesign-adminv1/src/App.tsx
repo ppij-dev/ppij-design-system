@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
   IconActivity, IconAlertCircle, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
@@ -90,6 +90,7 @@ export function App() {
   const [filter, setFilter] = useState("Semua");
   const [reviewInitialId, setReviewInitialId] = useState<string | null>(null);
   const [statsTopic, setStatsTopic] = useState<StatsTopic>("anggota");
+  const [profileOpen, setProfileOpen] = useState(false);
   const [drawer, setDrawer] = useState<{ title: string; kind: string; details: { label: string; value: string }[] } | null>(null);
   const [drawerStep, setDrawerStep] = useState<1 | 2>(1);
   const [drawerAction, setDrawerAction] = useState("");
@@ -126,6 +127,15 @@ export function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  useEffect(() => {
+    if (!profileOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setProfileOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [profileOpen]);
+
   function goStats(topic: StatsTopic) {
     setStatsTopic(topic); setPage("stats"); setMobileMore(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -134,6 +144,7 @@ export function App() {
   const visibleNav = scope === "komsat" ? nav.filter((n) => n.id !== "units") : nav;
   // The shell badge, the figures band, and the Antrean card share one source (production: GET /v1/admin/review counts.baru).
   const queueCount = statsByScope[scope].review.baru;
+  const roleCaption = scope === "national" ? "Admin nasional \u00b7 PPI Jepang" : scope === "korda" ? "Admin korda \u00b7 Korda Kanto" : "Admin komsat \u00b7 Komsat Tokyo";
   const scopedAdmins = admins.filter((a) => scope === "national" || (scope === "korda" ? ["Kanto", "Tokyo", "Yokohama", "Chiba", "Saitama"].includes(a.scope) : a.scope === "Tokyo"));
 
 
@@ -146,13 +157,17 @@ export function App() {
       <div className="sidebar-brand"><div className="brand-logo"><img src="/ppij-logo.png" alt="PPI Jepang" /></div><div className="sidebar-brand-copy"><strong>PPI Jepang</strong><span>ADMIN PORTAL</span></div><button className="sidebar-toggle" type="button" aria-label={sidebarCollapsed ? "Tampilkan navigasi" : "Sembunyikan navigasi"} aria-expanded={!sidebarCollapsed} onClick={() => { setSidebarCollapsed((value) => !value); setScopeOpen(false); }}><IconChevronLeft size={18} /></button></div>
       <div className="scope-wrap"><button className="scope-button" onClick={() => { setScopeOpen(!scopeOpen); setScopeQuery(""); }} aria-expanded={scopeOpen} aria-label={`Ruang kerja: ${scopes[scope].label}`}><span className="scope-mark"><IconBuildingCommunity size={18} /></span><span><small>RUANG KERJA</small><strong className="scope-full">{scopes[scope].label}</strong><strong className="scope-compact">{scopes[scope].short}</strong></span><IconChevronDown size={16} className={scopeOpen ? "rotate" : ""} /></button>
         {scopeOpen && <div className="scope-list" role="group" aria-label="Pilih ruang kerja"><Input value={scopeQuery} onChange={(event) => setScopeQuery(event.target.value)} placeholder="Cari korda atau komsat" aria-label="Cari korda atau komsat" />{(Object.keys(scopes) as Scope[]).filter((id) => `${scopes[id].label} ${scopes[id].type}`.toLocaleLowerCase("id").includes(scopeQuery.toLocaleLowerCase("id"))).map((id) => <button key={id} aria-pressed={scope === id} onClick={() => chooseScope(id)}><span>{scopes[id].label}<small>{scopes[id].type}</small></span>{scope === id && <IconCircleCheck size={17} />}</button>)}</div>}</div>
+      <div className="sidebar-switch" role="group" aria-label="Buka">
+        <a href="#portal" onClick={(e) => { e.preventDefault(); demo("Ini pratinjau. Portal mengikuti alur produksi."); }}>Portal</a>
+        <span aria-current="page">Admin</span>
+      </div>
       <p className="nav-caption">MENU UTAMA</p>
       <nav className="nav-list">{visibleNav.map((n) => <button key={n.id} className={page === n.id ? "nav-item active" : "nav-item"} onClick={() => go(n.id)} aria-label={n.label} title={sidebarCollapsed ? n.label : undefined} aria-current={page === n.id ? "page" : undefined}><n.icon size={19} stroke={1.85} /><span>{n.label}</span>{n.id === "review" && <span className="nav-count">{queueCount}</span>}</button>)}</nav>
-      <div className="sidebar-foot"><div className="sample-label"><IconSparkles size={16} /><span>PRATINJAU DESAIN</span></div><p>Data pada layar ini hanya contoh untuk meninjau pengalaman admin.</p><button aria-label="Bantuan dan pengaturan" title={sidebarCollapsed ? "Bantuan & pengaturan" : undefined} onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={17} /><span>Bantuan & pengaturan</span><IconArrowRight size={16} /></button></div>
+      <div className="sidebar-foot"><button type="button" className="identity-chip" onClick={() => setProfileOpen(true)} aria-haspopup="dialog"><span className="av">PA</span><span className="who"><b>Contoh Pengurus A</b><small>{roleCaption}</small></span><IconChevronRight size={14} /></button><div className="sample-label"><IconSparkles size={16} /><span>PRATINJAU DESAIN</span></div><p>Data pada layar ini hanya contoh untuk meninjau pengalaman admin.</p><button aria-label="Bantuan dan pengaturan" title={sidebarCollapsed ? "Bantuan & pengaturan" : undefined} onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={17} /><span>Bantuan & pengaturan</span><IconArrowRight size={16} /></button></div>
     </aside>
     <div className="main-wrap">
       <header className="topbar"><div className="topbar-path"><span>Admin</span><IconChevronRight size={15} /><strong>{pageTitle}</strong></div><div className="topbar-actions"><span className="today">Sabtu, 31 Oktober 2026</span><button className="icon-action" aria-label="Notifikasi" onClick={() => demo("Tidak ada notifikasi baru dalam pratinjau.")}><IconBell size={20} /></button><span className="top-avatar">PA</span><span className="top-name">Contoh Pengurus A</span></div></header>
-      <div className="mobile-topbar"><div className="mobile-brand"><img src="/ppij-logo.png" alt="PPI Jepang" /><span>Admin PPIJ</span></div><button className="mobile-scope" onClick={() => { setScopeOpen(!scopeOpen); setScopeQuery(""); }}>{scopes[scope].short}<IconChevronDown size={15} /></button>{scopeOpen && <div className="mobile-scope-menu"><Input value={scopeQuery} onChange={(event) => setScopeQuery(event.target.value)} placeholder="Cari korda atau komsat" aria-label="Cari korda atau komsat" />{(Object.keys(scopes) as Scope[]).filter((id) => `${scopes[id].label} ${scopes[id].type}`.toLocaleLowerCase("id").includes(scopeQuery.toLocaleLowerCase("id"))).map((id) => <button key={id} onClick={() => chooseScope(id)}>{scopes[id].label}</button>)}</div>}</div>
+      <div className="mobile-topbar"><div className="mobile-brand"><img src="/ppij-logo.png" alt="PPI Jepang" /><span>Admin PPIJ</span></div><div className="mobile-topbar-right"><button className="mobile-scope" onClick={() => { setScopeOpen(!scopeOpen); setScopeQuery(""); }}>{scopes[scope].short}<IconChevronDown size={15} /></button>{scopeOpen && <div className="mobile-scope-menu"><Input value={scopeQuery} onChange={(event) => setScopeQuery(event.target.value)} placeholder="Cari korda atau komsat" aria-label="Cari korda atau komsat" />{(Object.keys(scopes) as Scope[]).filter((id) => `${scopes[id].label} ${scopes[id].type}`.toLocaleLowerCase("id").includes(scopeQuery.toLocaleLowerCase("id"))).map((id) => <button key={id} onClick={() => chooseScope(id)}>{scopes[id].label}</button>)}</div>}<button type="button" className="mobile-avatar" onClick={() => setProfileOpen(true)} aria-label="Profil pengguna" aria-haspopup="dialog">PA</button></div></div>
       <main id="main" className="content">
         <div className="preview-banner"><span><IconSparkles size={16} /> PRATINJAU ADMIN V1</span><p>Seluruh nama dan angka di halaman ini adalah data contoh.</p></div>
         {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} goStats={goStats} openReview={goReview} />}
@@ -169,6 +184,18 @@ export function App() {
     <AdminDrawer size="sm" density="compact" className="admin-detail-drawer" open={drawer !== null} onOpenChange={(open) => { if (!open) setDrawer(null); }} title={drawer?.title ?? "Detail"} description={drawer?.kind} locale="id" step={drawerStep} onBack={() => setDrawerStep(1)} footer={drawerStep === 2 ? <Button size="sm" onClick={() => { setDrawer(null); demo(`${drawerAction} adalah contoh alur. Tidak ada data yang berubah.`); }}>Konfirmasi {drawerAction.toLowerCase()} <IconArrowRight size={16} /></Button> : drawer?.kind.startsWith("Pengajuan") ? <><Button size="sm" variant="outline" onClick={() => previewAction("Minta perbaikan")}>Minta perbaikan</Button><Button size="sm" onClick={() => previewAction("Setujui")}>Setujui</Button></> : drawer?.kind === "Penugasan pengurus" ? <><Button size="sm" variant="outline" onClick={() => previewAction("Cabut akses")}>Cabut akses</Button><Button size="sm" onClick={() => previewAction("Ubah peran")}>Ubah peran</Button></> : drawer?.kind === "Profil anggota" ? <Button size="sm" onClick={() => previewAction("Lihat kartu")}>Lihat kartu <IconArrowRight size={16} /></Button> : drawer?.kind === "Korda" || drawer?.kind === "Komsat" ? <Button size="sm" onClick={() => previewAction("Ubah unit")}>Ubah unit <IconArrowRight size={16} /></Button> : <Button size="sm" onClick={() => previewAction("Lanjutkan")}>Lanjutkan <IconArrowRight size={16} /></Button>}>
       {drawer && (drawerStep === 1 ? <div className="drawer-body"><div className="drawer-stamp"><IconShieldCheck size={16} /><span>Informasi contoh untuk peninjauan desain</span></div><dl>{drawer.details.map((d) => <div key={d.label}><dt>{d.label}</dt><dd>{d.value}</dd></div>)}</dl>{drawer.kind.startsWith("Pengajuan") && <div className="review-checklist"><h3>Kelengkapan pengajuan</h3><div><IconCircleCheck size={17} /> Identitas anggota terisi</div><div><IconCircleCheck size={17} /> Komisariat dipilih</div><div><IconCircleCheck size={17} /> Dokumen pendukung tersedia</div><p>Periksa dokumen asli dan ketentuan izin sebelum membuat keputusan di aplikasi terintegrasi.</p></div>}{drawer.kind === "Alur undangan" && <div className="drawer-form"><label htmlFor="invite-email">Email calon anggota</label><Input id="invite-email" type="email" placeholder="nama@contoh.com" /></div>}{drawer.kind === "Alur penunjukan" && <div className="drawer-form"><label htmlFor="appoint-name">Nama anggota aktif</label><Input id="appoint-name" placeholder="Cari anggota" /><label htmlFor="appoint-role">Peran yang ditunjuk</label><select id="appoint-role" defaultValue="Verifikator"><option>Verifikator</option><option>Admin komsat</option><option>Admin korda</option></select></div>}{drawer.kind === "Alur organisasi" && <div className="drawer-form"><label htmlFor="unit-name">Nama unit</label><Input id="unit-name" placeholder="Nama korda atau komisariat" /></div>}<div className="drawer-note"><strong>Pratinjau alur</strong><p>Langkah dan izin akhir mengikuti aturan di aplikasi admin yang terintegrasi.</p></div></div> : <div className="confirm-panel"><span className="confirm-icon"><IconShieldCheck size={20} /></span><h3>Konfirmasi {drawerAction.toLowerCase()}?</h3><p>Anda sedang melihat rancangan alur untuk <strong>{drawer.title}</strong>. Konfirmasi di sini hanya memperlihatkan umpan balik desain; data tidak berubah.</p><div className="confirm-summary"><span>Tindakan</span><strong>{drawerAction}</strong><span>Cakupan</span><strong>{scopes[scope].label}</strong></div></div>)}
     </AdminDrawer>
+    {profileOpen ? (<>
+      <div className="sheet-backdrop" onClick={() => setProfileOpen(false)} />
+      <div className="profile-sheet" role="dialog" aria-label="Profil pengguna">
+        <div className="sheet-handle" aria-hidden="true"></div>
+        <div className="sheet-head"><span className="av">PA</span><span><b>Contoh Pengurus A</b><small>{roleCaption}</small></span></div>
+        <div className="sheet-switch"><small>BUKA</small><div className="sidebar-switch sheet-pill"><a href="#portal" onClick={(e) => { e.preventDefault(); demo("Ini pratinjau. Portal mengikuti alur produksi."); }}>Portal</a><span aria-current="page">Admin</span></div></div>
+        <div className="sheet-rows">
+          <button type="button" className="sheet-row" onClick={() => demo("Ini pratinjau. Profil & akun menuju /akun di produksi.")}><IconId size={16} /><span>Profil &amp; akun<small className="sub">Menuju /akun di produksi</small></span></button>
+          <button type="button" className="sheet-row exit" onClick={() => { setProfileOpen(false); demo("Ini pratinjau. Keluar mengikuti alur produksi."); }}><IconX size={16} /><span>Keluar</span></button>
+        </div>
+      </div>
+    </>) : null}
     {notice && <div className="toast" data-tone={notice.tone} role={notice.tone === "error" ? "alert" : "status"}>{notice.tone === "error" ? <IconAlertCircle size={19} /> : <IconCircleCheck size={19} />}{notice.message}<button onClick={() => setNotice(null)} aria-label="Tutup notifikasi"><IconX size={17} /></button></div>}
   </div>;
 }

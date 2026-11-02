@@ -197,3 +197,37 @@
 /* --- Page toolbar sizing rule: sm buttons (32px) + compact h-8 inputs at desktop/tablet; 44px/16px only <=600px --- */
 @media(min-width:601px){.warehouse-facets .member-multi-trigger{min-height:2rem;font-size:13px}}
 
+
+/* --- Portal↔Admin switcher + identity chip + profile sheet (Option A) --- */
+.sidebar-switch{display:flex;align-items:center;gap:2px;margin:6px 12px 2px;padding:3px;border:1px solid var(--border);border-radius:999px;background:#fff}
+.sidebar-switch a,.sidebar-switch span{min-height:34px;display:flex;align-items:center;justify-content:center;padding:0 14px;border-radius:999px;font-size:12.5px;font-weight:700;color:var(--ink);text-decoration:none}
+.sidebar-switch a:hover{color:var(--brand-red)}
+.sidebar-switch span[aria-current]{background:var(--brand-red);color:#fff}
+.sidebar[data-collapsed=true] .sidebar-switch{display:none}
+.identity-chip{display:flex;align-items:center;gap:9px;width:calc(100% - 16px);margin:0 8px 10px;padding:9px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;text-align:left}
+.identity-chip .av{width:32px;height:32px;border-radius:9px;background:#faecee;color:var(--brand-red);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+.identity-chip .who{min-width:0;flex:1}
+.identity-chip .who b{display:block;font-size:12.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.identity-chip .who small{display:block;font-size:10.5px;color:#8a9299}
+.identity-chip svg{color:#8a9299;flex:none}
+.sidebar[data-collapsed=true] .identity-chip{width:44px;margin:0 auto 10px;padding:6px}
+.sidebar[data-collapsed=true] .identity-chip .who,.sidebar[data-collapsed=true] .identity-chip svg{display:none}
+.mobile-topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.mobile-avatar{width:44px;height:44px;border:0;border-radius:10px;background:#faecee;color:var(--brand-red);display:grid;place-items:center;font-weight:800;font-size:13px;cursor:pointer}
+.sheet-backdrop{position:fixed;inset:0;z-index:98;background:rgba(15,24,39,.4)}
+.profile-sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(420px,calc(100vw - 24px));z-index:99;background:#fff;border:1px solid #e7e9eb;border-bottom:0;border-radius:14px 14px 0 0;box-shadow:0 -8px 24px rgba(15,24,39,.14)}
+.profile-sheet .sheet-handle{width:38px;height:5px;border-radius:99px;background:#dfe3e6;margin:10px auto 4px}
+.profile-sheet .sheet-head{display:flex;align-items:center;gap:10px;padding:8px 16px 12px;border-bottom:1px solid #edf0f1}
+.profile-sheet .sheet-head .av{width:40px;height:40px;border-radius:10px;background:#faecee;color:var(--brand-red);display:grid;place-items:center;font-weight:800;flex:none}
+.profile-sheet .sheet-head b{display:block;font-size:14px}
+.profile-sheet .sheet-head small{display:block;font-size:11.5px;color:#8a9299}
+.profile-sheet .sheet-switch{padding:10px 16px 2px;display:grid;gap:6px}
+.profile-sheet .sheet-switch small{font-size:10px;letter-spacing:.12em;font-weight:800;color:#959ba2}
+.profile-sheet .sheet-pill{margin:0}
+.profile-sheet .sheet-rows{padding:4px 8px 10px}
+.profile-sheet .sheet-row{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 10px;border:0;border-radius:8px;background:none;font-weight:600;font-size:13.5px;color:var(--ink);text-align:left;cursor:pointer}
+.profile-sheet .sheet-row:hover{background:#f4f5f6}
+.profile-sheet .sheet-row svg{flex:none;color:#56636d}
+.profile-sheet .sheet-row .sub{display:block;font-size:10.5px;font-weight:500;color:#959da5}
+.profile-sheet .sheet-row.exit{color:var(--brand-red)}
+.profile-sheet .sheet-row.exit svg{color:var(--brand-red)}

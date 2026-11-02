@@ -3,25 +3,30 @@ import type { ReactNode } from "react";
 import {
   IconActivity, IconAlertCircle, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
   IconChartBar, IconChevronDown, IconChevronLeft, IconChevronRight, IconCircleCheck, IconClock,
-  IconFilter, IconId, IconLayoutDashboard, IconMenu2, IconPlus,
+  IconId, IconLayoutDashboard, IconMenu2,
   IconSearch, IconSettings, IconShieldCheck, IconSparkles, IconUsers, IconX,
 } from "@tabler/icons-react";
 import {
-  AdminDrawer, Badge, BottomBar, Button, DataTable, Input,
-  PageHeader, StatCard, Table, TableBody, TableCell, TableHead, TableHeader,
-  TableRow, UnitCard,
+  AdminDrawer, Badge, BottomBar, Button, Input,
+  PageHeader, Table, TableBody, TableCell, TableHead, TableHeader,
+  TableRow,
 } from "ppij-design-system";
 import { ReviewWorkspace, reviewSamples } from "./ReviewWorkspace";
 import { MemberPage } from "./MemberPage";
 import { ManagementPage } from "./ManagementPage";
+import { MapCard, MapSideCard, type StatsTopic } from "./MapCard";
+import { FiguresBand } from "./FiguresBand";
+import { StatsPage } from "./StatsPage";
+import { formatCount, statsByScope, trendFor } from "./statsData";
 import previewPackage from "../package.json";
 import designSystemPackage from "../../../packages/ui/package.json";
 
-type Page = "dashboard" | "review" | "members" | "roles" | "units";
+type Page = "dashboard" | "stats" | "review" | "members" | "roles" | "units";
 type Scope = "national" | "korda" | "komsat";
 
 const nav: { id: Page; label: string; icon: typeof IconActivity }[] = [
   { id: "dashboard", label: "Dashboard", icon: IconLayoutDashboard },
+  { id: "stats", label: "Statistik", icon: IconChartBar },
   { id: "review", label: "Verifikasi", icon: IconShieldCheck },
   { id: "members", label: "Anggota", icon: IconUsers },
   { id: "roles", label: "Admin & Peran", icon: IconId },
@@ -84,6 +89,7 @@ export function App() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Semua");
   const [reviewInitialId, setReviewInitialId] = useState<string | null>(null);
+  const [statsTopic, setStatsTopic] = useState<StatsTopic>("anggota");
   const [drawer, setDrawer] = useState<{ title: string; kind: string; details: { label: string; value: string }[] } | null>(null);
   const [drawerStep, setDrawerStep] = useState<1 | 2>(1);
   const [drawerAction, setDrawerAction] = useState("");
@@ -120,14 +126,20 @@ export function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function goStats(topic: StatsTopic) {
+    setStatsTopic(topic); setPage("stats"); setMobileMore(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   const visibleNav = scope === "komsat" ? nav.filter((n) => n.id !== "units") : nav;
-  const queueCount = reviews.filter((r) => !["menunggu_anggota", "selesai"].includes(r.tab) && (scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo"))).length;
+  // The shell badge, the figures band, and the Antrean card share one source (production: GET /v1/admin/review counts.baru).
+  const queueCount = statsByScope[scope].review.baru;
   const scopedAdmins = admins.filter((a) => scope === "national" || (scope === "korda" ? ["Kanto", "Tokyo", "Yokohama", "Chiba", "Saitama"].includes(a.scope) : a.scope === "Tokyo"));
 
 
   const pageTitle = nav.find((n) => n.id === page)?.label ?? "Dashboard";
   const bottomItems = visibleNav.slice(0, 4).map((n) => ({ label: n.label === "Admin & Peran" ? "Peran" : n.label, href: `#${n.id}`, icon: <n.icon size={21} stroke={1.8} />, current: page === n.id, badge: n.id === "review" ? queueCount : undefined }));
-  if (visibleNav.length > 4) bottomItems.push({ label: "Lainnya", href: "#more", icon: <IconMenu2 size={21} stroke={1.8} />, current: page === "units", badge: undefined });
+  if (visibleNav.length > 4) bottomItems.push({ label: "Lainnya", href: "#more", icon: <IconMenu2 size={21} stroke={1.8} />, current: page === "units" || page === "roles", badge: undefined });
 
   return <div className="admin-app">
     <aside className="sidebar" data-collapsed={sidebarCollapsed} aria-label="Navigasi admin">
@@ -143,7 +155,8 @@ export function App() {
       <div className="mobile-topbar"><div className="mobile-brand"><img src="/ppij-logo.png" alt="PPI Jepang" /><span>Admin PPIJ</span></div><button className="mobile-scope" onClick={() => { setScopeOpen(!scopeOpen); setScopeQuery(""); }}>{scopes[scope].short}<IconChevronDown size={15} /></button>{scopeOpen && <div className="mobile-scope-menu"><Input value={scopeQuery} onChange={(event) => setScopeQuery(event.target.value)} placeholder="Cari korda atau komsat" aria-label="Cari korda atau komsat" />{(Object.keys(scopes) as Scope[]).filter((id) => `${scopes[id].label} ${scopes[id].type}`.toLocaleLowerCase("id").includes(scopeQuery.toLocaleLowerCase("id"))).map((id) => <button key={id} onClick={() => chooseScope(id)}>{scopes[id].label}</button>)}</div>}</div>
       <main id="main" className="content">
         <div className="preview-banner"><span><IconSparkles size={16} /> PRATINJAU ADMIN V1</span><p>Seluruh nama dan angka di halaman ini adalah data contoh.</p></div>
-        {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} openReview={goReview} />}
+        {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} goStats={goStats} openReview={goReview} />}
+        {page === "stats" && <StatsPage scope={scope} scopeName={scopes[scope].label} topic={statsTopic} onTopic={setStatsTopic} />}
         {page === "review" && <div className="verification-page-island"><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran dan perubahan data untuk ${scopePhrase[scope]}.`} />
           <ReviewWorkspace scope={scope} initialSelectedId={reviewInitialId} onNotice={demo} />
         </div>}
@@ -152,7 +165,7 @@ export function App() {
         <footer className="page-footer"><span>PPI Jepang · Admin preview v{previewPackage.version} · Design system v{designSystemPackage.version}</span><span>Data ilustratif · 31 Okt 2026</span></footer>
       </main>
     </div>
-    <div className="bottom-wrap" onClickCapture={(e) => { const link = (e.target as HTMLElement).closest("a[href^='#']"); if (!link) return; e.preventDefault(); const target = link.getAttribute("href")!.slice(1); if (target === "more") setMobileMore(!mobileMore); else go(target as Page); }}><BottomBar items={bottomItems} ariaLabel="Navigasi admin" />{mobileMore && <div className="more-menu"><button onClick={() => go("units")}><IconBuildingCommunity size={19} /> Organisasi</button><button onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={19} /> Bantuan & pengaturan</button></div>}</div>
+    <div className="bottom-wrap" onClickCapture={(e) => { const link = (e.target as HTMLElement).closest("a[href^='#']"); if (!link) return; e.preventDefault(); const target = link.getAttribute("href")!.slice(1); if (target === "more") setMobileMore(!mobileMore); else go(target as Page); }}><BottomBar items={bottomItems} ariaLabel="Navigasi admin" />{mobileMore && <div className="more-menu"><button onClick={() => go("units")}><IconBuildingCommunity size={19} /> Organisasi</button><button onClick={() => go("roles")}><IconId size={19} /> Admin & Peran</button><button onClick={() => demo("Pusat bantuan akan tersedia setelah integrasi.")}><IconSettings size={19} /> Bantuan & pengaturan</button></div>}</div>
     <AdminDrawer size="sm" density="compact" className="admin-detail-drawer" open={drawer !== null} onOpenChange={(open) => { if (!open) setDrawer(null); }} title={drawer?.title ?? "Detail"} description={drawer?.kind} locale="id" step={drawerStep} onBack={() => setDrawerStep(1)} footer={drawerStep === 2 ? <Button size="sm" onClick={() => { setDrawer(null); demo(`${drawerAction} adalah contoh alur. Tidak ada data yang berubah.`); }}>Konfirmasi {drawerAction.toLowerCase()} <IconArrowRight size={16} /></Button> : drawer?.kind.startsWith("Pengajuan") ? <><Button size="sm" variant="outline" onClick={() => previewAction("Minta perbaikan")}>Minta perbaikan</Button><Button size="sm" onClick={() => previewAction("Setujui")}>Setujui</Button></> : drawer?.kind === "Penugasan pengurus" ? <><Button size="sm" variant="outline" onClick={() => previewAction("Cabut akses")}>Cabut akses</Button><Button size="sm" onClick={() => previewAction("Ubah peran")}>Ubah peran</Button></> : drawer?.kind === "Profil anggota" ? <Button size="sm" onClick={() => previewAction("Lihat kartu")}>Lihat kartu <IconArrowRight size={16} /></Button> : drawer?.kind === "Korda" || drawer?.kind === "Komsat" ? <Button size="sm" onClick={() => previewAction("Ubah unit")}>Ubah unit <IconArrowRight size={16} /></Button> : <Button size="sm" onClick={() => previewAction("Lanjutkan")}>Lanjutkan <IconArrowRight size={16} /></Button>}>
       {drawer && (drawerStep === 1 ? <div className="drawer-body"><div className="drawer-stamp"><IconShieldCheck size={16} /><span>Informasi contoh untuk peninjauan desain</span></div><dl>{drawer.details.map((d) => <div key={d.label}><dt>{d.label}</dt><dd>{d.value}</dd></div>)}</dl>{drawer.kind.startsWith("Pengajuan") && <div className="review-checklist"><h3>Kelengkapan pengajuan</h3><div><IconCircleCheck size={17} /> Identitas anggota terisi</div><div><IconCircleCheck size={17} /> Komisariat dipilih</div><div><IconCircleCheck size={17} /> Dokumen pendukung tersedia</div><p>Periksa dokumen asli dan ketentuan izin sebelum membuat keputusan di aplikasi terintegrasi.</p></div>}{drawer.kind === "Alur undangan" && <div className="drawer-form"><label htmlFor="invite-email">Email calon anggota</label><Input id="invite-email" type="email" placeholder="nama@contoh.com" /></div>}{drawer.kind === "Alur penunjukan" && <div className="drawer-form"><label htmlFor="appoint-name">Nama anggota aktif</label><Input id="appoint-name" placeholder="Cari anggota" /><label htmlFor="appoint-role">Peran yang ditunjuk</label><select id="appoint-role" defaultValue="Verifikator"><option>Verifikator</option><option>Admin komsat</option><option>Admin korda</option></select></div>}{drawer.kind === "Alur organisasi" && <div className="drawer-form"><label htmlFor="unit-name">Nama unit</label><Input id="unit-name" placeholder="Nama korda atau komisariat" /></div>}<div className="drawer-note"><strong>Pratinjau alur</strong><p>Langkah dan izin akhir mengikuti aturan di aplikasi admin yang terintegrasi.</p></div></div> : <div className="confirm-panel"><span className="confirm-icon"><IconShieldCheck size={20} /></span><h3>Konfirmasi {drawerAction.toLowerCase()}?</h3><p>Anda sedang melihat rancangan alur untuk <strong>{drawer.title}</strong>. Konfirmasi di sini hanya memperlihatkan umpan balik desain; data tidak berubah.</p><div className="confirm-summary"><span>Tindakan</span><strong>{drawerAction}</strong><span>Cakupan</span><strong>{scopes[scope].label}</strong></div></div>)}
     </AdminDrawer>
@@ -168,13 +181,20 @@ function MobileFilters({ search, setSearch, filter, setFilter, options }: { sear
   return <div className="mobile-filters"><div className="mobile-search"><IconSearch size={16} /><Input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Cari daftar" placeholder="Cari nama atau ID" /></div><FilterPills options={options} current={filter} onChange={setFilter} /></div>;
 }
 
-function Dashboard({ scope, queueCount, go, openReview }: { scope: Scope; queueCount: number; go: (page: Page) => void; openReview: (id: string) => void }) {
-  const national = scope === "national";
+/** Map-first dashboard: hero map (full island width), its level side card, then grouped figures. */
+function Dashboard({ scope, queueCount, go, goStats, openReview }: { scope: Scope; queueCount: number; go: (page: Page) => void; goStats: (topic: StatsTopic) => void; openReview: (id: string) => void }) {
+  const stats = statsByScope[scope];
+  const trend = trendFor(6);
+  const lastNew = trend.new[trend.new.length - 1];
+  const prevNew = trend.new[trend.new.length - 2];
+  const pct = prevNew > 0 ? Math.round(((lastNew - prevNew) / prevNew) * 100) : 0;
+  const maxNew = Math.max(...trend.new);
   return <><div className="dashboard-intro"><div><span className="date-label">SABTU, 31 OKTOBER 2026</span><h1>Selamat datang, Pengurus.</h1><p>Ini yang perlu perhatian hari ini di {scopes[scope].label}.</p></div><Button variant="outline" onClick={() => go("review")}>Buka antrean <IconArrowRight size={17} /></Button></div>
-    <div className="stats-grid"><StatCard label="Anggota aktif" value={national ? "1.284" : scope === "korda" ? "452" : "218"} icon={<IconUsers />} delta="+12" deltaTone="success" hint="bulan ini" /><StatCard label="Menunggu verifikasi" value={String(queueCount)} icon={<IconClock />} hint="butuh peninjauan" /><StatCard label={national ? "Komsat aktif" : "Anggota baru"} value={national ? "26" : scope === "korda" ? "17" : "8"} icon={<IconBuildingCommunity />} hint={national ? "di 9 korda" : "bulan ini"} /><StatCard label="Kartu diterbitkan" value={national ? "1.102" : scope === "korda" ? "390" : "183"} icon={<IconId />} delta="+48" deltaTone="success" hint="bulan ini" /></div>
+    <MapCard key={scope} scope={scope} scopeName={scopes[scope].label} onOpenStats={goStats} />
+    <MapSideCard scope={scope} onOpenReview={() => go("review")} />
+    <FiguresBand scope={scope} onOpenTopic={goStats} />
     <div className="dashboard-columns"><section className="work-panel"><SectionHead title="Perlu perhatian" caption="Mulai dari pekerjaan yang paling mendesak." /><div className="priority-list"><button onClick={() => go("review")}><span className="priority-icon red"><IconShieldCheck size={19} /></span><span><strong>{queueCount} pengajuan menunggu verifikasi</strong><small>Berkas tertua diterima 8 hari lalu</small></span><IconArrowRight size={17} /></button><button onClick={() => go("members")}><span className="priority-icon amber"><IconUsers size={19} /></span><span><strong>Data anggota perlu pembaruan</strong><small>Tinjau profil dengan informasi yang belum lengkap</small></span><IconArrowRight size={17} /></button></div></section>
-      <section className="work-panel pulse-panel"><SectionHead title="Aktivitas bulan ini" caption="Gambaran singkat pergerakan anggota." /><div className="chart-top"><div><strong>+48</strong><span>anggota baru</span></div><Badge variant="success">Naik 12%</Badge></div><div className="bar-chart" aria-label="Grafik ilustratif anggota baru selama enam bulan">{[42, 56, 49, 72, 61, 86].map((h, i) => <span key={i} style={{ height: `${h}%` }} />)}</div><div className="chart-axis"><span>Mei</span><span>Jun</span><span>Jul</span><span>Agu</span><span>Sep</span><span>Okt</span></div></section></div>
+      <section className="work-panel pulse-panel"><SectionHead title="Aktivitas bulan ini" caption="Anggota baru per bulan, enam bulan terakhir." /><div className="chart-top"><div><strong>+{formatCount(stats.tiles.new_this_month)}</strong><span>anggota baru</span></div><Badge variant={pct >= 0 ? "success" : "destructive"}>{pct >= 0 ? "Naik" : "Turun"} {Math.abs(pct)}%</Badge></div><div className="bar-chart" aria-label="Anggota baru per bulan, enam bulan terakhir">{trend.new.map((h, i) => <span key={i} style={{ height: `${Math.max(6, (h / maxNew) * 100)}%` }} />)}</div><div className="chart-axis">{trend.labels.map((label) => <span key={label}>{label}</span>)}</div><p className="stat-footnote">Seri contoh — kontrak produksi: GET /v1/admin/stats/timeseries.</p></section></div>
     <section className="recent-section"><SectionHead title="Pengajuan terbaru" caption="Ringkasan pendaftaran yang masuk ke antrean." action={<Button variant="ghost" size="sm" onClick={() => go("review")}>Lihat semua <IconArrowRight size={16} /></Button>} /><div className="recent-list">{reviews.slice(0, 3).filter((r) => scope === "national" || (scope === "korda" ? ["Tokyo", "Yokohama"].includes(r.unit) : r.unit === "Tokyo")).map((r) => <button key={r.id} onClick={() => openReview(r.id)}><Person initials={r.initials} name={r.name} detail={`${r.id} · ${r.unit}`} /><span>{r.received}</span><Badge variant={r.tab === "dikirim_ulang" ? "warning" : "secondary"}>{r.tab === "dikirim_ulang" ? "Dikirim ulang" : "Baru"}</Badge><IconChevronRight size={18} /></button>)}</div></section>
-    <section className="network-section"><SectionHead title={national ? "Jaringan PPI Jepang" : "Cakupan anggota"} caption={national ? "Sebaran anggota dan kelengkapan data di seluruh jaringan." : `Ringkasan unit dalam ${scopes[scope].label}.`} action={scope !== "komsat" && <Button variant="ghost" size="sm" onClick={() => go("units")}>Lihat organisasi <IconArrowRight size={16} /></Button>} /><div className="network-strip"><div><strong>{national ? "9" : scope === "korda" ? "4" : "1"}</strong><span>{national ? "Koordinator daerah" : "Unit aktif"}</span></div><div><strong>{national ? "26" : scope === "korda" ? "4" : "218"}</strong><span>{national || scope === "korda" ? "Komisariat aktif" : "Anggota terdaftar"}</span></div><div><strong>{national ? "74%" : scope === "korda" ? "79%" : "82%"}</strong><span>Profil lengkap</span></div></div><div className="coverage"><div className="coverage-head"><strong>{scope === "komsat" ? "Kelengkapan data anggota" : "Sebaran anggota"}</strong><span>Data contoh</span></div>{(scope === "national" ? [{ name: "Kanto", value: 452, width: 100 }, { name: "Kansai", value: 306, width: 68 }, { name: "Chubu", value: 183, width: 40 }, { name: "Kyushu", value: 104, width: 23 }] : scope === "korda" ? [{ name: "Tokyo", value: 218, width: 100 }, { name: "Yokohama", value: 96, width: 44 }, { name: "Chiba", value: 74, width: 34 }, { name: "Saitama", value: 64, width: 29 }] : [{ name: "Profil lengkap", value: 179, width: 82 }, { name: "Perlu pembaruan", value: 39, width: 18 }]).map((item) => <div className="coverage-row" key={item.name}><span>{item.name}</span><div aria-hidden="true"><i style={{ width: `${item.width}%` }} /></div><strong>{item.value}</strong></div>)}</div></section>
   </>;
 }

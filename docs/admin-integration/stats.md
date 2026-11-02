@@ -107,4 +107,10 @@ Powers cross-filtered aggregates: facet counts over an arbitrary filter combinat
 
 - The warehouse dataset is synthetic and seed-generated; its quotas are tied to the dashboard figures (aktif per komsat equals the map counts, completeness equals the dashboard bar, review states equal the queue counts, and the last trend bucket equals `tiles.new_this_month`), so no preview view can contradict the dashboard.
 - Trend cards and facet aggregates footnote their production contract (gap 1 or gap 4) instead of implying the preview talks to a server.
+- On phones (≤600px) the registration-period facet defaults to the last 6 months; 12 months stays selectable (Q15).
+- English i18n keys for the new Statistik strings are drafted at integration time; this repository owns no translations (Q17).
 - Do not migrate the preview's generator, series, footnotes, or demo callbacks; server responses decide every figure.
+
+## Adoption
+
+Implementing `GET /v1/admin/stats/*` follows `ppij-identity`'s own approved OpenSpec change; the contracts in this document are the design source those specs implement, not a license to add endpoints from a chat message (Q18).

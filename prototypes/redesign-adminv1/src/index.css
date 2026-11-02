@@ -48,7 +48,7 @@
 .map-card-head h2{font-size:18px;letter-spacing:-.02em;font-weight:800;margin:0 0 4px}
 .map-card-head p{margin:0;font-size:13px;color:#79818a;line-height:1.5}
 .map-head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:none}
-.map-expand{display:inline-flex;align-items:center;gap:6px;border:1px solid #e0e3e6;background:#fff;border-radius:8px;padding:9px 12px;font-size:13px;font-weight:700;color:#40484f}
+.map-expand{display:inline-flex;align-items:center;gap:6px;height:32px;border:1px solid #e0e3e6;background:#fff;border-radius:8px;padding:0 12px;font-size:13px;font-weight:700;color:#40484f}
 .map-expand:hover{background:#f4f5f6}
 .map-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--brand-red);background:#fff;color:var(--brand-ink);border-radius:99px;padding:7px 12px;font-size:12px;font-weight:700}
 .map-chip span{color:#8a9299;font-weight:800}
@@ -90,7 +90,7 @@
 .map-unmapped{margin:10px 0 0;font-size:12px;color:#8a9299}
 @media(min-width:900px){.map-panel-overlay{display:block}.map-panel-inline{display:none}.map-card-expanded .map-sheet{display:none}}
 @media(max-width:899px){.map-canvas{height:320px}}
-@media(max-width:600px){.map-canvas{height:240px}.map-card{padding:16px}.map-footer strong{font-size:18px}.map-footer>div{padding:0 10px}}
+@media(max-width:600px){.map-canvas{height:240px}.map-card{padding:16px}.map-footer strong{font-size:18px}.map-footer>div{padding:0 10px}.map-expand{height:44px}}
 
 /* --- Dashboard: level side card below the map (Cakupan / Klaim / Antrean) --- */
 .side-card{background:#fff;border:1px solid #e7e9eb;border-radius:11px;padding:22px;margin-bottom:22px}
@@ -193,3 +193,7 @@
 .warehouse-totals span{font-size:11px;color:#7d858e}
 @media(max-width:1100px){.warehouse-facets{grid-template-columns:repeat(2,minmax(0,1fr))}.warehouse-totals{grid-template-columns:repeat(3,minmax(0,1fr))}.warehouse-totals>div:nth-child(3){border-right:0}.warehouse-totals>div{padding:6px 12px}}
 @media(max-width:600px){.warehouse-facets{grid-template-columns:1fr}.warehouse-totals{grid-template-columns:repeat(2,minmax(0,1fr))}.warehouse-totals>div{border-right:0;padding:6px 10px}}
+
+/* --- Page toolbar sizing rule: sm buttons (32px) + compact h-8 inputs at desktop/tablet; 44px/16px only <=600px --- */
+@media(min-width:601px){.warehouse-search [data-slot=input]{height:2rem;min-height:2rem;font-size:13px}.warehouse-facets .member-multi-trigger{min-height:2rem;font-size:13px}}
+@media(max-width:600px){.warehouse-search [data-slot=input]{height:44px;min-height:44px;font-size:16px}}

@@ -174,10 +174,10 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
       actions={
         <div className="stats-header-actions">
           <Button size="sm" variant="outline" onClick={() => setFiltersOpen((open) => !open)} aria-expanded={filtersOpen}>
-            <IconFilter size={15} /> Filter{activeCount > 0 ? ` (${activeCount})` : ""}
+            <IconFilter size={16} /> Filter{activeCount > 0 ? ` (${activeCount})` : ""}
           </Button>
           <Button size="sm" onClick={exportNow} disabled={filtered.length === 0}>
-            <IconDownload size={15} /> Unduh CSV ({formatCount(filtered.length)})
+            <IconDownload size={16} /> Unduh CSV ({formatCount(filtered.length)})
           </Button>
         </div>
       }

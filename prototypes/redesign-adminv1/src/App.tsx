@@ -189,7 +189,7 @@ function Dashboard({ scope, queueCount, go, goStats, openReview }: { scope: Scop
   const prevNew = trend.new[trend.new.length - 2];
   const pct = prevNew > 0 ? Math.round(((lastNew - prevNew) / prevNew) * 100) : 0;
   const maxNew = Math.max(...trend.new);
-  return <><div className="dashboard-intro"><div><span className="date-label">SABTU, 31 OKTOBER 2026</span><h1>Selamat datang, Pengurus.</h1><p>Ini yang perlu perhatian hari ini di {scopes[scope].label}.</p></div><Button variant="outline" onClick={() => go("review")}>Buka antrean <IconArrowRight size={17} /></Button></div>
+  return <><div className="dashboard-intro"><div><span className="date-label">SABTU, 31 OKTOBER 2026</span><h1>Selamat datang, Pengurus.</h1><p>Ini yang perlu perhatian hari ini di {scopes[scope].label}.</p></div><Button size="sm" variant="outline" onClick={() => go("review")}>Buka antrean <IconArrowRight size={16} /></Button></div>
     <MapCard key={scope} scope={scope} scopeName={scopes[scope].label} onOpenStats={goStats} />
     <MapSideCard scope={scope} onOpenReview={() => go("review")} />
     <FiguresBand scope={scope} onOpenTopic={goStats} />

@@ -36,3 +36,14 @@ The preview detail now groups membership, email delivery/last send, education, a
 - No sample members or local-only invitation behavior reaches production.
 
 Invitation cancellation and resend now require a confirmation that names the affected email. The preview also supports editing name/email with validation and local save. Production currently has an email correction action for failed delivery; before integrating general name/email editing, add an approved API contract for pending invitations with full-name and email fields, scoped authorization, conflict handling, audit logging, and explicit rules for invalidating/resending links after an address changes. Accepted invitations must not edit the member profile through this action.
+
+## Member status actions (API gap)
+
+The member detail drawer shows status actions (Tangguhkan, Aktifkan kembali, Transfer komsat, Cabut) gated by the production RBAC matrix (`docs/rbac.md`): suspend/reactivate need Admin Korda or Admin Nasional, revoke needs Admin Nasional, and a komsat admin sees no status actions. Production has no endpoints for any of them — the membership status enum exists (`members.status`: ACTIVE, EXPIRED, SUSPENDED, REVOKED, plus INCOMPLETE for imported pre-activation) and `suspend_reason` is already a known field. Contracts to implement, all audit-logged and scoped to the caller's subtree (target outside the subtree answers 404, per the RBAC convention; missing permission answers 403):
+
+- `POST /v1/admin/members/{id}/suspend` — body `{ "reason": string }` (required, stored as `suspend_reason`). Precondition: status ACTIVE → SUSPENDED. Korda and national admins.
+- `POST /v1/admin/members/{id}/reactivate` — no body. Precondition: SUSPENDED → ACTIVE with the same validity window. Korda and national admins.
+- `POST /v1/admin/members/{id}/transfer` — body `{ "target_komsat_id": uuid }`. Precondition: ACTIVE; the target komsat must lie inside the caller's scope. Korda and national admins (production today only moves members in bulk through claim approval). Response carries the updated `komsat_id`/`komsat_name`.
+- `POST /v1/admin/members/{id}/revoke` — body `{ "reason": string }` (required). Precondition: ACTIVE or SUSPENDED → REVOKED. National admin only; irreversible — re-entry happens through a new registration. This is the existing `revoke_membership` permission; no korda/komsat variant may be added without an RBAC change.
+
+Shared rules: wrong current status answers 409 `invalid_status`; every action writes an audit row (who, when, scope, reason); review approval keeps refusing to re-activate SUSPENDED/REVOKED memberships without the korda/national override (`ErrMembershipBlocked`); EXPIRED and INCOMPLETE are intentionally untouched — expiry is automatic and INCOMPLETE belongs to the member-activation flow.

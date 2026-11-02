@@ -17,7 +17,7 @@ const members: Member[] = [
 ];
 const units = ["Tokyo", "Yokohama", "Chiba", "Saitama", "Osaka", "Kyoto", "Nagoya", "Fukuoka"];
 
-export function MemberWorkspace({ scope }: { scope: Scope }) {
+export function MemberWorkspace({ scope, onNotice }: { scope: Scope; onNotice?: (message: string) => void }) {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string[]>([]);
   const [komsat, setKomsat] = useState<string[]>([]);
@@ -28,9 +28,15 @@ export function MemberWorkspace({ scope }: { scope: Scope }) {
   const [source, setSource] = useState<string[]>([]);
   const [activation, setActivation] = useState<string[]>([]);
   const [expiry, setExpiry] = useState<string[]>([]);
-  const [selected, setSelected] = useState<Member | null>(null);
+  const [roster, setRoster] = useState(members);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const scoped = useMemo(() => members.filter((member) => scope === "national" || (scope === "korda" ? member.region === "Kanto" : member.komsat === "Tokyo")), [scope]);
+  const scoped = useMemo(() => roster.filter((member) => scope === "national" || (scope === "korda" ? member.region === "Kanto" : member.komsat === "Tokyo")), [roster, scope]);
+  const selected = roster.find((member) => member.id === selectedId) ?? null;
+  const applyStatus = (id: string, status: string, message: string) => {
+    setRoster((current) => current.map((member) => (member.id === id ? { ...member, status } : member)));
+    onNotice?.(message);
+  };
   const visible = scoped.filter((member) => {
     const q = search.trim().toLocaleLowerCase("id");
     const inGroup = (values: string[], value: string) => values.length === 0 || values.includes(value);
@@ -65,16 +71,40 @@ export function MemberWorkspace({ scope }: { scope: Scope }) {
         <SearchableMultiSelect label="Masa berlaku" values={expiry} options={["30 hari ke depan", "60 hari ke depan", "Kedaluwarsa"]} allLabel="Semua masa berlaku" onChange={setExpiry} />
       </div>
     </AdminDrawer>
-    <div className="member-table"><Table><TableHeader><TableRow><TableHead>Anggota</TableHead><TableHead>No. anggota</TableHead><TableHead>Komsat</TableHead><TableHead>Pendidikan</TableHead><TableHead>Status</TableHead><TableHead>Berlaku sampai</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{visible.map((member) => <TableRow key={member.id}><TableCell><strong>{member.name}</strong><small>{member.email}</small></TableCell><TableCell>{member.id}</TableCell><TableCell>{member.komsat}</TableCell><TableCell><strong>{member.institution}</strong><small>{member.degree} · {member.major}</small></TableCell><TableCell><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge>{member.badge && <small>{member.badge}</small>}</TableCell><TableCell>{member.validUntil}</TableCell><TableCell><Button size="sm" variant="ghost" onClick={() => setSelected(member)}>Detail <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
-    <div className="member-mobile-list">{visible.map((member) => <button type="button" key={member.id} onClick={() => setSelected(member)}><span className="member-mobile-top"><strong>{member.name}</strong><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge></span><small>{member.email}</small><span>No. {member.id} · {member.komsat}</span><span>{member.institution} · {member.degree}</span><span>Berlaku sampai {member.validUntil}<IconArrowRight size={17} /></span></button>)}</div>
+    <div className="member-table"><Table><TableHeader><TableRow><TableHead>Anggota</TableHead><TableHead>No. anggota</TableHead><TableHead>Komsat</TableHead><TableHead>Pendidikan</TableHead><TableHead>Status</TableHead><TableHead>Berlaku sampai</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{visible.map((member) => <TableRow key={member.id}><TableCell><strong>{member.name}</strong><small>{member.email}</small></TableCell><TableCell>{member.id}</TableCell><TableCell>{member.komsat}</TableCell><TableCell><strong>{member.institution}</strong><small>{member.degree} · {member.major}</small></TableCell><TableCell><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge>{member.badge && <small>{member.badge}</small>}</TableCell><TableCell>{member.validUntil}</TableCell><TableCell><Button size="sm" variant="ghost" onClick={() => setSelectedId(member.id)}>Detail <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
+    <div className="member-mobile-list">{visible.map((member) => <button type="button" key={member.id} onClick={() => setSelectedId(member.id)}><span className="member-mobile-top"><strong>{member.name}</strong><Badge variant={member.status === "Aktif" ? "success" : "warning"}>{member.status}</Badge></span><small>{member.email}</small><span>No. {member.id} · {member.komsat}</span><span>{member.institution} · {member.degree}</span><span>Berlaku sampai {member.validUntil}<IconArrowRight size={17} /></span></button>)}</div>
     {visible.length === 0 && <div className="member-empty"><IconSearch size={25} /><strong>Tidak ada anggota yang cocok</strong><p>Coba kata kunci atau filter lain.</p><Button variant="outline" size="sm" onClick={clear}>Hapus filter</Button></div>}
-    <AdminDrawer size="lg" density="compact" open={Boolean(selected)} onOpenChange={(open) => { if (!open) setSelected(null); }} title={selected?.name ?? "Detail anggota"} description={selected?.id} locale="id" className="member-detail-drawer">
-      {selected && <MemberDetail member={selected} />}
+    <AdminDrawer size="lg" density="compact" open={Boolean(selected)} onOpenChange={(open) => { if (!open) setSelectedId(null); }} title={selected?.name ?? "Detail anggota"} description={selected?.id} locale="id" className="member-detail-drawer">
+      {selected && <MemberDetail member={selected} scope={scope} onStatus={(status, message) => { applyStatus(selected.id, status, message); if (status === "Dicabut") setSelectedId(null); }} />}
     </AdminDrawer>
   </section>;
 }
 
-function MemberDetail({ member }: { member: Member }) {
+type DrawerAction = "tangguhkan" | "aktifkan" | "transfer" | "cabut" | null;
+
+const actionLabels: Record<Exclude<DrawerAction, null>, string> = {
+  tangguhkan: "Tangguhkan",
+  aktifkan: "Aktifkan kembali",
+  transfer: "Transfer komsat",
+  cabut: "Cabut keanggotaan",
+};
+
+/**
+ * Status-action authority, from production docs/rbac.md (permission matrix): suspend/reactivate
+ * and transfer need Admin Korda or Admin Nasional; revoke needs Admin Nasional. The endpoints
+ * themselves do not exist yet — the contracts are declared in docs/admin-integration/anggota.md.
+ */
+function allowedActions(status: string, scope: Scope): Exclude<DrawerAction, null>[] {
+  if (scope === "komsat") return [];
+  if (status === "Aktif") return scope === "national" ? ["tangguhkan", "transfer", "cabut"] : ["tangguhkan", "transfer"];
+  if (status === "Ditangguhkan") return ["aktifkan"];
+  return [];
+}
+
+function MemberDetail({ member, scope, onNotice, onStatus }: { member: Member; scope: Scope; onNotice?: (message: string) => void; onStatus: (status: string, message: string) => void }) {
+  const [action, setAction] = useState<DrawerAction>(null);
+  const [reason, setReason] = useState("");
+  const [target, setTarget] = useState("");
   const [revealed, setRevealed] = useState(false);
   const delivery = member.activation === "Email bermasalah" ? "Gagal dikirim" : member.activation === "Belum aktivasi" ? "Belum dikonfirmasi" : "Terkirim";
   const lastEmail = member.activation === "Belum aktivasi" ? "Belum ada email tercatat" : "Informasi keanggotaan · 30 Okt 2026";
@@ -87,6 +117,45 @@ function MemberDetail({ member }: { member: Member }) {
     <section className="member-sensitive"><div className="member-sensitive-head"><IconShield size={18} /><h3>Data pribadi sensitif</h3>{revealed && <span><IconLock size={13} /> Contoh terbuka</span>}</div>
       <FieldList rows={[["Tanggal lahir", revealed ? "17 Agustus 1999" : "••/••/1999"], ["Telepon", revealed ? "+81 90 0000 0000" : "+81 •• •••• ••••"], ["Kontak darurat", revealed ? "Kontak Contoh (keluarga) · +62 800 0000 0000" : "Kontak Contoh (keluarga) · nomor disembunyikan"], ["Dokumen", revealed ? "Kartu pelajar contoh · JPG · 31 Okt 2026" : "Berkas tersedia · detail disembunyikan"]]} />
       {revealed ? <p className="member-sensitive-note"><IconFileText size={15} /> Nilai ini hanya data contoh. Di portal terintegrasi, akses dokumen dan data sensitif dicatat dalam audit.</p> : <><p className="member-sensitive-note">Membuka data sensitif di portal terintegrasi akan dicatat dalam audit.</p><Button type="button" className="member-reveal-button" onClick={() => setRevealed(true)}><IconEye size={16} /> Buka data contoh</Button></>}
+    </section>
+    <section className="member-actions"><div className="member-actions-head"><h3>Tindakan status</h3><p>Wewenang mengikuti matriks RBAC produksi; endpoint aksi belum ada — kontraknya di docs/admin-integration/anggota.md.</p></div>
+      {allowedActions(member.status, scope).length === 0 ? (
+        <p className="member-actions-note">{scope === "komsat" ? "Tindakan status memerlukan wewenang admin korda atau nasional." : member.status === "Dicabut" ? "Keanggotaan yang dicabut bersifat final; aktif kembali hanya melalui pendaftaran baru." : "Tidak ada tindakan status untuk keanggotaan kedaluwarsa — perpanjangan melalui alur pendaftaran anggota."}</p>
+      ) : action === null ? (
+        <div className="member-action-buttons">
+          {allowedActions(member.status, scope).map((key) => (
+            <Button key={key} size="sm" variant={key === "cabut" ? "destructive" : "outline"} onClick={() => { setAction(key); setReason(""); setTarget(""); }}>{actionLabels[key]}</Button>
+          ))}
+        </div>
+      ) : (
+        <div className="member-action-pane">
+          <p className="member-action-title">{actionLabels[action]}: <strong>{member.name}</strong></p>
+          {action === "transfer" ? (<>
+            <label className="member-action-field"><span>Komsat tujuan</span>
+              <select value={target} onChange={(event) => setTarget(event.target.value)}>
+                <option value="">Pilih komsat tujuan</option>
+                {units.filter((unit) => unit !== member.komsat).map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+              </select>
+            </label>
+            <p className="member-action-copy">Perpindahan memindahkan keanggotaan aktif beserta data profilnya ke komsat tujuan.</p>
+          </>) : action === "aktifkan" ? (
+            <p className="member-action-copy">Keanggotaan kembali Aktif dengan masa berlaku yang sama.</p>
+          ) : (
+            <label className="member-action-field"><span>Alasan {action === "cabut" ? "pencabutan" : "penangguhan"} (wajib)</span>
+              <textarea value={reason} onChange={(event) => setReason(event.target.value)} rows={3} placeholder={action === "cabut" ? "Contoh: pelanggaran AD/ART" : "Contoh: menunggu klarifikasi pembayaran"} />
+            </label>
+          )}
+          {action === "cabut" ? <p className="member-action-copy warn">Pencabutan bersifat final dan hanya dapat dilakukan Admin Nasional. Anggota memerlukan pendaftaran baru untuk aktif kembali.</p> : null}
+          <div className="member-action-buttons">
+            <Button size="sm" variant="outline" onClick={() => setAction(null)}>Batal</Button>
+            <Button size="sm" variant={action === "aktifkan" ? "default" : "destructive"} disabled={(action === "tangguhkan" || action === "cabut") && reason.trim().length < 4 || action === "transfer" && !target} onClick={() => {
+              const detail = action === "transfer" ? `ke ${target}` : "";
+              onStatus(action === "aktifkan" ? "Aktif" : action === "cabut" ? "Dicabut" : member.status, `Tindakan contoh: ${member.name} ${actionLabels[action].toLowerCase()} ${detail} — kontrak produksi di anggota.md.`);
+              setAction(null);
+            }}>{action === "transfer" ? "Tinjau & transfer" : `Konfirmasi ${actionLabels[action].toLowerCase()}`}</Button>
+          </div>
+        </div>
+      )}
     </section>
   </div>;
 }

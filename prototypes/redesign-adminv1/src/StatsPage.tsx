@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { IconDownload, IconFilter, IconFilterOff, IconSearch, IconTrendingDown, IconTrendingUp, IconX } from "@tabler/icons-react";
-import { Badge, Button, PageHeader, SearchFilter, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "ppij-design-system";
+import { Badge, Button, PageHeader, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "ppij-design-system";
 import { komsats, komsatsOfKorda, kordas, type Scope } from "./mapData";
 import { coverageKorda, coverageNational, formatCount } from "./statsData";
 import {
@@ -118,7 +118,7 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
   const clearAll = () => setFilters({ ...emptyFilters });
 
   const activeFacets: [FacetKey, string][] = facetOrder.flatMap((key) => filters[key].map((value) => [key, value] as [FacetKey, string]));
-  const activeCount = activeFacets.length + (filters.monthsBack > 0 ? 1 : 0) + (filters.q ? 1 : 0);
+  const activeCount = activeFacets.length + (filters.monthsBack > 0 ? 1 : 0);
 
   const rootKomsats = scope === "korda" ? komsatsOfKorda("u-kanto") : scope === "komsat" ? komsatsOfKorda("u-kanto").filter((k) => k.unit_id === "u-tokyo") : komsats;
   const facetKorda = filters.korda.length > 0 && scope === "national" ? kordas.filter((k) => filters.korda.includes(k.name)) : null;
@@ -189,12 +189,6 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
           <button key={v.id} role="tab" aria-selected={topic === v.id} className={topic === v.id ? "selected" : ""} onClick={() => onTopic(v.id)}>{v.label}</button>
         ))}
       </div>
-      <SearchFilter
-        className="warehouse-search"
-        searchValue={filters.q}
-        onSearchChange={(q) => setFilters((current) => ({ ...current, q }))}
-        searchPlaceholder="Cari nama, institusi, no. anggota"
-      />
     </div>
 
     {filtersOpen ? (
@@ -224,11 +218,6 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
 
     {activeCount > 0 ? (
       <div className="warehouse-chips" aria-label="Filter aktif">
-        {filters.q ? (
-          <button type="button" className="warehouse-chip" onClick={() => setFilters((current) => ({ ...current, q: "" }))}>
-            Cari: {filters.q} <IconX size={13} />
-          </button>
-        ) : null}
         {filters.monthsBack > 0 ? (
           <button type="button" className="warehouse-chip" onClick={() => setFilters((current) => ({ ...current, monthsBack: 0 }))}>
             {filters.monthsBack} bulan terakhir <IconX size={13} />

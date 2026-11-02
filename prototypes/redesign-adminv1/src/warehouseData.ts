@@ -390,7 +390,6 @@ export type FacetKey =
   | "funding" | "source" | "category" | "completeness" | "expiry" | "card" | "kind";
 
 export interface Filters {
-  q: string;
   monthsBack: 0 | 3 | 6 | 12;
   state: string[];
   korda: string[];
@@ -409,7 +408,7 @@ export interface Filters {
 }
 
 export const emptyFilters: Filters = {
-  q: "", monthsBack: 0,
+  monthsBack: 0,
   state: [], korda: [], komsat: [], degree: [], field: [], institution: [], province: [],
   funding: [], source: [], category: [], completeness: [], expiry: [], card: [], kind: [],
 };
@@ -430,10 +429,6 @@ export function rowsInScope(scope: Scope): WarehouseRow[] {
 }
 
 export function matches(row: WarehouseRow, filters: Filters): boolean {
-  if (filters.q) {
-    const needle = filters.q.toLocaleLowerCase("id");
-    if (![row.name, row.institution, row.major, row.id].some((v) => v.toLocaleLowerCase("id").includes(needle))) return false;
-  }
   const multi: [FacetKey, string | string[]][] = [
     ["state", row.state], ["korda", row.korda], ["komsat", row.komsat], ["degree", row.degree],
     ["field", row.field], ["institution", row.institution], ["province", row.province],

@@ -170,8 +170,8 @@
 
 /* --- Statistik: data warehouse (facets, chips, totals, export) --- */
 .stats-header-actions{display:flex;gap:8px;flex-wrap:wrap}
-.warehouse-toolbar{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin:18px 0 14px}
-.warehouse-search{min-width:min(320px,100%)}
+.warehouse-toolbar{display:flex;align-items:end;gap:14px;flex-wrap:wrap;margin:18px 0 14px}
+
 .warehouse-panel{background:#fff;border:1px solid #e7e9eb;border-radius:11px;padding:0;margin-bottom:14px}
 .warehouse-panel summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 18px;font-weight:800;font-size:14px;letter-spacing:-.01em;color:var(--brand-ink)}
 .warehouse-panel summary::-webkit-details-marker{display:none}
@@ -195,5 +195,5 @@
 @media(max-width:600px){.warehouse-facets{grid-template-columns:1fr}.warehouse-totals{grid-template-columns:repeat(2,minmax(0,1fr))}.warehouse-totals>div{border-right:0;padding:6px 10px}}
 
 /* --- Page toolbar sizing rule: sm buttons (32px) + compact h-8 inputs at desktop/tablet; 44px/16px only <=600px --- */
-@media(min-width:601px){.warehouse-search [data-slot=input]{height:2rem;min-height:2rem;font-size:13px}.warehouse-facets .member-multi-trigger{min-height:2rem;font-size:13px}}
-@media(max-width:600px){.warehouse-search [data-slot=input]{height:44px;min-height:44px;font-size:16px}}
+@media(min-width:601px){.warehouse-facets .member-multi-trigger{min-height:2rem;font-size:13px}}
+

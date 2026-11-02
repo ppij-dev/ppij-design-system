@@ -4,7 +4,7 @@ Read [shared shell rules](README.md) and [dashboard.md](dashboard.md) first. Pre
 
 ## The data warehouse
 
-The Statistik page is an explorable dataset, not a fixed report: facet menus over every registration dimension, active-filter chips with per-value counts, aggregates that always recompute from the current filter set, and a **client-side CSV export** (Blob + anchor download, UTF-8 with BOM, `statistik-ppiij-<scope>-<view>-<date>.csv`, `;`-separated). No server round trip happens in the preview. In production, aggregate exports stay the default and are served from counts; **any member-level export must run through the audited export contract (gap 5)** — never by shipping masked-by-default directory rows to the browser in bulk.
+The Statistik page is an explorable dataset, not a fixed report: facet menus over every registration dimension, active-filter chips with per-value counts, aggregates that always recompute from the current filter set, and a **client-side CSV export** (Blob + anchor download, UTF-8 with BOM, `statistik-ppiij-<scope>-<view>-<date>.csv`, `;`-separated). No server round trip happens in the preview. There is **no free-text search on the stats page by design** — narrowing happens through facets only; free-text member search belongs to the Anggota directory, and any future text matching here would be a new contract addition on top of the distributions/filters spec below. In production, aggregate exports stay the default and are served from counts; **any member-level export must run through the audited export contract (gap 5)** — never by shipping masked-by-default directory rows to the browser in bulk.
 
 ## Facet inventory (registration dimensions, from `ppij-identity`)
 

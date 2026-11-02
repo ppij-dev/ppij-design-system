@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opsi Switcher Portal↔Admin + Profil Pengguna — Pratinjau Admin PPIJ</title>
+<style>
+  :root{
+    --red:#c8102e; --ink:#1d2630; --muted:#6c747d; --border:#e4e7ea; --bg:#f6f7f8;
+    --card:#fff; --chip:#faecee;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.5}
+  header.page{padding:28px 32px 8px}
+  header.page h1{margin:0 0 6px;font-size:22px;letter-spacing:-.02em}
+  header.page p{margin:0;color:var(--muted);max-width:900px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(560px,1fr));gap:24px;padding:24px 32px 48px}
+  .option{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px}
+  .option>h2{margin:0 0 2px;font-size:16px}
+  .option>h2 span{color:var(--red)}
+  .option>p.note{margin:0 0 16px;color:var(--muted);font-size:12.5px}
+  .demo{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+  .frame{background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex:none}
+  .frame.desktop{width:300px}
+  .frame.phone{width:300px}
+  .frame .cap{padding:7px 12px;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);
+    border-bottom:1px solid var(--border);background:#fbfcfc}
+  /* --- shared admin pieces --- */
+  .brand{display:flex;align-items:center;gap:10px;padding:18px 14px 14px}
+  .logo{width:34px;height:34px;border:1px solid #e7e7e7;border-radius:9px;display:grid;place-items:center;
+    background:#fff;color:var(--red);font-weight:800;font-size:12px}
+  .brand b{display:block;font-size:14px;letter-spacing:-.02em;line-height:1.1}
+  .brand small{display:block;font-size:9.5px;letter-spacing:.14em;font-weight:800;color:#868d95}
+  .nav-caption{font-size:10px;letter-spacing:.12em;color:#959ba2;font-weight:800;margin:14px 12px 8px}
+  .nav{display:grid;gap:3px;padding:0 8px}
+  .nav i{display:flex;align-items:center;gap:10px;height:38px;border-radius:8px;padding:0 10px;
+    color:#555d66;font-weight:600;font-style:normal;font-size:13px}
+  .nav i.active{background:var(--chip);color:var(--red);font-weight:800}
+  .nav i b{width:14px;height:14px;border-radius:4px;background:currentColor;opacity:.55;display:inline-block}
+  /* production ViewSwitch pill (issue #70): 44px segments, current side filled red */
+  .viewswitch{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--border);border-radius:999px;
+    background:#fff;padding:3px}
+  .viewswitch a{min-height:44px;display:flex;align-items:center;justify-content:center;padding:0 16px;
+    border-radius:999px;font-weight:600;font-size:13.5px;text-decoration:none;color:var(--ink);
+    white-space:nowrap;flex:none}
+  .viewswitch a.current{background:var(--red);color:#fff;font-weight:700}
+  .viewswitch.compact a{min-height:34px;padding:0 12px;font-size:12.5px}
+  /* identity chip */
+  .identity{display:flex;align-items:center;gap:10px;width:calc(100% - 16px);margin:10px 8px 8px;padding:9px 10px;
+    border:1px solid var(--border);border-radius:10px;background:#fff;text-align:left}
+  .identity .av{width:32px;height:32px;border-radius:9px;background:var(--chip);color:var(--red);
+    display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+  .identity b{display:block;font-size:12.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .identity small{display:block;font-size:10.5px;color:var(--muted)}
+  .identity svg{margin-left:auto;flex:none;color:#8a9299}
+  /* avatar */
+  .avatar{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;background:var(--chip);
+    color:var(--red);font-weight:800;font-size:14px;border:0;cursor:pointer}
+  /* phone topbar */
+  .ptop{display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;background:#fff;border-bottom:1px solid #e6e8ea}
+  .ptop .plogo{width:30px;height:30px;border:1px solid #ececec;border-radius:7px;display:grid;place-items:center;
+    background:#fff;color:var(--red);font-weight:800;font-size:11px}
+  .ptop b{font-size:14px}
+  .ptop .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+  /* bottom sheet */
+  .sheet{margin:14px;border:1px solid var(--border);border-radius:14px 14px 0 0;background:#fff;
+    box-shadow:0 -8px 24px rgba(15,24,39,.12)}
+  .sheet .handle{width:38px;height:5px;border-radius:99px;background:#dfe3e6;margin:10px auto 4px}
+  .sheet .head{display:flex;align-items:center;gap:10px;padding:8px 16px 12px;border-bottom:1px solid #edf0f1}
+  .sheet .head .av{width:40px;height:40px;border-radius:10px;background:var(--chip);color:var(--red);
+    display:grid;place-items:center;font-weight:800;flex:none}
+  .sheet .head b{display:block;font-size:14px}
+  .sheet .head small{display:block;font-size:11.5px;color:var(--muted)}
+  .sheet .rows{padding:6px 8px 10px}
+  .sheet .row{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border-radius:8px;
+    font-weight:600;font-size:13.5px}
+  .sheet .row:hover{background:#f4f5f6}
+  .sheet .row b{width:16px;height:16px;border-radius:5px;background:#56636d;opacity:.6;display:inline-block}
+  .sheet .row.exit{color:var(--red)}
+  .sheet .row.exit b{background:var(--red);opacity:1}
+  .sheet .pillrow{padding:10px 16px 4px;border-top:1px solid #edf0f1;display:grid;gap:6px}
+  .sheet .pillrow small{font-size:10px;letter-spacing:.12em;font-weight:800;color:#959ba2}
+  .pros{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .pros span{font-size:11.5px;padding:5px 10px;border-radius:99px;border:1px solid var(--border);color:var(--muted)}
+  .pros span.plus{border-color:#bfe3cd;background:#f0faf3;color:#176447}
+  .pros span.minus{border-color:#f3d4da;background:#fdf2f4;color:#9f1732}
+  .spacer{flex:1}
+</style>
+</head>
+<body>
+
+<header class="page">
+  <h1>Opsi Switcher Portal↔Admin + Profil Pengguna</h1>
+  <p>Produksi sudah punya <b>ViewSwitch</b> — pill segmen "Portal | Admin" (issue #70, <code>web/src/components/ViewSwitch.tsx</code>),
+  hanya tampil bagi anggota dengan peran admin/verifikator, dengan segmen sisi aktif diisi merah. Admin memasangnya di topbar ≥900px
+  dan di drawer "Lainnya" mobile; profil pengguna (nama, avatar, keluar) belum ada di sisi admin. Tiga opsi berikut menutup kedua
+  celah di pratinjau — pilih satu, nanti diimplementasikan.</p>
+</header>
+
+<div class="grid">
+
+  <!-- ============ OPTION A ============ -->
+  <section class="option">
+    <h2><span>Opsi A</span> — Pill produksi + chip identitas di footer sidebar</h2>
+    <p class="note">ViewSwitch pill persis pola produksi di sidebar (di bawah pilih ruang kerja), chip identitas di footer sidebar;
+      mobile: avatar 44px di topbar membuka bottom sheet berisi profil + pill + keluar.</p>
+    <div class="demo">
+      <div class="frame desktop">
+        <div class="cap">DESKTOP SIDEBAR (≥900px)</div>
+        <div class="brand"><span class="logo">PPIJ</span><span><b>PPI Jepang</b><small>ADMIN PORTAL</small></span></div>
+        <div style="padding:0 12px 4px"><div class="viewswitch compact"><a href="#" class="current">Admin</a><a href="#">Portal</a></div></div>
+        <p class="nav-caption">MENU UTAMA</p>
+        <div class="nav"><i class="active"><b></b>Dashboard</i><i><b></b>Verifikasi</i><i><b></b>Anggota</i></div>
+        <div class="spacer" style="height:18px"></div>
+        <div class="identity">
+          <span class="av">PA</span>
+          <span style="min-width:0"><b>Contoh Pengurus A</b><small>Admin nasional · PPI Jepang</small></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div style="border-top:1px solid #e8eaec;margin:0 8px 8px;padding:10px 2px 2px;display:flex;gap:7px;color:#5c646d;font-size:12px;font-weight:700">
+          Bantuan &amp; pengaturan
+        </div>
+      </div>
+      <div class="frame phone">
+        <div class="cap">MOBILE TOPBAR + SHEET (≤600px, 44px target)</div>
+        <div class="ptop">
+          <span class="plogo">PPIJ</span><b>Admin PPIJ</b>
+          <span class="right"><button class="avatar">PA</button></span>
+        </div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <div class="head"><span class="av">PA</span><span><b>Contoh Pengurus A</b><small>Admin nasional · PPI Jepang</small></span></div>
+          <div class="pillrow"><small>BUKA</small><div class="viewswitch compact"><a href="#">Portal</a><a href="#" class="current">Admin</a></div></div>
+          <div class="rows">
+            <div class="row"><b></b>Profil &amp; akun</div>
+            <div class="row exit"><b></b>Keluar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pros">
+      <span class="plus">+ Pill identik pola produksi (ViewSwitch #70)</span>
+      <span class="plus">+ Identitas selalu terlihat tanpa klik</span>
+      <span class="minus">− Dua tempat membawa tautan portal (pill + sheet)</span>
+    </div>
+  </section>
+
+  <!-- ============ OPTION B ============ -->
+  <section class="option">
+    <h2><span>Opsi B</span> — Semua lewat menu avatar</h2>
+    <p class="note">Topbar kanan (desktop) dan topbar mobile hanya avatar 44px; satu menu (popover desktop, sheet mobile)
+      memuat identitas, pill Portal↔Admin, profil, dan keluar. Sidebar tidak berubah.</p>
+    <div class="demo">
+      <div class="frame desktop">
+        <div class="cap">DESKTOP TOPBAR KANAN</div>
+        <div style="display:flex;align-items:center;gap:10px;height:56px;padding:0 14px;background:#fff;border-bottom:1px solid var(--border)">
+          <span style="color:#939aa1;font-size:12.5px;white-space:nowrap;flex:none">Admin › Statistik</span>
+          <span class="spacer"></span>
+          <div class="viewswitch compact"><a href="#" class="current">Admin</a><a href="#">Portal</a></div>
+          <button class="avatar" style="width:32px;height:32px;border-radius:8px;font-size:11px">PA</button>
+        </div>
+        <div style="margin:12px;border:1px solid var(--border);border-radius:10px;background:#fff;box-shadow:0 10px 24px rgba(15,24,39,.12);width:230px">
+          <div style="display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid #edf0f1">
+            <span class="av" style="width:34px;height:34px;border-radius:9px;background:var(--chip);color:var(--red);display:grid;place-items:center;font-weight:800">PA</span>
+            <span><b style="display:block;font-size:13px">Contoh Pengurus A</b><small style="font-size:11px;color:var(--muted)">Admin nasional · PPI Jepang</small></span>
+          </div>
+          <div class="rows" style="padding:4px 6px 6px">
+            <div class="row" style="min-height:36px;font-size:13px"><b></b>Profil &amp; akun</div>
+            <div class="row" style="min-height:36px;font-size:13px"><b></b>Buka portal</div>
+            <div class="row exit" style="min-height:36px;font-size:13px"><b></b>Keluar</div>
+          </div>
+        </div>
+      </div>
+      <div class="frame phone">
+        <div class="cap">MOBILE TOPBAR + SHEET</div>
+        <div class="ptop">
+          <span class="plogo">PPIJ</span><b>Admin PPIJ</b>
+          <span class="right"><button class="avatar">PA</button></span>
+        </div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <div class="head"><span class="av">PA</span><span><b>Contoh Pengurus A</b><small>Admin nasional · PPI Jepang</small></span></div>
+          <div class="pillrow"><small>BUKA</small><div class="viewswitch compact"><a href="#">Portal</a><a href="#" class="current">Admin</a></div></div>
+          <div class="rows">
+            <div class="row"><b></b>Profil &amp; akun</div>
+            <div class="row exit"><b></b>Keluar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pros">
+      <span class="plus">+ Satu permukaan profil; sidebar tidak berubah</span>
+      <span class="plus">+ Pill persis posisi produksi (topbar ≥900px, drawer mobile)</span>
+      <span class="minus">− Identitas tersembunyi di balik klik di desktop</span>
+    </div>
+  </section>
+
+  <!-- ============ OPTION C ============ -->
+  <section class="option">
+    <h2><span>Opsi C</span> — Blok switcher gaya "Ruang kerja" di atas sidebar</h2>
+    <p class="note">Pill Portal↔Admin menjadi blok tetap paling atas sidebar (di atas pilih ruang kerja) plus baris identitas;
+      mobile: pill ringkas di topbar kiri-avatar kanan, sheet untuk profil.</p>
+    <div class="demo">
+      <div class="frame desktop">
+        <div class="cap">DESKTOP SIDEBAR (≥900px)</div>
+        <div class="brand"><span class="logo">PPIJ</span><span><b>PPI Jepang</b><small>ADMIN PORTAL</small></span></div>
+        <div style="margin:0 10px 10px;padding:10px;border:1px solid var(--border);border-radius:10px;background:#fafafa">
+          <small style="display:block;font-size:9.5px;letter-spacing:.14em;font-weight:800;color:#868d95;margin-bottom:6px">BUKA</small>
+          <div class="viewswitch compact"><a href="#" class="current">Admin</a><a href="#">Portal</a></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:9px">
+            <span class="av" style="width:28px;height:28px;border-radius:8px;background:var(--chip);color:var(--red);display:grid;place-items:center;font-weight:800;font-size:11px">PA</span>
+            <span style="min-width:0"><b style="display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Contoh Pengurus A</b><small style="font-size:10px;color:var(--muted)">Admin nasional</small></span>
+          </div>
+        </div>
+        <p class="nav-caption">RUANG KERJA</p>
+        <div style="padding:0 12px 6px"><button style="width:100%;display:flex;align-items:center;gap:8px;border:1px solid #e0e3e6;border-radius:10px;background:#fff;padding:9px;font-size:12.5px;font-weight:700">PPI Jepang Nasional ▾</button></div>
+        <p class="nav-caption">MENU UTAMA</p>
+        <div class="nav"><i class="active"><b></b>Dashboard</i><i><b></b>Verifikasi</i><i><b></b>Anggota</i></div>
+      </div>
+      <div class="frame phone">
+        <div class="cap">MOBILE TOPBAR</div>
+        <div class="ptop">
+          <span class="plogo">PPIJ</span>
+          <span class="viewswitch compact" style="margin-left:2px"><a href="#">Portal</a><a href="#" class="current">Admin</a></span>
+          <span class="right"><button class="avatar" style="width:36px;height:36px;font-size:12px">PA</button></span>
+        </div>
+        <div style="padding:10px 12px;color:var(--muted);font-size:11.5px">Avatar membuka sheet profil (isi sama seperti Opsi A/B).</div>
+      </div>
+    </div>
+    <div class="pros">
+      <span class="plus">+ Switcher paling menonjol, selalu terlihat di atas</span>
+      <span class="plus">+ Identitas terlihat tanpa klik</span>
+      <span class="minus">− Sidebar atas penuh (brand + switcher + ruang kerja); bahasa visual berebut dengan pilih ruang kerja</span>
+    </div>
+  </section>
+
+</div>
+
+<footer style="padding:0 32px 40px;color:var(--muted);font-size:12px">
+  Aturan yang dipakai: target sentuh 44px ≤600px, kontrol drawer/toolbar rasio ringkas, salinan bahasa Indonesia
+  sejalan produksi ("Portal", "Admin", "Buka portal", "Keluar", "Profil &amp; akun"). Pill = pola ViewSwitch produksi
+  (isi merah pada sisi aktif, hanya tampil bagi pemegang peran admin/verifikator).
+</footer>
+
+</body>
+</html>

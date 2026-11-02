@@ -116,10 +116,19 @@ export function FiguresBand({ scope, onOpenTopic }: FiguresBandProps) {
     },
     {
       topic: "anggota",
-      label: "Berlaku 60 hari",
-      value: formatCount(stats.tiles.expiring_within_60_days),
-      body: <CompletenessBar scope={scope} />,
-      link: "Kelengkapan data",
+      label: "Kartu & masa berlaku",
+      value: formatCount(stats.tiles.cards_active),
+      body: (
+        <>
+          <p className="figure-sub">
+            <strong>+{formatCount(stats.tiles.cards_issued_this_month)}</strong> kartu terbit bulan ini
+            <span className="figure-sep" />
+            {formatCount(stats.tiles.expiring_within_60_days)} berlaku ≤ 60 hari
+          </p>
+          <CompletenessBar scope={scope} />
+        </>
+      ),
+      link: "Kelengkapan & kartu",
     },
   ];
 

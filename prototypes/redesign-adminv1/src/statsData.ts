@@ -4,7 +4,7 @@
  * Values are internally consistent: active_members = sum of komsat counts + unmapped (1.305),
  * pending_verification = the "baru" tab count, profil lengkap = lengkap / active_total ≈ 74%.
  */
-import { totalActive } from "./mapData";
+import { komsats, totalActive } from "./mapData";
 import type { Scope } from "./mapData";
 
 export type Tab = "baru" | "dikirim_ulang" | "diperiksa" | "menunggu_anggota" | "selesai";
@@ -26,6 +26,10 @@ export interface Tiles {
   new_this_month: number;
   /** tiles.expiring_within_60_days */
   expiring_within_60_days: number;
+  /** Declared contract (stats.md, gap 3): tiles.cards_active — ACTIVE member cards in scope. */
+  cards_active: number;
+  /** Declared contract (stats.md, gap 3): tiles.cards_issued_this_month. */
+  cards_issued_this_month: number;
 }
 
 export interface Completeness {
@@ -55,7 +59,7 @@ export interface ScopeStats {
 
 export const statsByScope: Record<Scope, ScopeStats> = {
   national: {
-    tiles: { active_members: totalActive, pending_verification: 37, new_this_month: 48, expiring_within_60_days: 23 },
+    tiles: { active_members: totalActive, pending_verification: 37, new_this_month: 48, expiring_within_60_days: 23, cards_active: 1102, cards_issued_this_month: 52 },
     review: { baru: 37, dikirim_ulang: 9, diperiksa: 11, menunggu_anggota: 6, selesai: 214 },
     completeness: { active_total: 1305, lengkap: 966, belum_lengkap: 246, belum_aktivasi: 93, reminder_eligible: 246 },
     distributions: {
@@ -107,7 +111,7 @@ export const statsByScope: Record<Scope, ScopeStats> = {
     avg_review_days_90d: 2.1,
   },
   korda: {
-    tiles: { active_members: 452, pending_verification: 12, new_this_month: 17, expiring_within_60_days: 9 },
+    tiles: { active_members: 452, pending_verification: 12, new_this_month: 17, expiring_within_60_days: 9, cards_active: 390, cards_issued_this_month: 18 },
     review: { baru: 12, dikirim_ulang: 3, diperiksa: 4, menunggu_anggota: 2, selesai: 86 },
     completeness: { active_total: 452, lengkap: 357, belum_lengkap: 68, belum_aktivasi: 27, reminder_eligible: 68 },
     distributions: {
@@ -156,7 +160,7 @@ export const statsByScope: Record<Scope, ScopeStats> = {
     avg_review_days_90d: 1.8,
   },
   komsat: {
-    tiles: { active_members: 197, pending_verification: 5, new_this_month: 8, expiring_within_60_days: 3 },
+    tiles: { active_members: 197, pending_verification: 5, new_this_month: 8, expiring_within_60_days: 3, cards_active: 183, cards_issued_this_month: 9 },
     review: { baru: 5, dikirim_ulang: 1, diperiksa: 2, menunggu_anggota: 1, selesai: 31 },
     completeness: { active_total: 197, lengkap: 162, belum_lengkap: 26, belum_aktivasi: 9, reminder_eligible: 26 },
     distributions: {
@@ -265,3 +269,41 @@ export const coverageKorda = {
 
 export const formatCount = (value: number) => new Intl.NumberFormat("id-ID").format(value);
 export const formatDays = (days: number) => `${new Intl.NumberFormat("id-ID", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(days)} hari`;
+
+/** Deterministic per-unit composition drift in [-0.10, +0.10] so filtered komsat splits differ believably. */
+function driftOf(unitId: string): number {
+  let hash = 0;
+  for (const ch of unitId) hash = (hash * 31 + ch.charCodeAt(0)) % 997;
+  return ((hash % 21) - 10) / 100;
+}
+
+/**
+ * Re-aggregates a distribution over the selected komsat names (design-first: the UI filters as
+ * designed; production serves this through GET /v1/admin/stats/distributions, stats.md gap 2).
+ * Scaling is deterministic, integers, and totals to the selected population.
+ */
+export function scopedDistribution(distribution: Distribution, komsatFilter: string[]): Distribution {
+  const names = new Set(komsatFilter);
+  const selected = komsats.filter((k) => names.has(k.name.replace("Komsat ", "")));
+  if (selected.length === 0) return distribution;
+  const totalSelected = selected.reduce((sum, k) => sum + k.active_count, 0);
+  if (totalSelected === 0) return distribution;
+  const buckets = distribution.items.map((item) => ({ ...item, count: 0 }));
+  let other = 0;
+  let unknown = 0;
+  for (const komsat of selected) {
+    const share = komsat.active_count / totalSelected;
+    const drift = driftOf(komsat.unit_id);
+    for (const bucket of buckets) bucket.count += Math.max(0, bucket.count * share * (1 + drift));
+    other += distribution.other * share;
+    unknown += distribution.unknown * share;
+  }
+  const rounded = buckets.map((bucket) => ({ ...bucket, count: Math.round(bucket.count) }));
+  const roundedRest = { other: Math.round(other), unknown: Math.round(unknown) };
+  const target = Math.round(totalSelected);
+  const sum = rounded.reduce((acc, bucket) => acc + bucket.count, 0) + roundedRest.other + roundedRest.unknown;
+  const largest = rounded.reduce((max, bucket) => (bucket.count > max.count ? bucket : max), rounded[0]);
+  largest.count += target - sum;
+  if (largest.count < 0) largest.count = 0;
+  return { items: rounded, other: roundedRest.other, unknown: roundedRest.unknown };
+}

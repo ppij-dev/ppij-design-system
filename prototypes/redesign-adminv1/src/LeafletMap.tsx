@@ -32,7 +32,7 @@ function bubbleIcon(bubble: MapBubble, selected: boolean) {
   const size = bubbleDiameter(bubble.active_count);
   return divIcon({
     className: "map-bubble-wrap",
-    html: `<span class="map-bubble" data-kind="${bubble.kind}"${selected ? ' data-selected="true"' : ""} role="button" aria-label="${bubble.name}: ${bubble.active_count} anggota aktif">${bubble.active_count}</span>`,
+    html: `<span class="map-bubble-frame"><span class="map-bubble"${selected ? ' data-selected="true"' : ""} role="button" aria-label="${bubble.name}: ${bubble.active_count} anggota aktif">${bubble.active_count}</span><span aria-hidden="true" class="map-bubble-label">${bubble.name}</span></span>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
   });

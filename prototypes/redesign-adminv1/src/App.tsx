@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import {
   IconActivity, IconAlertCircle, IconArrowDownRight, IconArrowRight, IconBell, IconBuildingCommunity,
   IconChartBar, IconChevronDown, IconChevronLeft, IconChevronRight, IconCircleCheck, IconClock,
-  IconId, IconLayoutDashboard, IconMenu2,
-  IconSearch, IconSettings, IconShieldCheck, IconSparkles, IconUsers, IconX,
+  IconId, IconLayoutDashboard, IconLogout, IconMenu2, IconUser,
+  IconSearch, IconSettings, IconShieldCheck, IconSparkles, IconUser as IconUserCircle, IconUsers, IconX,
 } from "@tabler/icons-react";
 import {
   AdminDrawer, Badge, BottomBar, Button, Input,
@@ -188,11 +188,11 @@ export function App() {
       <div className="sheet-backdrop" onClick={() => setProfileOpen(false)} />
       <div className="profile-sheet" role="dialog" aria-label="Profil pengguna">
         <div className="sheet-handle" aria-hidden="true"></div>
-        <div className="sheet-head"><span className="av">PA</span><span><b>Contoh Pengurus A</b><small>{roleCaption}</small></span></div>
+        <div className="sheet-head"><span className="av">PA</span><span><b>Contoh Pengurus A</b><small>{roleCaption}</small></span><button type="button" className="sheet-close" onClick={() => setProfileOpen(false)} aria-label="Tutup profil"><IconX size={18} /></button></div>
         <div className="sheet-switch"><small>BUKA</small><div className="sidebar-switch sheet-pill"><a href="#portal" onClick={(e) => { e.preventDefault(); demo("Ini pratinjau. Portal mengikuti alur produksi."); }}>Portal</a><span aria-current="page">Admin</span></div></div>
         <div className="sheet-rows">
-          <button type="button" className="sheet-row" onClick={() => demo("Ini pratinjau. Profil & akun menuju /akun di produksi.")}><IconId size={16} /><span>Profil &amp; akun<small className="sub">Menuju /akun di produksi</small></span></button>
-          <button type="button" className="sheet-row exit" onClick={() => { setProfileOpen(false); demo("Ini pratinjau. Keluar mengikuti alur produksi."); }}><IconX size={16} /><span>Keluar</span></button>
+          <button type="button" className="sheet-row" onClick={() => demo("Ini pratinjau. Profil & akun menuju /akun di produksi.")}><IconUserCircle size={16} /><span>Profil &amp; akun<small className="sub">Menuju /akun di produksi</small></span></button>
+          <button type="button" className="sheet-row exit" onClick={() => { setProfileOpen(false); demo("Ini pratinjau. Keluar mengikuti alur produksi."); }}><IconLogout size={16} /><span>Keluar</span></button>
         </div>
       </div>
     </>) : null}

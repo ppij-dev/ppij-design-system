@@ -231,3 +231,8 @@
 .profile-sheet .sheet-row .sub{display:block;font-size:10.5px;font-weight:500;color:#959da5}
 .profile-sheet .sheet-row.exit{color:var(--brand-red)}
 .profile-sheet .sheet-row.exit svg{color:var(--brand-red)}
+
+/* Profile sheet close affordance: X at the header top-right, 44px touch */
+.profile-sheet .sheet-head { position: relative; padding-right: 56px; }
+.profile-sheet .sheet-close { position: absolute; top: 0; right: 4px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; border-radius: 10px; color: #8a9299; cursor: pointer; }
+.profile-sheet .sheet-close:hover { background: #f4f5f6; color: var(--brand-ink); }

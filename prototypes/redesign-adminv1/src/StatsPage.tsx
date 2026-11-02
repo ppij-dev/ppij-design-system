@@ -105,7 +105,7 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
     // Q15: phones default the registration-period facet to the last 6 months; 12 months stays selectable.
     monthsBack: typeof window !== "undefined" && window.matchMedia("(max-width: 600px)").matches ? 6 : 0,
   }));
-  const [filtersOpen, setFiltersOpen] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const scopedRows = useMemo(() => rowsInScope(scope), [scope]);
   const filtered = useMemo(() => filterRows(scopedRows, filters), [scopedRows, filters]);
 

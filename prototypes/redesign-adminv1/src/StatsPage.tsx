@@ -100,7 +100,11 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
   topic: StatsTopic;
   onTopic: (topic: StatsTopic) => void;
 }) {
-  const [filters, setFilters] = useState<Filters>(emptyFilters);
+  const [filters, setFilters] = useState<Filters>(() => ({
+    ...emptyFilters,
+    // Q15: phones default the registration-period facet to the last 6 months; 12 months stays selectable.
+    monthsBack: typeof window !== "undefined" && window.matchMedia("(max-width: 600px)").matches ? 6 : 0,
+  }));
   const [filtersOpen, setFiltersOpen] = useState(true);
   const scopedRows = useMemo(() => rowsInScope(scope), [scope]);
   const filtered = useMemo(() => filterRows(scopedRows, filters), [scopedRows, filters]);
@@ -302,7 +306,7 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
               <p className="trend-total">Rata-rata hari menunggu: <strong>{avgWaiting === null ? "—" : new Intl.NumberFormat("id-ID", { maximumFractionDigits: 1 }).format(avgWaiting)}</strong></p>
             </div>
           </div>
-          <div className="table-section">
+          <div className="warehouse-table">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -343,7 +347,7 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
               <p className="trend-total">{formatCount(filtered.length)} baris terfilter</p>
             </div>
           </div>
-          <div className="table-section">
+          <div className="warehouse-table">
             <Table>
               <TableHeader>
                 <TableRow>

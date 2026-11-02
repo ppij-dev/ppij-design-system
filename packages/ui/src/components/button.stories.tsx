@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "./button";
 import { IconPlus, IconSend, IconLoader2 } from "@tabler/icons-react";
+import { Input } from "./input";
 
 const meta: Meta<typeof Button> = {
   title: "Portal/Button",
@@ -85,6 +86,12 @@ export const ActionIntents: Story = {
 export const AdminPageActions: Story = {
   render: () => <div className="grid gap-6">
     <div className="grid justify-items-start gap-2"><Button size="sm"><IconPlus />Undang anggota</Button><p className="text-sm text-muted-foreground">Desktop page action: 32px height, 14px label, 16px icon.</p></div>
+    <div className="flex flex-wrap items-center gap-2">
+      <Button size="sm" variant="outline"><IconPlus />Filter</Button>
+      <Button size="sm"><IconPlus />Unduh CSV</Button>
+      <Input data-size="sm" placeholder="Cari nama, institusi, no. anggota" className="w-64" />
+      <p className="w-full text-sm font-medium text-foreground">Page toolbar rule: desktop and tablet page actions are Button size sm — 32px height, 14px label, 16px icon — paired with compact h-8 inputs (data-size sm). 44px touch targets and 16px inputs apply only below 600px.</p>
+    </div>
     <div className="grid max-w-sm gap-2"><Button size="sm" className="min-h-11"><IconPlus />Undang anggota</Button><p className="text-sm text-muted-foreground">Phone action: 44px touch target with the same label and icon scale.</p></div>
   </div>,
 };

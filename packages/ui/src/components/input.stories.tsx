@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
 
@@ -33,6 +34,16 @@ export const Sizes: Story = {
       <Input data-size="sm" placeholder="Kecil (32px)" />
       <Input placeholder="Bawaan (36px)" />
       <Input data-size="lg" placeholder="Besar (44px)" />
+    </div>
+  ),
+};
+
+export const PageToolbar: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-2">
+      <Button size="sm" variant="outline">Filter</Button>
+      <Input data-size="sm" placeholder="Cari nama, institusi, no. anggota" className="w-64" />
+      <p className="w-full text-xs text-muted-foreground">Page toolbar rule: pair compact h-8 inputs (data-size sm) with Button size sm — 32px height, 14px label, 16px icon. 44px touch targets and 16px inputs apply only below 600px.</p>
     </div>
   ),
 };

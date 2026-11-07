@@ -49,7 +49,8 @@ export function PortalView({ onNavigate, locale, onLocale }: { onNavigate: (view
         <div className="flex flex-col gap-5 md:grid md:grid-cols-[350px_minmax(0,1fr)] md:items-start md:gap-x-8 md:gap-y-6">
           <TodoStrip heading={pick(locale, "Langkah berikutnya", "Next step")} label={pick(locale, "Tambahkan minat Anda (opsional)", "Add your interests (optional)")} href="#" onClick={go("profile")} />
           <div className="md:sticky md:top-[72px]">
-            <MemberCardBlock locale={locale} memberId="PPIJ-2026-000123" name="I Nyoman Darma Kotama" number="PPIJ-2026-000123" komsat="Okayama" korda="PPI Kansai" validUntil="2027-10-31" state="active" logoSrc={logoUrl} mapSrc={mapUrl} />
+            {/* AD/ART category line: Luar Biasa members only; a Biasa member passes null and gets no line. */}
+            <MemberCardBlock locale={locale} memberId="PPIJ-2026-000123" name="I Nyoman Darma Kotama" number="PPIJ-2026-000123" komsat="Okayama" korda="PPI Kansai" validUntil="2027-10-31" state="active" categoryLine="Anggota Luar Biasa" logoSrc={logoUrl} mapSrc={mapUrl} />
           </div>
           <ServiceTiles
             groups={[

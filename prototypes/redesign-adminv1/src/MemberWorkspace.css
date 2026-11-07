@@ -18,7 +18,7 @@
 .member-filter-field { display: grid; gap: 6px; color: #54616b; font-size: 13px; font-weight: 650; }
 .member-filter-field input { min-height: 32px; font-size: 13px; }
 .member-table { overflow-x: auto; border: 1px solid #e1e5e8; border-radius: 12px; }
-.member-table [data-slot=table] { min-width: 860px; }
+.member-table [data-slot=table] { min-width: 1080px; }
 .member-table [data-slot=table-head], .member-table [data-slot=table-cell] { padding: 13px 14px; }
 .member-table [data-slot=table-cell] { color: #36434b; font-size: 13px; }
 .member-table [data-slot=table-cell] strong, .member-table [data-slot=table-cell] small { display: block; }
@@ -73,3 +73,84 @@
 
 .member-detail-note { font-size: 12px; }
 .member-actions-note { font-size: 12px; }
+
+/* ---------------------------------------------------------------------------
+   Member detail aligned with the plan (add-member-profile-registration-data D12,
+   D13 and add-member-category): Profil sections read-only in the drawer, masked
+   values behind an audited Tampilkan, and the "Ubah data anggota" and category
+   override forms as a second drawer step.
+--------------------------------------------------------------------------- */
+.member-detail-head { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.member-detail-stamp { display: flex; align-items: center; gap: 8px; color: #56636d; font-size: 12px; }
+.member-detail-stamp svg { flex: none; color: #b61632; }
+.member-detail-head [data-slot=button] { flex: none; gap: 6px; font-weight: 650; }
+.member-detail-audit { display: flex; align-items: start; gap: 8px; border: 1px solid #e6eaed; border-radius: 9px; padding: 10px 12px; background: #f8fafb; color: #56636d !important; }
+.member-detail-audit svg { flex: none; margin-top: 2px; color: #b61632; }
+.member-detail-audit strong { color: #29343b; }
+.member-row-span { grid-column: 1 / -1; }
+.member-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; letter-spacing: 0; }
+.member-reveal-line { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+.member-masked-value { letter-spacing: .1em; color: #4b5760; }
+.member-reveal-value { overflow-wrap: anywhere; }
+.member-reveal-toggle { display: inline-flex; align-items: center; gap: 4px; flex: none; border: 1px solid #d7dde1; border-radius: 999px; padding: 3px 9px; background: #fff; color: #8f1730; font-size: 11px; font-weight: 700; }
+.member-reveal-toggle:hover { background: #fdf2f4; }
+.member-reveal-toggle:focus-visible { outline: 2px solid #c8102e; outline-offset: 1px; }
+.member-chip-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.member-chip-list > span { border-radius: 999px; padding: 3px 10px; background: #f1f3f4; color: #36434b; font-size: 12px; font-weight: 600; }
+.member-chip-empty { color: #66727c; font-weight: 500; }
+.member-dated-list { display: grid; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.member-dated-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-top: 1px solid #eef1f3; padding-top: 6px; color: #4d5a63; }
+.member-dated-list small { flex: none; color: #66727c; font-size: 12px; }
+.member-detail .member-dated-list span { font-weight: 650; color: #26323a; }
+.member-subsection { margin-top: 16px; }
+.member-subsection h4 { margin: 0 0 10px; color: #3b4851; font-size: 12px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+.member-category-cell { display: grid; justify-items: start; gap: 5px; }
+.member-category-cell small { color: #66727c; font-size: 11.5px; font-weight: 500; }
+.member-category-open { margin-top: 12px; gap: 6px; font-weight: 650; }
+.member-detail-note-inline { display: flex; align-items: start; gap: 7px; margin: 10px 0 0; color: #66727c; font-size: 12px; line-height: 1.5; }
+.member-detail-note-inline svg { flex: none; margin-top: 2px; }
+.member-mobile-category { display: flex; align-items: center; gap: 6px; }
+
+/* "Ubah data anggota" and category override: the second step of the detail drawer. */
+.member-edit { display: grid; align-content: start; gap: 16px; padding: 2px 0 14px; color: #26323a; font-size: 13px; line-height: 1.5; }
+.member-edit-note { display: flex; align-items: start; gap: 8px; margin: 0; border-radius: 9px; padding: 10px 12px; background: #f8fafb; color: #56636d; font-size: 12.5px; }
+.member-edit-note svg { flex: none; margin-top: 2px; color: #b61632; }
+.member-edit-error-form { display: flex; align-items: start; gap: 8px; margin: 0; border: 1px solid #f0ccd4; border-radius: 9px; padding: 11px 13px; background: #fdf2f4; color: #8f1730; font-size: 13px; font-weight: 600; }
+.member-edit-error-form svg { flex: none; margin-top: 1px; }
+.member-edit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 16px 14px; }
+.member-edit-wide { grid-column: 1 / -1; }
+.member-edit-field { display: grid; gap: 6px; min-width: 0; color: #4e5c66; font-size: 12px; font-weight: 700; }
+.member-edit-field > span, .member-edit-field > label { color: #4e5c66; }
+.member-edit-field [data-slot=input], .member-edit-field .verification-filter-trigger { width: 100%; }
+/* MonthPicker draws its own group label; match the form's label scale instead of repeating it. */
+.member-edit-field > [role=group] > p { margin: 0; color: #4e5c66; font-size: 12px; font-weight: 700; }
+.member-edit-field [data-slot=select-trigger] { width: 100%; }
+.member-edit-hint { color: #66727c; font-size: 11.5px; font-weight: 500; line-height: 1.5; }
+.member-edit-error { color: #ad1732; font-size: 12px; font-weight: 650; }
+.member-edit-error > svg { flex: none; }
+.member-edit-reveal { display: flex; align-items: center; gap: 8px; }
+.member-edit-reveal [data-slot=input] { flex: 1 1 auto; min-width: 0; }
+.member-edit-reveal [data-slot=button] { flex: none; gap: 5px; font-weight: 650; }
+.member-edit-fixed { display: grid; gap: 3px; margin: 0; color: #26323a; font-weight: 650; }
+.member-edit-fixed small { color: #66727c; font-size: 11.5px; font-weight: 500; }
+.member-edit-inert { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; border: 1px solid #e6eaed; border-radius: 9px; padding: 11px 13px; background: #f8fafb; }
+.member-edit-inert span { color: #66727c; font-size: 12px; font-weight: 650; }
+.member-edit-inert small { flex: 1 1 210px; color: #66727c; font-size: 11.5px; font-weight: 500; }
+.member-edit-reason { grid-column: 1 / -1; }
+.member-edit-reason textarea { width: 100%; font-size: 13px; }
+.member-edit-choice { display: grid; gap: 8px; margin: 0; border: 1px solid #e6eaed; border-radius: 9px; padding: 12px 13px; }
+.member-edit-choice legend { padding: 0 6px; color: #4e5c66; font-size: 12px; font-weight: 700; }
+.member-edit-warning { margin: 0; border-radius: 9px; padding: 11px 13px; background: #fff3e0; color: #704a16; font-size: 12.5px; line-height: 1.5; }
+.member-edit-preview { display: grid; gap: 7px; border-top: 1px solid #eef1f3; padding-top: 14px; }
+.member-edit-preview > label { color: #4e5c66; font-size: 12px; font-weight: 700; }
+.member-edit-preview [data-slot=select-trigger] { width: max-content; min-width: 240px; }
+.member-edit-preview p { margin: 0; color: #66727c; font-size: 11.5px; }
+@media (max-width: 600px) {
+  .member-edit-grid { grid-template-columns: minmax(0, 1fr); }
+  .member-edit-field [data-slot=input], .member-edit-field [data-slot=select-trigger], .member-edit-field .verification-filter-trigger { min-height: 44px; font-size: 16px; }
+  .member-edit-reason textarea { font-size: 16px; }
+  .member-edit-reveal [data-slot=button], .member-category-open, .member-detail-head [data-slot=button], .member-reveal-toggle { min-height: 44px; }
+  .member-reveal-toggle { padding: 8px 12px; font-size: 12px; }
+  .member-detail-head [data-slot=button] { width: 100%; }
+  .member-edit-preview [data-slot=select-trigger] { width: 100%; min-width: 0; }
+}

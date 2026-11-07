@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   IconAdjustmentsHorizontal, IconAlertCircle, IconArrowRight, IconEye, IconEyeOff,
@@ -129,6 +129,7 @@ export function MemberWorkspace({ scope, onNotice }: { scope: Scope; onNotice?: 
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>(() => Object.fromEntries(members.map((member) => [member.id, profileFor(member)])));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mode, setMode] = useState<"detail" | "edit" | "category">("detail");
+  const [educationFocus, setEducationFocus] = useState(false);
   const [revealed, setRevealed] = useState<string[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const scoped = useMemo(() => roster.filter((member) => scope === "national" || (scope === "korda" ? member.region === "Kanto" : member.komsat === "Tokyo")), [roster, scope]);
@@ -138,8 +139,8 @@ export function MemberWorkspace({ scope, onNotice }: { scope: Scope; onNotice?: 
     setRoster((current) => current.map((member) => (member.id === id ? { ...member, status: nextStatus } : member)));
     onNotice?.(message);
   };
-  const closeMember = () => { setSelectedId(null); setMode("detail"); setRevealed([]); };
-  const openMember = (id: string) => { setSelectedId(id); setMode("detail"); setRevealed([]); };
+  const closeMember = () => { setSelectedId(null); setMode("detail"); setRevealed([]); setEducationFocus(false); };
+  const openMember = (id: string) => { setSelectedId(id); setMode("detail"); setRevealed([]); setEducationFocus(false); };
   const reveal = (field: string) => setRevealed((current) => (current.includes(field) ? current : [...current, field]));
   const hide = (field: string) => setRevealed((current) => current.filter((item) => item !== field));
   const saveEdit = (patch: Partial<ProfileData>) => {
@@ -198,11 +199,11 @@ export function MemberWorkspace({ scope, onNotice }: { scope: Scope; onNotice?: 
         <SearchableMultiSelect label="Masa berlaku" values={expiry} options={["30 hari ke depan", "60 hari ke depan", "Kedaluwarsa"]} allLabel="Semua masa berlaku" onChange={setExpiry} />
       </div>
     </AdminDrawer>
-    <div className="member-table"><Table><TableHeader><TableRow><TableHead>Anggota</TableHead><TableHead>No. anggota</TableHead><TableHead>Komsat</TableHead><TableHead>Pendidikan</TableHead><TableHead>Kategori</TableHead><TableHead>Status</TableHead><TableHead>Berlaku sampai</TableHead><TableHead><span className="sr-only">Aksi</span></TableHead></TableRow></TableHeader><TableBody>{visible.map((member) => <TableRow key={member.id}><TableCell><strong>{member.name}</strong><small>{member.email}</small></TableCell><TableCell>{member.id}</TableCell><TableCell>{member.komsat}</TableCell><TableCell><strong>{member.institution}</strong><small>{member.degree} · {member.major}</small></TableCell><TableCell><Badge variant={categoryVariant(profiles[member.id].category)}>{categoryShort(profiles[member.id].category, profiles[member.id].subtype)}</Badge>{profiles[member.id].categoryReplacedAt && <small>Override diganti</small>}</TableCell><TableCell><Badge variant={statusVariant(member.status)}>{member.status}</Badge>{member.badge && <small>{member.badge}</small>}</TableCell><TableCell>{member.validUntil}</TableCell><TableCell><Button size="sm" variant="ghost" onClick={() => openMember(member.id)}>Detail <IconArrowRight size={15} /></Button></TableCell></TableRow>)}</TableBody></Table></div>
+    <div className="member-table"><Table><TableHeader><TableRow><TableHead>Anggota</TableHead><TableHead>No. anggota</TableHead><TableHead>Komsat</TableHead><TableHead>Pendidikan</TableHead><TableHead>Kategori</TableHead><TableHead>Status</TableHead><TableHead>Berlaku sampai</TableHead></TableRow></TableHeader><TableBody>{visible.map((member) => <TableRow key={member.id}><TableCell><button type="button" className="member-name-button" onClick={() => openMember(member.id)} aria-label={`Buka detail ${member.name}`}><strong>{member.name}</strong><small>{member.email}</small></button></TableCell><TableCell>{member.id}</TableCell><TableCell>{member.komsat}</TableCell><TableCell><strong>{member.institution}</strong><small>{member.degree} · {member.major}</small></TableCell><TableCell><Badge variant={categoryVariant(profiles[member.id].category)}>{categoryShort(profiles[member.id].category, profiles[member.id].subtype)}</Badge>{profiles[member.id].categoryReplacedAt && <small>Override diganti</small>}</TableCell><TableCell><Badge variant={statusVariant(member.status)}>{member.status}</Badge>{member.badge && <small>{member.badge}</small>}</TableCell><TableCell>{member.validUntil}</TableCell></TableRow>)}</TableBody></Table></div>
     <div className="member-mobile-list">{visible.map((member) => <button type="button" key={member.id} onClick={() => openMember(member.id)}><span className="member-mobile-top"><strong>{member.name}</strong><Badge variant={statusVariant(member.status)}>{member.status}</Badge></span><small>{member.email}</small><span>No. {member.id} · {member.komsat}</span><span>{member.institution} · {member.degree}</span><span className="member-mobile-category">Kategori <Badge variant={categoryVariant(profiles[member.id].category)}>{categoryShort(profiles[member.id].category, profiles[member.id].subtype)}</Badge></span><span>Berlaku sampai {member.validUntil}<IconArrowRight size={17} /></span></button>)}</div>
     {visible.length === 0 && <div className="member-empty"><IconSearch size={25} /><strong>Tidak ada anggota yang cocok</strong><p>Coba kata kunci atau filter lain.</p><Button variant="outline" size="sm" onClick={clear}>Hapus filter</Button></div>}
     <AdminDrawer size="lg" density="compact" step={editing ? 2 : 1} onBack={() => setMode("detail")} open={Boolean(selected)} onOpenChange={(open) => { if (!open) closeMember(); }} title={mode === "edit" ? "Ubah data anggota" : mode === "category" ? "Ubah kategori anggota" : selected?.name ?? "Detail anggota"} description={selected ? (mode === "edit" ? `${selected.id} · Nomor anggota tidak berubah` : mode === "category" ? `${selected.name} · ${selected.id}` : selected.id) : undefined} locale="id" className="member-detail-drawer" footer={mode === "edit" ? <Button size="sm" type="submit" form="member-edit-form">Simpan perubahan</Button> : mode === "category" ? <Button size="sm" type="submit" form="category-override-form">Simpan kategori</Button> : undefined}>
-      {selected && profile && (mode === "edit" ? <MemberEditForm key={`edit-${selected.id}`} member={selected} profile={profile} scope={scope} onSave={saveEdit} /> : mode === "category" ? <CategoryOverrideForm key={`category-${selected.id}`} profile={profile} onSave={saveCategory} /> : <MemberDetail member={selected} profile={profile} scope={scope} revealed={revealed} onReveal={reveal} onHide={hide} canOverrideCategory={scope !== "komsat"} onEdit={() => setMode("edit")} onOverride={() => setMode("category")} onStatus={(nextStatus, message) => { applyStatus(selected.id, nextStatus, message); if (nextStatus === "Dicabut") closeMember(); }} />)}
+      {selected && profile && (mode === "edit" ? <MemberEditForm key={`edit-${selected.id}`} member={selected} profile={profile} scope={scope} focusEducation={educationFocus} onSave={saveEdit} /> : mode === "category" ? <CategoryOverrideForm key={`category-${selected.id}`} profile={profile} onSave={saveCategory} /> : <MemberDetail member={selected} profile={profile} scope={scope} revealed={revealed} onReveal={reveal} onHide={hide} canOverrideCategory={scope !== "komsat"} onEdit={() => setMode("edit")} onOverride={() => setMode("category")} onCompleteEducation={() => { setEducationFocus(true); setMode("edit"); }} onStatus={(nextStatus, message) => { applyStatus(selected.id, nextStatus, message); if (nextStatus === "Dicabut") closeMember(); }} />)}
     </AdminDrawer>
   </section>;
 }
@@ -247,9 +248,9 @@ function RevealValue({ field, masked, clear, revealed, onReveal, onHide }: { fie
   </span>;
 }
 
-function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canOverrideCategory, onEdit, onOverride, onStatus }: {
+function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canOverrideCategory, onEdit, onOverride, onCompleteEducation, onStatus }: {
   member: Member; profile: ProfileData; scope: Scope; revealed: string[]; onReveal: (field: string) => void; onHide: (field: string) => void;
-  canOverrideCategory: boolean; onEdit: () => void; onOverride: () => void; onStatus: (status: string, message: string) => void;
+  canOverrideCategory: boolean; onEdit: () => void; onOverride: () => void; onCompleteEducation: () => void; onStatus: (status: string, message: string) => void;
 }) {
   const [action, setAction] = useState<DrawerAction>(null);
   const [reason, setReason] = useState("");
@@ -277,8 +278,6 @@ function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canO
     <section><h3>Domisili di Jepang</h3><Rows rows={[
       { label: "Prefektur", value: profile.prefecture },
       { label: "Kota atau kecamatan", value: profile.city },
-      { label: "Status izin tinggal", value: profile.residenceStatus },
-      { label: "Izin tinggal berlaku sampai", value: <RevealValue field="residenceExpiry" masked={maskExpiry(profile.residenceExpiry)} clear={formatDate(profile.residenceExpiry)} revealed={revealed.includes("residenceExpiry")} onReveal={onReveal} onHide={onHide} /> },
     ]} /></section>
     <section><h3>Pendidikan</h3><Rows rows={[
       { label: "Institusi", value: profile.institution, span: true },
@@ -289,11 +288,24 @@ function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canO
       { label: "Perkiraan lulus", value: formatMonth(profile.expectedGraduation) },
       { label: "Lab atau pembimbing", value: profile.lab || "—" },
       { label: "Nomor pelajar", value: profile.studentNumber || "—" },
-    ]} /></section>
+    ]} />
+      {!profile.entryMonth || !profile.expectedGraduation ? <div className="member-detail-prompt">
+        <IconAlertCircle size={16} aria-hidden="true" />
+        <div><strong>Data studi belum lengkap</strong><p>Bulan masuk dan perkiraan lulus menentukan kategori anggota. Lengkapi lewat “Ubah data anggota”.</p></div>
+        <Button size="sm" variant="outline" onClick={onCompleteEducation}><IconPencil size={15} /> Lengkapi data studi</Button>
+      </div> : null}
+    </section>
     <section><h3>Pendanaan</h3><Rows rows={[{ label: "Pendanaan saat ini", value: <Chips values={profile.funding.filter((row) => !row.to).map((row) => row.value)} />, span: true }]} />
       {profile.funding.some((row) => row.to) && <div className="member-subsection"><h4>Riwayat pendanaan</h4><ul className="member-dated-list">{profile.funding.filter((row) => row.to).map((row) => <li key={`${row.value}-${row.to}`}><span>{row.value}</span><small>{row.from} – {row.to}</small></li>)}</ul></div>}
     </section>
     <section><h3>Minat</h3><Chips values={profile.interests} /></section>
+    <section><h3>Izin tinggal dan kontak darurat</h3><Rows rows={[
+      { label: "Status izin tinggal", value: profile.residenceStatus },
+      { label: "Izin tinggal berlaku sampai", value: <RevealValue field="residenceExpiry" masked={maskExpiry(profile.residenceExpiry)} clear={formatDate(profile.residenceExpiry)} revealed={revealed.includes("residenceExpiry")} onReveal={onReveal} onHide={onHide} /> },
+      { label: "Kontak darurat", value: <RevealValue field="emergency" masked={maskEmergency(profile.emergency)} clear={`${profile.emergency.name} (${profile.emergency.relationship}) · ${profile.emergency.phone} · ${profile.emergency.address}`} revealed={revealed.includes("emergency")} onReveal={onReveal} onHide={onHide} />, span: true },
+    ]} />
+      <p className="member-detail-note-inline"><IconLock size={14} aria-hidden="true" />Izin tinggal dan kontak darurat disimpan terenkripsi dan hanya terbuka lewat aksi audit.</p>
+    </section>
     <section><h3>Keanggotaan</h3><Rows rows={[
       { label: "Nomor anggota", value: <span className="member-mono">{member.id}</span> },
       { label: "Status", value: <Badge variant={statusVariant(member.status)}>{member.status}</Badge> },
@@ -309,9 +321,6 @@ function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canO
     ]} />
       {canOverrideCategory ? <Button size="sm" variant="outline" className="member-category-open" onClick={onOverride}><IconShieldLock size={15} /> Ubah kategori</Button> : <p className="member-detail-note-inline"><IconLock size={14} aria-hidden="true" />Hanya admin korda atau nasional yang dapat mengubah kategori anggota.</p>}
       <div className="member-subsection"><h4>Riwayat keanggotaan</h4><Timeline items={profile.membership.map((entry, index) => ({ title: entry.status, description: entry.reason, time: entry.date, state: index === 0 ? "current" : "complete" }))} /></div>
-    </section>
-    <section><h3>Kontak darurat</h3><Rows rows={[{ label: "Kontak darurat", value: <RevealValue field="emergency" masked={maskEmergency(profile.emergency)} clear={`${profile.emergency.name} (${profile.emergency.relationship}) · ${profile.emergency.phone} · ${profile.emergency.address}`} revealed={revealed.includes("emergency")} onReveal={onReveal} onHide={onHide} />, span: true }]} />
-      <p className="member-detail-note-inline"><IconLock size={14} aria-hidden="true" />Kontak darurat disimpan terenkripsi dan hanya terbuka lewat aksi audit.</p>
     </section>
     <section className="member-actions"><div className="member-actions-head"><h3>Tindakan status</h3><p>Wewenang mengikuti matriks RBAC produksi. Pindah komsat dilakukan di “Ubah data anggota”, bukan di sini.</p></div>
       {actions.length === 0 ? (
@@ -365,7 +374,14 @@ function ErrorPreview({ value, onChange }: { value: SimulatedError; onChange: (v
   </div>;
 }
 
-function MemberEditForm({ member, profile, scope, onSave }: { member: Member; profile: ProfileData; scope: Scope; onSave: (patch: Partial<ProfileData>) => void }) {
+function MemberEditForm({ member, profile, scope, focusEducation = false, onSave }: { member: Member; profile: ProfileData; scope: Scope; focusEducation?: boolean; onSave: (patch: Partial<ProfileData>) => void }) {
+  const educationRef = useRef<HTMLDivElement>(null);
+  /** Opened from the "complete the study dates" prompt: land on the education fields, not the top. */
+  useEffect(() => {
+    if (!focusEducation || !educationRef.current) return;
+    educationRef.current.scrollIntoView({ block: "center" });
+    educationRef.current.querySelector("input")?.focus({ preventScroll: true });
+  }, [focusEducation]);
   const [fullName, setFullName] = useState(profile.fullName);
   /** The date of birth stays masked and is prefilled only from the audited reveal (Q47). */
   const [birthDate, setBirthDate] = useState("");
@@ -385,7 +401,6 @@ function MemberEditForm({ member, profile, scope, onSave }: { member: Member; pr
   const [simulated, setSimulated] = useState<SimulatedError>("none");
   const [errors, setErrors] = useState<{ [field: string]: string }>({});
   const komsatFixed = scope === "komsat";
-  const outsideScope = units.filter((unit) => !scopeUnits[scope].includes(unit));
   const revealBirth = () => { setBirthDate(profile.birthDate); setBirthRevealed(true); };
   const submit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -419,7 +434,7 @@ function MemberEditForm({ member, profile, scope, onSave }: { member: Member; pr
       </div>
       <div className="member-edit-field"><span>Jenis kelamin</span><PillRadio ariaLabel="Jenis kelamin" value={gender} onChange={(value) => setGender(value as "L" | "P")} options={[{ value: "L", label: "Laki-laki" }, { value: "P", label: "Perempuan" }]} /></div>
       <div className="member-edit-field"><span>Provinsi asal</span><TypeAhead value={originProvince} onChange={setOriginProvince} options={provinces} placeholder="Ketik provinsi" /></div>
-      <div className="member-edit-field member-edit-wide"><span>Institusi</span><TypeAhead value={institution} onChange={setInstitution} options={institutions} placeholder="Ketik nama institusi" />{errors.institution && <small className="member-edit-error" role="alert">{errors.institution}</small>}</div>
+      <div className="member-edit-field member-edit-wide" ref={educationRef}><span>Institusi</span><TypeAhead value={institution} onChange={setInstitution} options={institutions} placeholder="Ketik nama institusi" />{errors.institution && <small className="member-edit-error" role="alert">{errors.institution}</small>}</div>
       <label className="member-edit-field"><span>Fakultas atau sekolah pascasarjana</span><Input value={faculty} onChange={(event) => setFaculty(event.target.value)} placeholder="Contoh: Sekolah Pascasarjana" /><small className="member-edit-hint">Opsional untuk pascadoktoral dan peneliti.</small></label>
       <div className="member-edit-field"><span>Jenjang</span>
         <Select value={degree} onValueChange={setDegree}><SelectTrigger size="sm" aria-invalid={Boolean(errors.degree)}><SelectValue placeholder="Pilih jenjang" /></SelectTrigger><SelectContent>{degrees.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>
@@ -431,8 +446,8 @@ function MemberEditForm({ member, profile, scope, onSave }: { member: Member; pr
       <label className="member-edit-field"><span>Lab atau pembimbing</span><Input value={lab} onChange={(event) => setLab(event.target.value)} placeholder="Contoh: Lab Sistem Informasi" /></label>
       <label className="member-edit-field"><span>Nomor pelajar</span><Input value={studentNumber} onChange={(event) => setStudentNumber(event.target.value)} placeholder="Contoh: 76123456" /></label>
       <div className="member-edit-field member-edit-wide"><span>Komsat</span>
-        {komsatFixed ? <p className="member-edit-fixed">{profile.komsat}<small>Admin komsat tidak dapat memindahkan anggota ke komsat lain.</small></p> : <SearchableUnitMenu label="Komsat tujuan" values={[komsat]} options={units} onChange={(values) => setKomsat(values[0] ?? profile.komsat)} />}
-        {!komsatFixed && outsideScope.length > 0 && <small className="member-edit-hint">Di luar cakupan ruang kerja ini: {outsideScope.join(", ")}. Memindahkan anggota ke salah satunya ditolak (403 komsat_scope_required).</small>}
+        {komsatFixed ? <p className="member-edit-fixed">{profile.komsat}<small>Admin komsat tidak dapat memindahkan anggota ke komsat lain.</small></p> : <SearchableUnitMenu label="Komsat tujuan" values={[komsat]} options={scopeUnits[scope]} onChange={(values) => setKomsat(values[0] ?? profile.komsat)} />}
+        {!komsatFixed && <small className="member-edit-hint">Hanya komsat di dalam cakupan ruang kerja ini yang ditawarkan. Bila cakupan berubah sebelum disimpan, server menolak dengan 403 komsat_scope_required.</small>}
         {errors.komsat && <small className="member-edit-error" role="alert">{errors.komsat}</small>}
       </div>
     </div>

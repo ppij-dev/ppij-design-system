@@ -18,9 +18,15 @@
 .member-filter-field { display: grid; gap: 6px; color: #54616b; font-size: 13px; font-weight: 650; }
 .member-filter-field input { min-height: 32px; font-size: 13px; }
 .member-table { overflow-x: auto; border: 1px solid #e1e5e8; border-radius: 12px; }
-.member-table [data-slot=table] { min-width: 1080px; }
+.member-table [data-slot=table] { min-width: 860px; }
+/* Seven columns keep one line per value; only the header labels and the education cell wrap (Q61). */
+.member-table [data-slot=table-head] { white-space: normal; }
+.member-table [data-slot=table-cell]:nth-child(4) { white-space: normal; }
+.member-table [data-slot=table-cell]:nth-child(6) small { white-space: normal; }
+.member-table [data-slot=table-head], .member-table [data-slot=table-cell] { padding-left: 9px; padding-right: 9px; }
+.member-table [data-slot=table-head] { font-size: 12px; color: #64717c; }
 .member-table [data-slot=table-head], .member-table [data-slot=table-cell] { padding: 13px 14px; }
-.member-table [data-slot=table-cell] { color: #36434b; font-size: 13px; }
+.member-table [data-slot=table-cell] { color: #36434b; font-size: 12.5px; }
 .member-table [data-slot=table-cell] strong, .member-table [data-slot=table-cell] small { display: block; }
 .member-table [data-slot=table-cell] strong { color: #20282e; font-weight: 700; }
 .member-table [data-slot=table-cell] small { margin-top: 3px; color: #68757e; font-size: 12px; }
@@ -153,4 +159,22 @@
   .member-reveal-toggle { padding: 8px 12px; font-size: 12px; }
   .member-detail-head [data-slot=button] { width: 100%; }
   .member-edit-preview [data-slot=select-trigger] { width: 100%; min-width: 0; }
+}
+
+/* The member name is the row action (owner decision Q61); the trailing action column is gone. */
+.member-name-button { display: grid; border: 0; padding: 0; background: none; color: inherit; text-align: left; }
+.member-name-button strong { color: #20282e; font-size: 13px; font-weight: 700; }
+.member-name-button small { margin-top: 3px; color: #68757e; font-size: 12px; overflow-wrap: anywhere; }
+.member-name-button:hover strong { color: #a8132d; text-decoration: underline; text-underline-offset: 2px; }
+.member-name-button:focus-visible { outline: 2px solid #c8102e; outline-offset: 3px; border-radius: 4px; }
+
+/* "Belum ditentukan" category: the admin detail prompts for the missing study dates (Q63). */
+.member-detail-prompt { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 8px 10px; margin-top: 12px; border: 1px solid #f0dcc0; border-radius: 9px; padding: 11px 13px; background: #fffaef; }
+.member-detail-prompt > svg { margin-top: 2px; color: #a66d20; }
+.member-detail-prompt strong { display: block; color: #6b4a16; font-size: 13px; }
+.member-detail-prompt p { margin: 2px 0 0; color: #6f5a34; font-size: 12px; line-height: 1.5; }
+.member-detail-prompt [data-slot=button] { grid-column: 2; justify-self: start; gap: 6px; font-weight: 650; }
+@media (max-width: 600px) {
+  .member-name-button { min-height: 44px; }
+  .member-detail-prompt [data-slot=button] { grid-column: 1 / -1; width: 100%; min-height: 44px; }
 }

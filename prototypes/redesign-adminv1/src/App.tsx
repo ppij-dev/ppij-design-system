@@ -172,7 +172,7 @@ export function App() {
         <div className="preview-banner"><span><IconSparkles size={16} /> PRATINJAU ADMIN V1</span><p>Seluruh nama dan angka di halaman ini adalah data contoh.</p></div>
         {page === "dashboard" && <Dashboard scope={scope} queueCount={queueCount} go={go} goStats={goStats} openReview={goReview} />}
         {page === "stats" && <StatsPage scope={scope} scopeName={scopes[scope].label} topic={statsTopic} onTopic={setStatsTopic} />}
-        {page === "review" && <div className="verification-page-island"><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran dan perubahan data untuk ${scopePhrase[scope]}.`} />
+        {page === "review" && <div className="verification-page-island"><PageHeader title="Verifikasi anggota" description={`Tinjau pendaftaran anggota untuk ${scopePhrase[scope]}.`} />
           <ReviewWorkspace scope={scope} initialSelectedId={reviewInitialId} onNotice={demo} />
         </div>}
         {page === "members" && <MemberPage scope={scope} scopePhrase={scopePhrase[scope]} onNotice={demo} />}

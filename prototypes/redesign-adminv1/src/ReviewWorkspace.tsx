@@ -12,7 +12,12 @@ import "./ReviewWorkspace.css";
 
 type Scope = "national" | "korda" | "komsat";
 type Tab = "baru" | "dikirim_ulang" | "diperiksa" | "menunggu_anggota" | "selesai";
-type Kind = "Pendaftaran" | "Perpanjangan" | "Perubahan" | "Permintaan komsat";
+/**
+ * Registration review only (owner decision 2026-11-05): members no longer file change requests for
+ * reviewed profile fields, so the "Perubahan" and "Permintaan komsat" kinds are gone. A komsat move
+ * now happens in the Anggota "Ubah data anggota" drawer.
+ */
+type Kind = "Pendaftaran" | "Perpanjangan";
 type Action = "approve" | "requestChanges" | "reject" | "forward" | "assignKomsat";
 type Field = { label: string; value: string };
 type Group = { title: string; fields: Field[] };
@@ -30,7 +35,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "menunggu_anggota", label: "Menunggu anggota" },
   { id: "selesai", label: "Selesai" },
 ];
-const kinds: Kind[] = ["Pendaftaran", "Perpanjangan", "Perubahan", "Permintaan komsat"];
+const kinds: Kind[] = ["Pendaftaran", "Perpanjangan"];
 const units = ["Tokyo", "Yokohama", "Chiba", "Saitama", "Osaka", "Kyoto", "Nagoya", "Fukuoka"];
 const fieldGroups = (name: string, unit: string): Group[] => [
   { title: "Data diri", fields: [
@@ -64,12 +69,12 @@ const fieldGroups = (name: string, unit: string): Group[] => [
 export const reviewSamples: Review[] = [
   { id: "REG-2408", name: "Contoh Anggota A", initials: "AA", unit: "Tokyo", kind: "Pendaftaran", received: "Hari ini, 09.42", tab: "baru", round: 1, daysWaiting: 0, binding: "Institusi", flags: [], groups: fieldGroups("Contoh Anggota A", "Tokyo"), history: [], front: "image", back: "pdf" },
   { id: "REG-2407", name: "Contoh Anggota B", initials: "AB", unit: "Yokohama", kind: "Perpanjangan", received: "Hari ini, 08.16", tab: "baru", round: 1, daysWaiting: 0, binding: "Kota/kecamatan", flags: ["Kemungkinan duplikat"], groups: fieldGroups("Contoh Anggota B", "Yokohama"), history: [], front: "pdf", back: "image" },
-  { id: "REG-2406", name: "Contoh Anggota C", initials: "AC", unit: "Osaka", kind: "Perubahan", received: "Kemarin, 17.30", tab: "dikirim_ulang", round: 2, daysWaiting: 1, binding: "Institusi", flags: [], groups: fieldGroups("Contoh Anggota C", "Osaka"), history: [
+  { id: "REG-2402", name: "Contoh Anggota C", initials: "AC", unit: "Tokyo", kind: "Pendaftaran", received: "Kemarin, 17.30", tab: "dikirim_ulang", round: 2, daysWaiting: 1, binding: "Institusi", flags: [], groups: fieldGroups("Contoh Anggota C", "Tokyo"), history: [
     { date: "28 Okt 2026 · 10.15", title: "Putaran 1 · Minta perbaikan", detail: "Kartu pelajar · Foto sisi depan kurang jelas." },
     { date: "30 Okt 2026 · 17.30", title: "Putaran 2 · Dikirim ulang", detail: "Anggota mengunggah ulang dokumen dan memberi tanggapan." },
   ], front: "image", back: "image" },
-  { id: "REG-2405", name: "Contoh Anggota D", initials: "AD", unit: "Nagoya", kind: "Permintaan komsat", received: "23 Okt, 13.10", tab: "diperiksa", round: 1, daysWaiting: 8, binding: "Permintaan anggota", flags: ["Komsat lain"], owner: "Contoh Pengurus B", groups: fieldGroups("Contoh Anggota D", "Nagoya"), history: [
-    { date: "23 Okt 2026 · 13.10", title: "Pengajuan diterima", detail: "Permintaan perubahan komsat masuk ke antrean." },
+  { id: "REG-2405", name: "Contoh Anggota D", initials: "AD", unit: "Tokyo", kind: "Perpanjangan", received: "23 Okt, 13.10", tab: "diperiksa", round: 1, daysWaiting: 8, binding: "Institusi", flags: [], owner: "Contoh Pengurus B", groups: fieldGroups("Contoh Anggota D", "Tokyo"), history: [
+    { date: "23 Okt 2026 · 13.10", title: "Pengajuan diterima", detail: "Permohonan perpanjangan masuk ke antrean Tokyo." },
     { date: "24 Okt 2026 · 09.20", title: "Pemeriksaan dimulai", detail: "Pengajuan sedang dipegang Contoh Pengurus B." },
   ], front: "image", back: "pdf" },
   { id: "REG-2404", name: "Contoh Anggota E", initials: "AE", unit: "Tokyo", kind: "Pendaftaran", received: "21 Okt, 14.22", tab: "menunggu_anggota", round: 1, daysWaiting: 10, binding: "Institusi", flags: ["Lebih dari 7 hari"], groups: fieldGroups("Contoh Anggota E", "Tokyo"), history: [
@@ -236,7 +241,6 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
         {selected.flags.length > 0 && <div className="verification-flag"><IconAlertCircle size={18} /> {selected.flags.join(" · ")}</div>}
         {selected.owner && readOnly && <div className="verification-claim"><p>Sedang diperiksa oleh {selected.owner}. Keputusan hanya bisa dibuat setelah mengambil alih pemeriksaan.</p><Button size="sm" variant="outline" onClick={() => { setTakenOver((current) => [...current, selected.id]); onNotice("Pemeriksaan diambil alih. Keputusan contoh dapat dibuat."); }}>Ambil alih pemeriksaan</Button></div>}
         {selected.owner && !readOnly && <div className="verification-claim"><IconCircleCheck size={18} /> Pemeriksaan diambil alih untuk pratinjau ini.</div>}
-        {selected.kind === "Permintaan komsat" && <div className="verification-claim"><strong>Permintaan ganti komsat</strong><p>Anggota meminta komsat lain karena domisili dan kampus berada di wilayah berbeda.</p></div>}
         <section className="verification-section"><h3>Data pendaftaran</h3><p>Diurutkan seperti langkah registrasi anggota.</p>{selected.groups.map((group) => <div className="verification-field-group" key={group.title}><h4>{group.title}</h4><dl>{group.fields.map((field) => <div key={field.label}><dt>{field.label}</dt><dd>{field.value}</dd></div>)}</dl></div>)}</section>
         <section className="verification-section"><h3>Kartu pelajar</h3><p>Dokumen yang dikumpulkan pada registrasi. Pratinjau ini memakai berkas contoh.</p><div className="verification-doc-tabs" role="group" aria-label="Sisi kartu pelajar"><button className={documentSide === "front" ? "active" : ""} aria-pressed={documentSide === "front"} onClick={() => setDocumentSide("front")}>Sisi depan</button><button className={documentSide === "back" ? "active" : ""} aria-pressed={documentSide === "back"} onClick={() => setDocumentSide("back")}>Sisi belakang</button></div><div className="verification-document-island"><div className="verification-file-row">{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={22} /> : <IconPhoto size={22} />}<div><strong>Kartu pelajar · {documentSide === "front" ? "sisi depan" : "sisi belakang"}</strong><span>Berkas contoh · {(documentSide === "front" ? selected.front : selected.back) === "pdf" ? "PDF" : "JPG"}</span></div></div><div className="verification-document-stage"><div className="verification-document-paper"><span>PRATINJAU BERKAS CONTOH</span>{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={45} stroke={1.4} /> : <IconId size={45} stroke={1.4} />}<strong>KARTU PELAJAR</strong><i /><i /><small>Tanpa data pribadi</small></div></div><dl className="verification-document-facts"><div><dt>Nama</dt><dd>{selected.name}</dd></div><div><dt>Jenjang</dt><dd>{fieldValue(selected, "Jenjang")}</dd></div><div><dt>Institusi / Fakultas</dt><dd>{fieldValue(selected, "Institusi")} / {fieldValue(selected, "Fakultas")}</dd></div><div><dt>Tinggal dari / sampai</dt><dd>{monthYear(fieldValue(selected, "Tinggal sejak"))} sampai {monthYear(fieldValue(selected, "Tinggal sampai"))}</dd></div></dl></div></section>
         <section className="verification-section"><h3>Riwayat pemeriksaan</h3>{selected.history.length ? <><ol className="verification-history">{[...selected.history].reverse().slice(0, historyExpanded ? undefined : 3).map((entry, index) => <li key={`${selected.id}-${entry.date}-${index}`}><time>{entry.date}</time><strong>{entry.title}</strong><HistoryDetail detail={entry.detail} /></li>)}</ol>{selected.history.length > 3 && <button type="button" className="verification-history-more" aria-expanded={historyExpanded} onClick={() => setHistoryExpanded((value) => !value)}>{historyExpanded ? "Tampilkan 3 terbaru" : `Lihat selengkapnya (${selected.history.length - 3} peristiwa)`}</button>}</> : <p>Belum ada keputusan atau umpan balik pada putaran ini.</p>}</section>

@@ -33,6 +33,7 @@ export default meta;
 type Story = StoryObj<typeof MemberCardBlock>;
 
 export const Active: Story = { args: { state: "active" } };
+export const ActiveLuarBiasa: Story = { args: { state: "active", categoryLine: "Anggota Luar Biasa" } };
 export const Expiring: Story = { args: { state: "expiring", validUntil: "2026-11-15" } };
 export const ChangePending: Story = { args: { state: "change_pending" } };
 export const ExpiredGrace: Story = { args: { state: "expired_grace", graceUntil: "2026-12-31" } };

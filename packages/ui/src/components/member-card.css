@@ -19,6 +19,8 @@
 .mc-front .mc-id { position:absolute; left:20px; top:98px; width:calc(64% - 24px); gap:3px; }
 .mc-front .mc-name { height:40px; font-size:17px; line-height:20px; text-wrap:wrap; }
 .mc-front .mc-number { font-size:12px; line-height:15px; }
+/* AD/ART category line, Luar Biasa members only (Anggota Biasa shows no line). */
+.mc-category { font-size:11px; line-height:14px; font-weight:600; letter-spacing:.06em; opacity:.94; }
 .mc-front .mc-note { font-size:11px; line-height:11px; max-height:22px; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; overflow-wrap:anywhere; }
 .mc-front .mc-foot { position:absolute; left:20px; right:20px; bottom:14px; height:36px; gap:8px; }
 .mc-front .mc-col:first-child { min-width:0; flex:1; }

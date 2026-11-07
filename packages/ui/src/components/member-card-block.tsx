@@ -53,6 +53,11 @@ export interface MemberCardBlockProps {
   validUntil?: string | null;
   graceUntil?: string | null;
   suspendReason?: string | null;
+  /**
+   * AD/ART category line under the member number ("Anggota Luar Biasa"). The page passes it for
+   * LUAR_BIASA members only and null (or nothing) for everyone else, so the card shows no line.
+   */
+  categoryLine?: string | null;
   state: MemberCardState;
   /** The PPIJ logo shown on the front (the app serves /ppij-logo.png). */
   logoSrc: string;
@@ -263,6 +268,7 @@ function Front(p: FaceProps) {
         ) : (
           <span className="mc-number">{p.number}</span>
         )}
+        {p.categoryLine ? <span className="mc-category">{p.categoryLine}</span> : null}
         {state === "change_pending" ? <span className="mc-note">{l.pending}</span> : null}
       </div>
       <div className="mc-row mc-foot">

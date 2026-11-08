@@ -26,8 +26,15 @@ npm install ppij-design-system
 
 Exports: React components from the package root,
 `ppij-design-system/tokens.css`, and `ppij-design-system/tokens.json`.
-Until the first npm publish, install the same package from the public GitHub
-repo: `npm install github:ppij-dev/ppij-design-system`.
+`npm install ppij-design-system` is the primary route. The fallback is the
+tarball attached to the release:
+
+```sh
+npm install https://github.com/ppij-dev/ppij-design-system/releases/download/v0.4.0/ppij-design-system-0.4.0.tgz
+```
+
+Do not install `github:ppij-dev/ppij-design-system`: that installs the
+repository root, which is the private npm workspace, not the package.
 
 A consumer needs two things of its own, both proved by installing a packed
 tarball into an app with no credentials:

@@ -66,8 +66,11 @@ that had drifted. Released through the change
   geography in the package.
 - The design system stays presentation-only: no fetching, no routes, no
   permissions, no mutations.
-- Install the 0.4.0 tarball with `npm install github:ppij-dev/ppij-design-system#v0.4.0`
-  until the registry publish lands.
+- `ppij-design-system@0.4.0` is published on npm, so `npm install
+  ppij-design-system` is the install route. The release tarball
+  (`https://github.com/ppij-dev/ppij-design-system/releases/download/v0.4.0/ppij-design-system-0.4.0.tgz`)
+  stays available as the anonymous fallback; installing the GitHub repo ref
+  itself does not work, because the repository root is the private workspace.
 
 ## [0.3.0] - 2026-11-03
 

@@ -7,8 +7,17 @@ application data logic, no API clients and no secrets.
 
 ```sh
 npm install ppij-design-system
-npm install github:ppij-dev/ppij-design-system   # the released tarball route
 ```
+
+`npm install ppij-design-system` is the primary route. The fallback is the
+tarball attached to the release:
+
+```sh
+npm install https://github.com/ppij-dev/ppij-design-system/releases/download/v0.4.0/ppij-design-system-0.4.0.tgz
+```
+
+Do not install `github:ppij-dev/ppij-design-system`: that installs the
+repository root, which is the private npm workspace, not this package.
 
 ## Exports
 

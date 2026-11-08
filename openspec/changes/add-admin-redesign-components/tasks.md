@@ -655,7 +655,7 @@ stands for.
 
 - [x] Tag `v0.4.0` and publish a GitHub Release whose tarball is the anonymous
       install artifact (`npm install github:ppij-dev/ppij-design-system#v0.4.0`).
-- [ ] **Owner:** run `npm publish` from `packages/ui` with 2FA, then confirm
+- [x] **Owner:** run `npm publish` from `packages/ui` with 2FA, then confirm
       `npm view ppij-design-system version` reports `0.4.0`. This is not a
       worker step; commit, tag and release are, publish is not.
 - Proof: the tag exists, the release tarball installs into a scratch app, and

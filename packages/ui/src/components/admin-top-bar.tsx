@@ -91,11 +91,13 @@ export function AdminTopBar({
             <button
               type="button"
               onClick={onIdentityClick}
-              aria-label={identity.name}
+              // The visible label is the initials, so the accessible name carries
+              // them too (WCAG 2.5.3) and then states the person's name.
+              aria-label={`${identity.initials}, ${identity.name}`}
               aria-haspopup={onIdentityClick ? "dialog" : undefined}
               className="grid size-11 shrink-0 place-items-center rounded-[10px] bg-brand-red/8 text-[13px] font-extrabold text-brand-red focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
             >
-              {identity.initials}
+              <span aria-hidden>{identity.initials}</span>
             </button>
           ) : null}
         </div>
@@ -170,21 +172,23 @@ export function AdminTopBar({
             <button
               type="button"
               onClick={onIdentityClick}
-              aria-label={identity.name}
+              // No aria-label: the visible name below is the accessible name. An
+              // aria-label here would have to repeat the initials, which axe
+              // counts as the visible label (WCAG 2.5.3).
               aria-haspopup="dialog"
               className="flex items-center gap-2 rounded-full pr-1 pl-0.5 transition-colors hover:bg-secondary focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none max-[600px]:min-h-11 min-[600px]:h-8"
             >
               <span aria-hidden className="grid size-8 place-items-center rounded-full bg-brand-red/8 text-xs font-extrabold text-brand-red">
                 {identity.initials}
               </span>
-              <span className="hidden max-w-40 truncate font-bold text-brand-ink min-[900px]:block">{identity.name}</span>
+              <span className="sr-only max-w-40 truncate font-bold text-brand-ink min-[900px]:not-sr-only min-[900px]:block">{identity.name}</span>
             </button>
           ) : (
             <span className="flex items-center gap-2 max-[600px]:min-h-11 min-[600px]:h-8">
               <span aria-hidden className="grid size-8 place-items-center rounded-full bg-brand-red/8 text-xs font-extrabold text-brand-red">
                 {identity.initials}
               </span>
-              <span className="hidden max-w-40 truncate font-bold text-brand-ink min-[900px]:block">{identity.name}</span>
+              <span className="sr-only max-w-40 truncate font-bold text-brand-ink min-[900px]:not-sr-only min-[900px]:block">{identity.name}</span>
             </span>
           )
         ) : null}

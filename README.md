@@ -30,7 +30,7 @@ Exports: React components from the package root,
 tarball attached to the release:
 
 ```sh
-npm install https://github.com/ppij-dev/ppij-design-system/releases/download/v0.4.0/ppij-design-system-0.4.0.tgz
+npm install https://github.com/ppij-dev/ppij-design-system/releases/download/v0.4.1/ppij-design-system-0.4.1.tgz
 ```
 
 Do not install `github:ppij-dev/ppij-design-system`: that installs the

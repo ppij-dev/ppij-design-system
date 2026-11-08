@@ -58,7 +58,9 @@ export function StatStrip({ items, columns = 3, size = "default", label, classNa
     <dl
       data-slot="stat-strip"
       data-size={size}
-      {...(label ? { role: "group", "aria-label": label } : {})}
+      // No role override: role="group" replaced the list semantics and made axe
+      // report dlitem for every <dt>/<dd> inside. The label names the <dl>.
+      {...(label ? { "aria-label": label } : {})}
       className={cn(
         grid,
         compact ? "mt-4 border-t border-brand-border pt-3.5" : "rounded-xl border border-brand-border bg-card px-1.5 py-4",

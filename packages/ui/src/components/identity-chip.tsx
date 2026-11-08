@@ -21,13 +21,22 @@ export interface IdentityChipProps {
  * initials alone.
  */
 export function IdentityChip({ name, detail, initials, onClick, collapsed = false, className }: IdentityChipProps) {
+  // WCAG 2.5.3 (label in name), measured with axe 4.14:
+  // - Collapsed, the only visible label is the initials, and axe counts
+  //   aria-hidden text as visible, so the name has to carry them as well.
+  // - Expanded, the two visible lines are separate block spans; axe joins them
+  //   without a separator, so no aria-label can match them. The button instead
+  //   takes its accessible name from that visible text (the initials and the
+  //   chevron are aria-hidden), which is the name plus the role.
+  const accessibleName = collapsed ? `${initials}, ${name}${detail ? `, ${detail}` : ""}` : undefined
+
   return (
     <button
       data-slot="identity-chip"
       data-collapsed={collapsed}
       type="button"
       onClick={onClick}
-      aria-label={name}
+      aria-label={accessibleName}
       aria-haspopup="dialog"
       className={cn(
         "flex items-center rounded-[10px] border border-brand-border bg-card text-left transition-colors hover:bg-secondary/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",

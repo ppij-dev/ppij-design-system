@@ -12,6 +12,40 @@ drifted apart.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 the versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-11-08
+
+Accessibility fixes found by the `ppij-identity` E2E integration, where axe
+reported `label-content-name-mismatch` (WCAG 2.5.3) and `dlitem` on the admin
+screens. No API change and no visual change beyond the three notes below.
+
+### Fixed
+
+- `IdentityChip`: the collapsed chip's accessible name now carries the visible
+  initials as well as the person's full name and role (`"PA, Contoh Pengurus A,
+  Admin Nasional"`), and the expanded chip takes its accessible name from its
+  own visible text instead of an `aria-label` that could not match it. axe 4.14
+  counts `aria-hidden` text as visible and joins two block-line labels without a
+  separator, so no `aria-label` can satisfy the rule for the two-line chip.
+- `AdminTopBar`: the phone identity wraps its initials in `aria-hidden` and names
+  itself `"PA, Contoh Pengurus A"`; the desktop identity drops its `aria-label`
+  and keeps the person's name as a visually hidden label below 900px, so the
+  button is never unnamed.
+- `StatStrip`: the `<dl>` no longer takes `role="group"`, which had replaced the
+  definition-list semantics and made axe report every `<dt>`/`<dd>` as `dlitem`;
+  the optional `label` still names the strip through `aria-label`.
+- `MapCard`: the desktop panel overlay is a plain `<div>` and no longer carries
+  an `aria-label`, which was prohibited on a generic element.
+
+### Notes
+
+- Verified with axe-core 4.14 over the affected Storybook stories: the
+  `label-content-name-mismatch` and `dlitem` violations go from six each to
+  zero. The only rules that still fire are the Storybook iframe's own
+  `landmark-one-main` and `page-has-heading-one`, which fire identically on
+  stories this release does not touch.
+- `npm install ppij-design-system` remains the install route; the release tarball
+  is the fallback.
+
 ## [0.4.0] - 2026-11-08
 
 The admin redesign component set: the presentation half of the `ppij-identity`

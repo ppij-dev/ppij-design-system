@@ -155,7 +155,7 @@ export function MapCard({
           </div>
         ) : null}
         {/* Desktop overlay: the panel over the canvas, top right, from 900px up. */}
-        <div data-slot="map-panel-overlay" className="absolute top-2.5 right-2.5 hidden w-[230px] rounded-[10px] border border-brand-border bg-card p-3.5 shadow-lg min-[900px]:block" aria-label={panelLabel}>
+        <div data-slot="map-panel-overlay" className="absolute top-2.5 right-2.5 hidden w-[230px] rounded-[10px] border border-brand-border bg-card p-3.5 shadow-lg min-[900px]:block">
           {panel}
         </div>
       </div>

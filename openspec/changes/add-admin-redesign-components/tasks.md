@@ -653,7 +653,7 @@ stands for.
 
 ### Task F3 — Tag and release (owner step, S)
 
-- [ ] Tag `v0.4.0` and publish a GitHub Release whose tarball is the anonymous
+- [x] Tag `v0.4.0` and publish a GitHub Release whose tarball is the anonymous
       install artifact (`npm install github:ppij-dev/ppij-design-system#v0.4.0`).
 - [ ] **Owner:** run `npm publish` from `packages/ui` with 2FA, then confirm
       `npm view ppij-design-system version` reports `0.4.0`. This is not a

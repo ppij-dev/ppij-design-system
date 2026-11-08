@@ -104,7 +104,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B1 — `PanelCard` (S)
 
-- [ ] `packages/ui/src/components/panel-card.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/panel-card.tsx` + `.stories.tsx`
 - Props: `title`, `description?`, `action?: ReactNode`, `badge?: ReactNode`,
       `icon?: ReactNode`, `padding?: "page" | "panel" | "none"`,
       `density?: "default" | "compact"`, `children`, `className`.
@@ -121,7 +121,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B2 — `ListRow` (S)
 
-- [ ] `packages/ui/src/components/list-row.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/list-row.tsx` + `.stories.tsx`
 - Props: `leading?: ReactNode`, `title`, `subtitle?`, `meta?: ReactNode`,
       `trailing?: ReactNode`, `badge?: ReactNode`, `tone?:
       "default" | "danger" | "muted"`, `onSelect?`, `href?`, `selected?`,
@@ -142,7 +142,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B3 — `FactList` (M)
 
-- [ ] `packages/ui/src/components/fact-list.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/fact-list.tsx` + `.stories.tsx`
 - Props: `items: { label: string; value: ReactNode; span?: boolean;
       muted?: boolean }[]`, `variant?: "rows" | "inline" | "twoColumn"`,
       `total?: { label: string; value: ReactNode }`,
@@ -162,7 +162,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B4 — `StatStrip` (S)
 
-- [ ] `packages/ui/src/components/stat-strip.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/stat-strip.tsx` + `.stories.tsx`
 - Props: `items: { value: ReactNode; label: string; hint?: string }[]`,
       `columns?`, `size?: "default" | "compact"`, `className`.
 - Stories (`Admin/StatStrip`): three items (map footer); two items; six items
@@ -175,7 +175,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B5 — `Callout` (M)
 
-- [ ] `packages/ui/src/components/callout.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/callout.tsx` + `.stories.tsx`
 - Props: `tone?: "info" | "success" | "warning" | "danger" | "neutral"`,
       `icon?: ReactNode`, `title?`, `children`, `action?: ReactNode`,
       `density?: "default" | "compact"`, `className`.
@@ -195,7 +195,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B6 — `FormGrid` (S)
 
-- [ ] `packages/ui/src/components/form-grid.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/form-grid.tsx` + `.stories.tsx`
 - Props: `columns?: 1 | 2`, `children`, `className`; a companion
       `FormField` (`label`, `hint?`, `error?`, `wide?`, `children`) exported
       from the same module.
@@ -213,7 +213,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B7 — `RevealValue` (S)
 
-- [ ] `packages/ui/src/components/reveal-value.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/reveal-value.tsx` + `.stories.tsx`
 - Props: `masked`, `clear`, `revealed: boolean`, `onReveal`, `onHide`,
       `showLabel?`, `hideLabel?`, `iconOnly?`, `className`.
 - Stories (`Admin/RevealValue`): masked (default); revealed; toggle focused;
@@ -228,7 +228,7 @@ the four story files rendering at both viewport presets.
 
 ### Task B8 — `ExpandableText` (S)
 
-- [ ] `packages/ui/src/components/expandable-text.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/expandable-text.tsx` + `.stories.tsx`
 - Props: `children: string`, `lines?: number` (default 3), `expandLabel?`,
       `collapseLabel?`, `className`.
 - Stories (`Admin/ExpandableText`): three-line clamp with the toggle; short

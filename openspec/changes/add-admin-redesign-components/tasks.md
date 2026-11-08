@@ -20,6 +20,13 @@ Sizes: **S** ≤ 150 LOC plus one story file; **M** 150–400 LOC or 4–6 stori
 **L** > 400 LOC, a merge of existing copies, or geometry that needs its own
 review.
 
+## 0. Owner approval
+
+- [x] 0.1 Owner approves this change as proposed (2026-11-08, Q90); the pending `0.3.1` fixes fold into
+      `0.4.0` instead of a separate `0.3.1` release (Q91); and the `VERSION`/`CHANGELOG` bookkeeping is
+      fixed now, as part of `0.4.0` (Q92 — `VERSION` is the source and the build syncs it into
+      `packages/ui/package.json`).
+
 Prototype provenance paths are relative to
 `prototypes/redesign-adminv1/src/`.
 
@@ -83,8 +90,7 @@ Prototype provenance paths are relative to
 - [ ] Root `VERSION` reads `0.1.0` while `packages/ui/package.json` reads
       `0.3.0` and nothing consumes `VERSION`. Make `VERSION` the source and
       have the build write it into `packages/ui/package.json` before publish
-      (or, if the owner prefers, update both in the release runbook — see
-      open question 6).
+      (owner decision Q92, 2026-11-08: do the sync now, as part of `0.4.0`).
 - [ ] Add `CHANGELOG.md` with the `0.3.0` and `0.4.0` entries.
 - Proof: `npm run build` leaves `VERSION` and
       `packages/ui/package.json.version` equal; `scripts/gate.sh` green.

@@ -1,5 +1,8 @@
 # Add the admin redesign component set (releases as `ppij-design-system@0.4.0`)
 
+Owner decisions 2026-11-08: approved as proposed (Q90); the pending `0.3.1` fixes fold into `0.4.0`
+(Q91); the `VERSION`/`CHANGELOG` bookkeeping is fixed now, as part of `0.4.0` (Q92).
+
 ## Why
 
 Release 1.1.0 of `ppij-identity` rebuilds the real admin from the admin

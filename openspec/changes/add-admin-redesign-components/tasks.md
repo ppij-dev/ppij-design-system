@@ -364,9 +364,12 @@ looks unchanged when reviewed in the preview dev server.
 - Proof: stories render; the review history shows three events then reveals
       the rest.
 
-**Batch C proof:** `scripts/gate.sh` green; the prototype dev server shows the
-new shell rendering the same screens as before the batch, at 390px, 700px and
-1440px.
+**Batch C proof:** `scripts/gate.sh` green; the six story files render at 390
+and 1280 with their bands measured at 390/599/601/1280. The prototype
+dev-server check (the new shell rendering the same screens at 390px, 700px and
+1440px) belongs to F1: the prototype keeps its own `App.tsx` shell until the
+migration batch imports these components, so batch C proves the components by
+their stories and F1 proves the shell against the migrated prototype.
 
 ## Batch D — Filters and charts
 

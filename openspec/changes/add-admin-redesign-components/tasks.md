@@ -375,7 +375,7 @@ their stories and F1 proves the shell against the migrated prototype.
 
 ### Task D1 — `SearchableMultiSelect` (L)
 
-- [ ] `packages/ui/src/components/searchable-multi-select.tsx` +
+- [x] `packages/ui/src/components/searchable-multi-select.tsx` +
       `.stories.tsx`. Merges the prototype's `SearchableMultiSelect.tsx`,
       `SearchableUnitMenu` and the multi-select uses in `MemberWorkspace`,
       `MemberPage`, `ManagementPage` and `StatsPage`.
@@ -407,7 +407,7 @@ their stories and F1 proves the shell against the migrated prototype.
 
 ### Task D2 — `FilterMenu` (S)
 
-- [ ] `packages/ui/src/components/filter-menu.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/filter-menu.tsx` + `.stories.tsx`
 - Props: `label`, `value`, `options: { value: string; label: string }[]`,
       `allLabel`, `onChange`, `hideLabel?`, `disabled?`, `className`.
 - Stories (`Admin/FilterMenu`): nothing selected; one value selected; long
@@ -423,7 +423,7 @@ their stories and F1 proves the shell against the migrated prototype.
 
 ### Task D3 — `FilterChips` (S)
 
-- [ ] `packages/ui/src/components/filter-chips.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/filter-chips.tsx` + `.stories.tsx`
 - Props: `chips: { label: string; value: string; count?: number;
       onRemove: () => void }[]`, `onClearAll?`, `clearAllLabel?`,
       `label?` (group name), `className`.
@@ -440,7 +440,7 @@ their stories and F1 proves the shell against the migrated prototype.
 
 ### Task D4 — `PieChart` (L)
 
-- [ ] `packages/ui/src/components/pie-chart.tsx` + `.stories.tsx`. Data-in,
+- [x] `packages/ui/src/components/pie-chart.tsx` + `.stories.tsx`. Data-in,
       SVG-out, no dependency (`design.md` D1).
 - Props: `data: { label: string; value: number; color?: string }[]`,
       `size?: number`, `donut?: boolean`, `centerLabel?: string`,
@@ -472,7 +472,7 @@ their stories and F1 proves the shell against the migrated prototype.
 
 ### Task D5 — `BarChart` (M)
 
-- [ ] `packages/ui/src/components/bar-chart.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/bar-chart.tsx` + `.stories.tsx`
 - Props: `data: { label: string; value: number; hint?: string }[]`,
       `orientation?: "vertical" | "horizontal"`,
       `highlightLast?: boolean`, `max?: number`, `height?: number`,
@@ -496,7 +496,7 @@ their stories and F1 proves the shell against the migrated prototype.
 
 ### Task D6 — `DistributionBar` (M)
 
-- [ ] `packages/ui/src/components/distribution-bar.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/distribution-bar.tsx` + `.stories.tsx`
 - Props: `segments: { label: string; value: number; color?: string }[]`,
       `size?: "sm" | "md"`, `legend?: "list" | "inline" | "none"`,
       `totalLabel?: string`, `formatValue?: (value: number) => string`,

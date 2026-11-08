@@ -27,7 +27,7 @@ Prototype provenance paths are relative to
 
 ### Task A1 — `AdminDrawer`: 44px phone close button (S)
 
-- [ ] `packages/ui/src/components/admin-drawer.tsx`: the close `Button` uses
+- [x] `packages/ui/src/components/admin-drawer.tsx`: the close `Button` uses
       `size="icon"` (36px) below 900px and `icon-sm` (32px) in compact desktop.
       Below 600px it must be 44×44; from 600px up it stays `icon-sm` compact /
       `icon` default.
@@ -45,7 +45,7 @@ Prototype provenance paths are relative to
 
 ### Task A2 — `Input`: 13px compact text (S)
 
-- [ ] `packages/ui/src/components/input.tsx`: add `textSize?: "compact"`
+- [x] `packages/ui/src/components/input.tsx`: add `textSize?: "compact"`
       (13px from 600px up, 16px below 600px) beside the existing
       `data-[size=sm|lg]` heights.
 - Props: `size?: "sm" | "default" | "lg"` (existing, via `data-size`),
@@ -64,7 +64,7 @@ Prototype provenance paths are relative to
 
 ### Task A3 — `StatusCard`: admin compact density (S)
 
-- [ ] `packages/ui/src/components/status-card.tsx`: add
+- [x] `packages/ui/src/components/status-card.tsx`: add
       `density?: "default" | "compact"` giving a 13px body, 12px labels, 14px
       title and 32px action, matching `AdminDrawer`'s compact density.
 - Props: existing (`icon`, `title`, `body`, `actionLabel`, `actionHref`,
@@ -80,14 +80,20 @@ Prototype provenance paths are relative to
 
 ### Task A4 — Version coherence: `VERSION` → `0.4.0` and a real sync (S)
 
-- [ ] Root `VERSION` reads `0.1.0` while `packages/ui/package.json` reads
+- [x] Root `VERSION` reads `0.1.0` while `packages/ui/package.json` reads
       `0.3.0` and nothing consumes `VERSION`. Make `VERSION` the source and
       have the build write it into `packages/ui/package.json` before publish
       (or, if the owner prefers, update both in the release runbook — see
       open question 6).
-- [ ] Add `CHANGELOG.md` with the `0.3.0` and `0.4.0` entries.
+- [x] Add `CHANGELOG.md` with the `0.3.0` and `0.4.0` entries.
 - Proof: `npm run build` leaves `VERSION` and
       `packages/ui/package.json.version` equal; `scripts/gate.sh` green.
+
+Note (owner Q92): batch A makes the version pair coherent at `0.3.0` —
+`VERSION` is the source, `scripts/sync-version.mjs` copies it into
+`package.json` and `packages/ui/package.json` on every build, and
+`scripts/check-version.mjs` (in `make test`) fails when the three disagree.
+The `0.4.0` bump itself belongs to F2, so `VERSION` still reads `0.3.0` here.
 
 **Batch A proof:** `scripts/gate.sh` prints `ALL PASS` on a clean tree, plus
 the four story files rendering at both viewport presets.

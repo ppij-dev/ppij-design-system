@@ -49,6 +49,14 @@ export { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMe
 export { FormPanel } from "./components/form-panel";
 export { MemberCard, MemberCardBack, type MemberCardProps, type MemberCardBackProps, type MemberCardTheme } from "./components/member-card";
 export { PageHeader, type PageHeaderProps } from "./components/page-header";
+export { PanelCard, type PanelCardProps, type PanelCardHeadingLevel, type PanelCardPadding } from "./components/panel-card";
+export { ListRow, type ListRowProps, type ListRowTone } from "./components/list-row";
+export { FactList, type FactListProps, type FactListItem, type FactListVariant } from "./components/fact-list";
+export { StatStrip, type StatStripProps, type StatStripItem } from "./components/stat-strip";
+export { Callout, type CalloutProps, type CalloutTone } from "./components/callout";
+export { FormGrid, FormField, type FormGridProps, type FormFieldProps } from "./components/form-grid";
+export { RevealValue, type RevealValueProps } from "./components/reveal-value";
+export { ExpandableText, type ExpandableTextProps } from "./components/expandable-text";
 export { DataTable, type DataTableProps } from "./components/data-table";
 export { TopBar, type TopBarProps, type TopBarLink } from "./components/top-bar";
 export { ViewToggle, type ViewToggleProps, type ViewToggleOption } from "./components/view-toggle";

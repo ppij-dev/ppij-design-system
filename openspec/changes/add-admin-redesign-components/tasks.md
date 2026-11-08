@@ -524,7 +524,7 @@ in `design.md` D1 passes.
 
 ### Task E1 — `FiguresBand` (M)
 
-- [ ] `packages/ui/src/components/figures-band.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/figures-band.tsx` + `.stories.tsx`
 - Props: `title`, `description?`, `groups: { label: string; value: string;
       tone?: "default" | "warn"; sub?: ReactNode; visual?: ReactNode;
       linkLabel: string; onSelect: () => void }[]`, `columns?`,
@@ -549,7 +549,7 @@ in `design.md` D1 passes.
 
 ### Task E2 — `DocumentViewer` (M)
 
-- [ ] `packages/ui/src/components/document-viewer.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/document-viewer.tsx` + `.stories.tsx`
 - Props: `sides: { id: string; label: string; kind: "image" | "pdf"; name:
       string; meta?: string }[]`, `value`, `onChange`, `children` (the app's
       preview stage), `facts?: FactListProps["items"]`, `loading?`,
@@ -572,7 +572,7 @@ in `design.md` D1 passes.
 
 ### Task E3 — `MapCard` (L)
 
-- [ ] `packages/ui/src/components/map-card.tsx` + `.stories.tsx`. Imports no
+- [x] `packages/ui/src/components/map-card.tsx` + `.stories.tsx`. Imports no
       map library and no geography (`design.md` D3).
 - Props: `title`, `description?`, `children` (the app's map canvas),
       `panel: ReactNode` (the selection summary body), `panelLabel?`,

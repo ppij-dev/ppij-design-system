@@ -249,7 +249,7 @@ looks unchanged when reviewed in the preview dev server.
 
 ### Task C1 — `AdminTopBar` (M)
 
-- [ ] `packages/ui/src/components/admin-top-bar.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/admin-top-bar.tsx` + `.stories.tsx`
 - Props: `path: { label: string; href?: string }[]`, `title: string`,
       `meta?: ReactNode[]`, `actions?: ReactNode`, `identity?:
       { name: string; initials: string }`, `onIdentityClick?`,
@@ -270,7 +270,7 @@ looks unchanged when reviewed in the preview dev server.
 
 ### Task C2 — `WorkspaceSelector` (M)
 
-- [ ] `packages/ui/src/components/workspace-selector.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/workspace-selector.tsx` + `.stories.tsx`
 - Props: `value: string`, `options: { id: string; label: string; short?:
       string; kind: string; icon?: ReactNode }[]`, `onChange`, `label?`
       (default "RUANG KERJA"), `searchPlaceholder?`, `collapsed?: boolean`,
@@ -290,7 +290,7 @@ looks unchanged when reviewed in the preview dev server.
 
 ### Task C3 — `IdentityChip` (S)
 
-- [ ] `packages/ui/src/components/identity-chip.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/identity-chip.tsx` + `.stories.tsx`
 - Props: `name`, `detail`, `initials`, `onClick`, `collapsed?: boolean`,
       `className`.
 - Stories (`Admin/IdentityChip`): expanded; collapsed (initials only); long
@@ -304,7 +304,7 @@ looks unchanged when reviewed in the preview dev server.
 
 ### Task C4 — `AccountSheet` (M)
 
-- [ ] `packages/ui/src/components/account-sheet.tsx` + `.stories.tsx`
+- [x] `packages/ui/src/components/account-sheet.tsx` + `.stories.tsx`
 - Props: `open`, `onOpenChange`, `name`, `detail`, `initials`, `items:
       { label: string; sublabel?: string; icon: ReactNode; onSelect: () =>
       void; tone?: "default" | "danger" }[]`, `switchSlot?: ReactNode`,
@@ -325,7 +325,7 @@ looks unchanged when reviewed in the preview dev server.
 
 ### Task C5 — `Tabs`: count and appearance (M, MODIFIED)
 
-- [ ] `packages/ui/src/components/tabs.tsx`: `TabsTrigger` gains
+- [x] `packages/ui/src/components/tabs.tsx`: `TabsTrigger` gains
       `count?: number`, and `TabsList` gains
       `appearance?: "default" | "underline" | "segmented"`. No existing prop
       changes behaviour.
@@ -347,7 +347,7 @@ looks unchanged when reviewed in the preview dev server.
 
 ### Task C6 — `Timeline`: expansion (M, MODIFIED)
 
-- [ ] `packages/ui/src/components/timeline.tsx`: add
+- [x] `packages/ui/src/components/timeline.tsx`: add
       `defaultVisibleCount?: number`, `expandLabel?`, `collapseLabel?`,
       `onExpandChange?`. The default (`undefined`) keeps today's
       render-everything behaviour.

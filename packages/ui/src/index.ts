@@ -53,6 +53,12 @@ export { AdminTopBar, type AdminTopBarProps, type AdminTopBarIdentity, type TopB
 export { WorkspaceSelector, type WorkspaceSelectorProps, type WorkspaceOption, type WorkspaceLocale } from "./components/workspace-selector";
 export { IdentityChip, type IdentityChipProps } from "./components/identity-chip";
 export { AccountSheet, type AccountSheetProps, type AccountSheetItem, type AccountSheetLocale } from "./components/account-sheet";
+export { SearchableMultiSelect, type SearchableMultiSelectProps } from "./components/searchable-multi-select";
+export { FilterMenu, type FilterMenuProps, type FilterMenuOption } from "./components/filter-menu";
+export { FilterChips, type FilterChipsProps, type FilterChip } from "./components/filter-chips";
+export { PieChart, type PieChartProps, type PieChartDatum } from "./components/pie-chart";
+export { BarChart, type BarChartProps, type BarChartDatum } from "./components/bar-chart";
+export { DistributionBar, type DistributionBarProps, type DistributionSegment } from "./components/distribution-bar";
 export { PanelCard, type PanelCardProps, type PanelCardHeadingLevel, type PanelCardPadding } from "./components/panel-card";
 export { ListRow, type ListRowProps, type ListRowTone } from "./components/list-row";
 export { FactList, type FactListProps, type FactListItem, type FactListVariant } from "./components/fact-list";

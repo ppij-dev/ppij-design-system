@@ -12,35 +12,62 @@ drifted apart.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 the versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2026-11-08
 
-The next release is planned as `0.4.0` through the change
-`openspec/changes/add-admin-redesign-components`. `VERSION` stays `0.3.0` until
-that change's release batch bumps it, so this section describes work that is
-committed but not released. Batches B–F (the 21 admin components, the
-`Timeline`/`Tabs` adjustments, the prototype migration and the release proof)
-are still open.
+The admin redesign component set: the presentation half of the `ppij-identity`
+admin rebuild, plus the three pending `0.3.1` fixes and the version bookkeeping
+that had drifted. Released through the change
+`openspec/changes/add-admin-redesign-components`.
 
 ### Added
 
-- `CHANGELOG.md` and the `VERSION` → `package.json` version sync, so the
-  shipped package version can no longer drift from the release number.
+- **21 presentation components.** The shell: `AdminTopBar`,
+  `WorkspaceSelector`, `IdentityChip`, `AccountSheet`. The containers:
+  `PanelCard`, `ListRow`, `FactList`, `StatStrip`. The filter controls:
+  `SearchableMultiSelect` (merging three local copies), `FilterMenu`,
+  `FilterChips`. The charts: `PieChart`, `BarChart`, `DistributionBar`. The data
+  displays: `FiguresBand`, `DocumentViewer`, `MapCard`. The form and feedback
+  pieces: `FormGrid`/`FormField`, `Callout`, `RevealValue`, `ExpandableText`.
+- **Charts are hand-rolled SVG and divs, with no new dependency.** `PieChart`,
+  `BarChart` and `DistributionBar` are data-in, token-coloured, with an
+  accessible legend and a screen-reader `<table>` fallback where the shape needs
+  one. The owner's *Jenis kelamin* and *Anggota Biasa vs Luar Biasa* charts for
+  Statistik are `PieChart` stories; the prototype's Statistik page now renders
+  the category pie from the real filtered facet, and *Jenis kelamin* stays a
+  story because the synthetic dataset has no such field.
+- Every new component ships exactly one story file in the `Admin` group (or
+  `Portal` for the shared `Callout`), with the states its task lists, so "no
+  story, no component" is checked by `make test`.
 
 ### Changed
 
-- `AdminDrawer`: the close control is at least 44×44 below 600px, which is the
-  touch minimum for the phone bottom sheet; from 600px up it keeps the existing
-  `icon-sm` compact (32px) and `icon` default (36px) sizes. Props, the
-  locale-derived accessible name and the focus ring are unchanged.
+- `AdminDrawer`: the close control is at least 44×44 below 600px and keeps the
+  compact (`icon-sm`) or default (`icon`) size from 600px up.
 - `Input`: a new `textSize="compact"` renders 13px text from 600px up and 16px
-  below (the editable minimum that stops iOS from zooming on focus), with a
-  44px phone floor. It replaces the per-page `font-size: 13px` overrides the
-  admin pages carried. Existing `data-size` heights, validation and disabled
-  behaviour are untouched.
-- `StatusCard`: a new `density="compact"` renders the admin scale — a 14px
-  title, 13px body and a 32px action from 600px up, keeping the 44px action
-  below 600px. The default density, the compact row form, the tones, the
-  `role="region"` and the action behaviour are unchanged.
+  below, with a 44px phone floor, replacing the per-page 13px overrides.
+- `StatusCard`: a new `density="compact"` renders the admin scale (14px title,
+  13px body, 32px action from 600px up, 44px action below).
+- `Tabs`: `TabsTrigger` gains `count` and `TabsList` gains
+  `appearance="underline" | "segmented"`. Neither changes an existing use: a
+  `Tabs` without them renders exactly as before.
+- `Timeline`: `defaultVisibleCount`, `defaultExpanded`, `expandLabel`,
+  `collapseLabel` and `onExpandChange`, and `description` now takes any node so
+  an item can hold an `ExpandableText`. Unset, every item still renders.
+- `VERSION` is the single source of the release number: `make build` copies it
+  into `package.json` and `packages/ui/package.json`, and `make test` fails when
+  the three disagree. The stale `VERSION` `0.1.0` is gone.
+- The admin prototype imports the whole component set from the package and no
+  longer carries a local `SearchableMultiSelect`, `SearchableUnitMenu`,
+  `FilterMenu` or the page CSS that restated the shared compositions.
+
+### Notes
+
+- `MapCard` frames an app-supplied map: no Leaflet, no `react-leaflet` and no
+  geography in the package.
+- The design system stays presentation-only: no fetching, no routes, no
+  permissions, no mutations.
+- Install the 0.4.0 tarball with `npm install github:ppij-dev/ppij-design-system#v0.4.0`
+  until the registry publish lands.
 
 ## [0.3.0] - 2026-11-03
 

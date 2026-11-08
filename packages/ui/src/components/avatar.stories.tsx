@@ -1,10 +1,28 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ComponentProps } from "react";
 import { Avatar, AvatarImage, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarBadge } from "./avatar";
 
-const meta: Meta<typeof Avatar> = { title: "Portal/Avatar", component: Avatar };
-export default meta;
-type Story = StoryObj<typeof Avatar>;
+type PlaygroundArgs = ComponentProps<typeof Avatar> & { fallback?: string };
 
+const meta: Meta<PlaygroundArgs> = {
+  title: "Portal/Avatar",
+  component: Avatar,
+  argTypes: {
+    size: { control: "select", options: ["sm", "default", "lg"] },
+    fallback: { control: "text" },
+  },
+};
+export default meta;
+type Story = StoryObj<PlaygroundArgs>;
+
+export const Playground: Story = {
+  args: { size: "default", fallback: "DK" },
+  render: ({ fallback, ...args }) => (
+    <Avatar {...args}>
+      <AvatarFallback>{fallback}</AvatarFallback>
+    </Avatar>
+  ),
+};
 export const InitialsFallback: Story = {
   render: () => (
     <div style={{ display: "flex", gap: 10 }}>

@@ -4,7 +4,18 @@ import { BarChart } from "./bar-chart";
 const meta: Meta<typeof BarChart> = {
   title: "Admin/BarChart",
   component: BarChart,
-  argTypes: { orientation: { control: "select", options: ["vertical", "horizontal"] } },
+  argTypes: {
+    data: { control: "object" },
+    orientation: { control: "select", options: ["vertical", "horizontal"] },
+    highlightLast: { control: "boolean" },
+    max: { control: "number" },
+    height: { control: "number" },
+    formatValue: { control: false },
+    gridLines: { control: "boolean" },
+    fallback: { control: "select", options: ["table", "none"] },
+    ariaLabel: { control: "text" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof BarChart>;
@@ -145,6 +156,23 @@ export const NoData: Story = {
   render: () => (
     <div className="max-w-xl bg-card p-5">
       <BarChart data={[]} ariaLabel="Belum ada data" />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    data: MONTHS,
+    orientation: "vertical",
+    highlightLast: true,
+    height: 150,
+    gridLines: false,
+    fallback: "none",
+    ariaLabel: "Pendaftaran per bulan",
+  },
+  render: (args) => (
+    <div className="max-w-xl bg-card p-5">
+      <BarChart {...args} />
     </div>
   ),
 };

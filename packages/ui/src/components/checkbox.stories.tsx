@@ -1,11 +1,33 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ComponentProps } from "react";
 import { Checkbox } from "./checkbox";
 import { Label } from "./label";
 
-const meta: Meta<typeof Checkbox> = { title: "Portal/Checkbox", component: Checkbox };
-export default meta;
-type Story = StoryObj<typeof Checkbox>;
+type PlaygroundArgs = ComponentProps<typeof Checkbox> & { label?: string };
 
+const meta: Meta<PlaygroundArgs> = {
+  title: "Portal/Checkbox",
+  component: Checkbox,
+  argTypes: {
+    checked: { control: "boolean" },
+    disabled: { control: "boolean" },
+    required: { control: "boolean" },
+    onCheckedChange: { action: "checkedChange" },
+    label: { control: "text" },
+  },
+};
+export default meta;
+type Story = StoryObj<PlaygroundArgs>;
+
+export const Playground: Story = {
+  args: { label: "Saya menyetujui pemrosesan data pribadi untuk keanggotaan PPI Jepang." },
+  render: ({ label, ...args }) => (
+    <div style={{ display: "flex", gap: 8, alignItems: "flex-start", maxWidth: 460 }}>
+      <Checkbox id="playground-checkbox" {...args} />
+      <Label htmlFor="playground-checkbox">{label}</Label>
+    </div>
+  ),
+};
 export const Consent: Story = {
   render: () => (
     <div style={{ display: "grid", gap: 12, maxWidth: 460 }}>

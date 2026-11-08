@@ -7,6 +7,21 @@ import { AccountSheet, type AccountSheetProps } from "./account-sheet";
 const meta: Meta<typeof AccountSheet> = {
   title: "Admin/AccountSheet",
   component: AccountSheet,
+  argTypes: {
+    open: { control: "boolean" },
+    onOpenChange: { action: "onOpenChange" },
+    name: { control: "text" },
+    detail: { control: "text" },
+    initials: { control: "text" },
+    items: { control: "object" },
+    switchSlot: { control: false },
+    signOutLabel: { control: "text" },
+    onSignOut: { action: "onSignOut" },
+    locale: { control: "select", options: ["id", "en"] },
+    closeLabel: { control: "text" },
+    label: { control: "text" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof AccountSheet>;
@@ -134,4 +149,42 @@ export const English: Story = {
       locale="en"
     />
   ),
+};
+
+/** Playground keeps the open state local so the close button and the open control both work. */
+function PlaygroundSheet(props: AccountSheetProps) {
+  const [open, setOpen] = React.useState(props.open);
+  React.useEffect(() => {
+    setOpen(props.open);
+  }, [props.open]);
+  return (
+    <div className="min-h-40">
+      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+        Buka profil
+      </Button>
+      <AccountSheet
+        {...props}
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          props.onOpenChange(next);
+        }}
+      />
+    </div>
+  );
+}
+
+export const Playground: Story = {
+  args: {
+    open: true,
+    name: "Contoh Pengurus A",
+    detail: "Admin Nasional",
+    initials: "PA",
+    items: ROWS,
+    switchSlot: SWITCH,
+    signOutLabel: "Keluar",
+    onSignOut: () => undefined,
+    locale: "id",
+  },
+  render: (args) => <PlaygroundSheet {...args} />,
 };

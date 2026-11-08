@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { IconClockHour4 } from "@tabler/icons-react";
-import { EditablePanel } from "./editable-panel";
+import { EditablePanel, type EditablePanelProps } from "./editable-panel";
 import { AdminDrawer } from "./admin-drawer";
 import { Alert, AlertDescription, AlertTitle } from "./alert";
 import { Button } from "./button";
@@ -82,7 +82,19 @@ function EditableDemo() {
   );
 }
 
-const meta: Meta = { title: "Portal/EditablePanel" };
+const meta: Meta = {
+  title: "Portal/EditablePanel",
+  argTypes: {
+    title: { control: "text" },
+    description: { control: "text" },
+    pending: { control: "boolean" },
+    pendingLabel: { control: "text" },
+    onEdit: { action: "onEdit" },
+    editLabel: { control: "text" },
+    proposal: { control: false },
+    children: { control: false },
+  },
+};
 export default meta;
 type Story = StoryObj;
 
@@ -124,6 +136,45 @@ export const PendingReview: Story = {
           <div className="grid gap-0.5">
             <dt className="text-sm text-brand-muted">Komsat</dt>
             <dd className="font-medium text-brand-ink">Okayama</dd>
+          </div>
+        </dl>
+      </EditablePanel>
+    </div>
+  ),
+};
+
+export const Playground: StoryObj<EditablePanelProps> = {
+  args: {
+    title: "Kontak",
+    description: "Nama panggilan, telepon, dan LINE diperbarui langsung.",
+    pending: false,
+    pendingLabel: "Menunggu",
+    editLabel: "Edit",
+  },
+  render: (args) => (
+    <div className="max-w-xl">
+      <EditablePanel
+        {...args}
+        proposal={
+          args.pending ? (
+            <Alert>
+              <IconClockHour4 aria-hidden="true" />
+              <AlertTitle>Perubahan menunggu peninjauan</AlertTitle>
+              <AlertDescription>
+                <p>Data saat ini tetap berlaku sampai pengurus menyetujui perubahan.</p>
+              </AlertDescription>
+            </Alert>
+          ) : undefined
+        }
+      >
+        <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
+          <div className="grid gap-0.5">
+            <dt className="text-sm text-brand-muted">Nama panggilan</dt>
+            <dd className="font-medium text-brand-ink">Darma</dd>
+          </div>
+          <div className="grid gap-0.5">
+            <dt className="text-sm text-brand-muted">Nomor telepon atau WhatsApp</dt>
+            <dd className="font-medium text-brand-ink">+81 90-1234-5678</dd>
           </div>
         </dl>
       </EditablePanel>

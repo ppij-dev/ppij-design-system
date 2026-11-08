@@ -5,7 +5,13 @@ import { FactList } from "./fact-list";
 const meta: Meta<typeof FactList> = {
   title: "Admin/FactList",
   component: FactList,
-  argTypes: { variant: { control: "select", options: ["rows", "inline", "twoColumn"] } },
+  argTypes: {
+    items: { control: "object" },
+    variant: { control: "select", options: ["rows", "inline", "twoColumn"] },
+    total: { control: "object" },
+    emptyLabel: { control: "text" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof FactList>;
@@ -170,6 +176,18 @@ export const PhoneNarrow: Story = {
           { label: "Jenjang", value: "D3" },
         ]}
       />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    items: DRAWER_FACTS,
+    variant: "rows",
+  },
+  render: (args) => (
+    <div className="max-w-md">
+      <FactList {...args} />
     </div>
   ),
 };

@@ -9,7 +9,19 @@ import { ListRow } from "./list-row";
 const meta: Meta<typeof ListRow> = {
   title: "Admin/ListRow",
   component: ListRow,
-  argTypes: { tone: { control: "select", options: ["default", "danger", "muted"] } },
+  argTypes: {
+    tone: { control: "select", options: ["default", "danger", "muted"] },
+    title: { control: "text" },
+    subtitle: { control: "text" },
+    meta: { control: "text" },
+    leading: { control: false },
+    trailing: { control: false },
+    badge: { control: false },
+    href: { control: "text" },
+    onSelect: { action: "select" },
+    selected: { control: "boolean" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof ListRow>;
@@ -132,6 +144,15 @@ export const PhoneCard: Story = {
         trailing={<IconChevronRight className="size-4 text-brand-muted" aria-hidden />}
         onSelect={() => undefined}
       />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: { title: "Tinjau 12 pendaftaran baru", subtitle: "Komsat Okayama", meta: "2 Nov 2026", tone: "default", selected: false },
+  render: (args) => (
+    <div className="max-w-3xl">
+      <ListRow {...args} leading={<IconChip><IconUsers stroke={1.75} aria-hidden /></IconChip>} trailing={<IconChevronRight className="size-4 text-brand-muted" aria-hidden />} />
     </div>
   ),
 };

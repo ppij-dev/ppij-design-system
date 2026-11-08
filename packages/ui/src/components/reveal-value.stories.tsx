@@ -7,6 +7,18 @@ import { RevealValue } from "./reveal-value";
 const meta: Meta<typeof RevealValue> = {
   title: "Admin/RevealValue",
   component: RevealValue,
+  argTypes: {
+    masked: { control: "text" },
+    clear: { control: "text" },
+    revealed: { control: "boolean" },
+    onReveal: { action: "onReveal" },
+    onHide: { action: "onHide" },
+    showLabel: { control: "text" },
+    hideLabel: { control: "text" },
+    iconOnly: { control: "boolean" },
+    maskedLabel: { control: "text" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof RevealValue>;
@@ -101,4 +113,26 @@ export const Phone: Story = {
       <RevealValue {...args} className="text-[13px]" />
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: { masked: MASK, clear: "PPIJ-2026-000123", revealed: false, iconOnly: false, className: "text-[13px]" },
+  render: (args) => {
+    const [revealed, setRevealed] = React.useState(args.revealed);
+    React.useEffect(() => setRevealed(args.revealed), [args.revealed]);
+    return (
+      <RevealValue
+        {...args}
+        revealed={revealed}
+        onReveal={() => {
+          setRevealed(true);
+          args.onReveal();
+        }}
+        onHide={() => {
+          setRevealed(false);
+          args.onHide();
+        }}
+      />
+    );
+  },
 };

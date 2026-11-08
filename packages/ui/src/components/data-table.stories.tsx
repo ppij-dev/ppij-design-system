@@ -7,7 +7,26 @@ import { Button } from "./button";
 import { IconFilter, IconSearch } from "@tabler/icons-react";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "./empty";
 
-const meta: Meta<typeof DataTable> = { title: "Admin/DataTable", component: DataTable };
+const meta: Meta<typeof DataTable> = {
+  title: "Admin/DataTable",
+  component: DataTable,
+  argTypes: {
+    searchValue: { control: "text" },
+    onSearchChange: { action: "onSearchChange" },
+    searchPlaceholder: { control: "text" },
+    actions: { control: false },
+    children: { control: false },
+    footerText: { control: "text" },
+    pageLabel: { control: "text" },
+    onPrevious: { action: "onPrevious" },
+    onNext: { action: "onNext" },
+    previousDisabled: { control: "boolean" },
+    nextDisabled: { control: "boolean" },
+    previousLabel: { control: "text" },
+    nextLabel: { control: "text" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof DataTable>;
 
@@ -84,4 +103,47 @@ export const NoResults: Story = {
       </div>
     </DataTable>
   ),
+};
+
+/** Playground keeps the search text local so typing filters the rows, and still reports to the args. */
+function PlaygroundTable(args: React.ComponentProps<typeof DataTable>) {
+  const [q, setQ] = React.useState(args.searchValue ?? "");
+  React.useEffect(() => {
+    setQ(args.searchValue ?? "");
+  }, [args.searchValue]);
+  const rows = all.filter((r) => r.join(" ").toLowerCase().includes(q.toLowerCase()));
+  return (
+    <DataTable
+      {...args}
+      searchValue={q}
+      onSearchChange={(value) => {
+        setQ(value);
+        args.onSearchChange?.(value);
+      }}
+    >
+      <Table>
+        <TableHeader><TableRow><TableHead>Nama</TableHead><TableHead>Komsat</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
+        <TableBody>
+          {rows.map(([n, k, s]) => (
+            <TableRow key={n}><TableCell>{n}</TableCell><TableCell>{k}</TableCell><TableCell><Badge variant={s === "Aktif" ? "default" : "secondary"}>{s}</Badge></TableCell></TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </DataTable>
+  );
+}
+
+export const Playground: Story = {
+  args: {
+    searchValue: "",
+    searchPlaceholder: "Cari anggota...",
+    actions: <Button variant="outline"><IconFilter size={16} /> Filter</Button>,
+    footerText: "Menampilkan 7 dari 7 anggota",
+    pageLabel: "Halaman 1 dari 3",
+    previousLabel: "Sebelumnya",
+    nextLabel: "Berikutnya",
+    previousDisabled: true,
+    nextDisabled: false,
+  },
+  render: (args) => <PlaygroundTable {...args} />,
 };

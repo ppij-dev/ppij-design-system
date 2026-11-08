@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { SegmentedProgress } from "./segmented-progress";
 
-const meta: Meta<typeof SegmentedProgress> = { title: "Wizard/SegmentedProgress", component: SegmentedProgress };
+const meta: Meta<typeof SegmentedProgress> = { title: "Wizard/SegmentedProgress", component: SegmentedProgress,
+  argTypes: {
+    current: { control: "number" },
+    total: { control: "number" },
+    label: { control: "text" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof SegmentedProgress>;
 
@@ -13,4 +20,8 @@ export const StepThreeOfSeven: Story = {
       <p className="mt-3 text-sm text-brand-muted">Langkah 3 dari 7. Segmen terisi sampai langkah saat ini.</p>
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: { current: 3, total: 7, label: "Progres pendaftaran" },
 };

@@ -6,7 +6,18 @@ import { WorkspaceSelector } from "./workspace-selector";
 const meta: Meta<typeof WorkspaceSelector> = {
   title: "Admin/WorkspaceSelector",
   component: WorkspaceSelector,
-  argTypes: { variant: { control: "select", options: ["sidebar", "phone"] } },
+  argTypes: {
+    value: { control: "text" },
+    options: { control: "object" },
+    onChange: { action: "onChange" },
+    label: { control: "text" },
+    searchPlaceholder: { control: "text" },
+    collapsed: { control: "boolean" },
+    variant: { control: "select", options: ["sidebar", "phone"] },
+    defaultOpen: { control: "boolean" },
+    locale: { control: "select", options: ["id", "en"] },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof WorkspaceSelector>;
@@ -138,6 +149,31 @@ export const IconMark: Story = {
       <p className="mt-3 text-xs text-brand-muted">
         <IconBuildingCommunity className="inline size-4" aria-hidden /> Tanpa ikon khusus, penanda memakai glyph komunitas.
       </p>
+    </div>
+  ),
+};
+
+/** Keeps the Playground interactive: a click selects the row, and the Controls panel still sets the value. */
+function PlaygroundPicker(args: React.ComponentProps<typeof WorkspaceSelector>) {
+  const [value, setValue] = React.useState(args.value);
+  React.useEffect(() => setValue(args.value), [args.value]);
+  return (
+    <WorkspaceSelector
+      {...args}
+      value={value}
+      onChange={(id) => {
+        setValue(id);
+        args.onChange(id);
+      }}
+    />
+  );
+}
+
+export const Playground: Story = {
+  args: { value: "national", options: OPTIONS, variant: "sidebar", locale: "id", collapsed: false, defaultOpen: false },
+  render: (args) => (
+    <div className="w-[254px] rounded-xl border border-brand-border bg-card p-3.5">
+      <PlaygroundPicker {...args} />
     </div>
   ),
 };

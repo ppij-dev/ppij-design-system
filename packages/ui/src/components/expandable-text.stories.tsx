@@ -5,6 +5,14 @@ import { Timeline } from "./timeline";
 const meta: Meta<typeof ExpandableText> = {
   title: "Admin/ExpandableText",
   component: ExpandableText,
+  argTypes: {
+    children: { control: "text" },
+    lines: { control: "number" },
+    defaultExpanded: { control: "boolean" },
+    expandLabel: { control: "text" },
+    collapseLabel: { control: "text" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof ExpandableText>;
@@ -98,6 +106,21 @@ export const Phone: Story = {
   parameters: { docs: { description: { story: "Reviewed at 390 and 320px: three lines still fit, the toggle is 44px tall and the text never truncates mid-word." } } },
   render: (args) => (
     <div style={{ maxWidth: 320 }} className="text-[13px] leading-5 text-brand-muted">
+      <ExpandableText {...args} />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    children: REVIEW_NOTE,
+    lines: 3,
+    defaultExpanded: false,
+    expandLabel: "Lihat selengkapnya",
+    collapseLabel: "Tampilkan lebih sedikit",
+  },
+  render: (args) => (
+    <div className="max-w-2xl text-[13px] leading-5 text-brand-muted">
       <ExpandableText {...args} />
     </div>
   ),

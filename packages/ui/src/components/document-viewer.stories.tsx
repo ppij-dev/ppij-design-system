@@ -6,6 +6,18 @@ import { DocumentViewer, type DocumentSide } from "./document-viewer";
 const meta: Meta<typeof DocumentViewer> = {
   title: "Admin/DocumentViewer",
   component: DocumentViewer,
+  argTypes: {
+    sides: { control: "object" },
+    value: { control: "text" },
+    onChange: { action: "onChange" },
+    children: { control: false },
+    facts: { control: "object" },
+    loading: { control: "boolean" },
+    emptyLabel: { control: "text" },
+    locale: { control: "select", options: ["id", "en"] },
+    label: { control: "text" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof DocumentViewer>;
@@ -151,4 +163,37 @@ export const English: Story = {
       </DocumentViewer>
     </div>
   ),
+};
+
+/** Playground keeps the selected side local so the switcher works, and reports each change to the args. */
+function PlaygroundViewer(args: React.ComponentProps<typeof DocumentViewer>) {
+  const [value, setValue] = React.useState(args.value);
+  React.useEffect(() => {
+    setValue(args.value);
+  }, [args.value]);
+  return (
+    <div className="max-w-xl">
+      <DocumentViewer
+        {...args}
+        value={value}
+        onChange={(id) => {
+          setValue(id);
+          args.onChange(id);
+        }}
+      >
+        <PaperStage />
+      </DocumentViewer>
+    </div>
+  );
+}
+
+export const Playground: Story = {
+  args: {
+    sides: SIDES,
+    value: "front",
+    facts: FACTS,
+    loading: false,
+    locale: "id",
+  },
+  render: (args) => <PlaygroundViewer {...args} />,
 };

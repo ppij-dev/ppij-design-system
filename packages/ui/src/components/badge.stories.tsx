@@ -6,11 +6,19 @@ const meta: Meta<typeof Badge> = {
   title: "Portal/Badge",
   component: Badge,
   args: { children: "Terverifikasi" },
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["default", "secondary", "outline", "destructive", "success", "warning", "info", "ghost", "link"],
+    },
+    children: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof Badge>;
 
 export const Default: Story = {};
+export const Playground: Story = {};
 export const Variants: Story = {
   render: () => (
     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

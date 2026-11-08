@@ -7,6 +7,11 @@ const meta: Meta<typeof DistributionBar> = {
   argTypes: {
     size: { control: "select", options: ["sm", "md"] },
     legend: { control: "select", options: ["list", "inline", "none"] },
+    segments: { control: "object" },
+    totalLabel: { control: "text" },
+    formatValue: { control: false },
+    ariaLabel: { control: "text" },
+    className: { control: "text" },
   },
 };
 export default meta;
@@ -116,4 +121,14 @@ export const Phone: Story = {
       <DistributionBar segments={DEGREES} size="md" legend="inline" ariaLabel="Komposisi jenjang studi" />
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: {
+    segments: COMPLETENESS,
+    size: "md",
+    legend: "list",
+    totalLabel: "Total",
+    ariaLabel: "Kelengkapan berkas",
+  },
 };

@@ -7,7 +7,21 @@ import { Badge } from "./badge";
 import { Label } from "./label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 
-const meta: Meta<typeof SearchFilter> = { title: "Admin/SearchFilter", component: SearchFilter };
+const meta: Meta<typeof SearchFilter> = { title: "Admin/SearchFilter", component: SearchFilter,
+  argTypes: {
+    searchValue: { control: "text" },
+    onSearchChange: { action: "onSearchChange" },
+    searchPlaceholder: { control: "text" },
+    filters: { control: false },
+    advancedFilters: { control: false },
+    advancedActiveCount: { control: "number" },
+    advancedTitle: { control: "text" },
+    activeFilters: { control: "object" },
+    onClearAll: { action: "onClearAll" },
+    clearAllLabel: { control: "text" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof SearchFilter>;
 
@@ -108,3 +122,56 @@ function MemberDirectoryDemo() {
 }
 
 export const MemberDirectory: Story = { render: () => <MemberDirectoryDemo /> };
+
+export const Playground: Story = {
+  args: {
+    searchValue: "",
+    searchPlaceholder: "Cari anggota...",
+    filters: (
+      <Select defaultValue="semua">
+        <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="semua">Semua status</SelectItem>
+          <SelectItem value="Aktif">Aktif</SelectItem>
+          <SelectItem value="Menunggu">Menunggu</SelectItem>
+        </SelectContent>
+      </Select>
+    ),
+    advancedFilters: (
+      <div style={{ display: "grid", gap: 6 }}>
+        <Label>Komsat</Label>
+        <Select defaultValue="semua">
+          <SelectTrigger className="w-full"><SelectValue placeholder="Komsat" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="semua">Semua komsat</SelectItem>
+            <SelectItem value="Okayama">Okayama</SelectItem>
+            <SelectItem value="Tokyo">Tokyo</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    ),
+    advancedActiveCount: 1,
+    advancedTitle: "Filter lanjutan",
+    activeFilters: [
+      { label: "Status", value: "Aktif", onRemove: () => undefined },
+      { label: "Komsat", value: "Okayama", onRemove: () => undefined },
+    ],
+    clearAllLabel: "Hapus semua filter",
+  },
+  render: (args) => {
+    const [search, setSearch] = React.useState(args.searchValue);
+    React.useEffect(() => setSearch(args.searchValue), [args.searchValue]);
+    return (
+      <div style={{ maxWidth: 860 }}>
+        <SearchFilter
+          {...args}
+          searchValue={search}
+          onSearchChange={(next) => {
+            setSearch(next);
+            args.onSearchChange(next);
+          }}
+        />
+      </div>
+    );
+  },
+};

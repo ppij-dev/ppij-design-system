@@ -5,7 +5,14 @@ import { PortalShell } from "./portal-shell";
 // @ts-expect-error Static brand asset; the portal supplies its own served copy.
 import logoUrl from "../../../../brand/ppij-logo.png";
 
-const meta: Meta<typeof OfflineBanner> = { title: "Portal/OfflineBanner", component: OfflineBanner };
+const meta: Meta<typeof OfflineBanner> = {
+  title: "Portal/OfflineBanner",
+  component: OfflineBanner,
+  argTypes: {
+    show: { control: "boolean" },
+    label: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof OfflineBanner>;
 
@@ -29,4 +36,8 @@ export const InShell: Story = {
       <h1 className="text-2xl font-bold text-brand-ink">Halo, Darma</h1>
     </PortalShell>
   ),
+};
+
+export const Playground: Story = {
+  args: { show: true, label: "Tidak ada koneksi. Data Anda tersimpan." },
 };

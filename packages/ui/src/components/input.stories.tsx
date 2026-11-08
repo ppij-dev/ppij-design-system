@@ -3,11 +3,25 @@ import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
 
-const meta: Meta<typeof Input> = { title: "Portal/Input", component: Input };
+const meta: Meta<typeof Input> = {
+  title: "Portal/Input",
+  component: Input,
+  argTypes: {
+    type: { control: "select", options: ["text", "email", "password", "number", "search", "tel", "url", "date"] },
+    placeholder: { control: "text" },
+    disabled: { control: "boolean" },
+    required: { control: "boolean" },
+    readOnly: { control: "boolean" },
+    "aria-invalid": { control: "boolean" },
+    textSize: { control: "select", options: ["compact"] },
+    onChange: { action: "change" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Input>;
 
 export const Default: Story = { args: { placeholder: "Nama lengkap" } };
+export const Playground: Story = { args: { placeholder: "Nama lengkap" } };
 export const WithLabel: Story = {
   render: () => (
     <div style={{ display: "grid", gap: 6, maxWidth: 320 }}>

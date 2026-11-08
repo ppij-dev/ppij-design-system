@@ -1,8 +1,25 @@
+import type { ComponentProps } from "react";
+import type { TabsAppearance } from "./tabs";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "./card";
 
-const meta: Meta<typeof Tabs> = { title: "Portal/Tabs", component: Tabs };
+type TabsArgs = ComponentProps<typeof Tabs> & {
+  appearance?: TabsAppearance;
+  variant?: "default" | "line";
+};
+const meta: Meta<TabsArgs> = {
+  title: "Portal/Tabs",
+  component: Tabs,
+  argTypes: {
+    defaultValue: { control: "text" },
+    orientation: { control: "select", options: ["horizontal", "vertical"] },
+    onValueChange: { action: "valueChanged" },
+    appearance: { control: "select", options: ["default", "underline", "segmented"] },
+    variant: { control: "select", options: ["default", "line"] },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Tabs>;
 
@@ -174,6 +191,22 @@ export const DefaultAppearanceUnchanged: Story = {
       </TabsList>
       <TabsContent value="profil"><p className="pt-2 text-[13px] text-brand-muted">Tampilan bawaan tidak berubah.</p></TabsContent>
       <TabsContent value="berkas"><p className="pt-2 text-[13px] text-brand-muted">Termasuk tinggi barisnya.</p></TabsContent>
+    </Tabs>
+  ),
+};
+
+export const Playground: StoryObj<TabsArgs> = {
+  args: { defaultValue: "profil", orientation: "horizontal", appearance: "default", variant: "default" },
+  render: ({ appearance, variant, ...root }) => (
+    <Tabs {...root} style={{ maxWidth: 440 }}>
+      <TabsList appearance={appearance} variant={variant}>
+        <TabsTrigger value="profil">Profil</TabsTrigger>
+        <TabsTrigger value="berkas">Berkas</TabsTrigger>
+        <TabsTrigger value="akun">Akun</TabsTrigger>
+      </TabsList>
+      <TabsContent value="profil"><p className="pt-3 text-[13px] text-brand-muted">Nama, afiliasi, dan komsat.</p></TabsContent>
+      <TabsContent value="berkas"><p className="pt-3 text-[13px] text-brand-muted">Dokumen verifikasi yang sudah diunggah.</p></TabsContent>
+      <TabsContent value="akun"><p className="pt-3 text-[13px] text-brand-muted">Email masuk dan keamanan akun.</p></TabsContent>
     </Tabs>
   ),
 };

@@ -3,7 +3,15 @@ import { BottomBar } from "./bottom-bar";
 import { Card, CardHeader, CardTitle, CardContent } from "./card";
 import { IconHome, IconUsers, IconId, IconBell, IconUser } from "@tabler/icons-react";
 
-const meta: Meta<typeof BottomBar> = { title: "Portal/BottomBar", component: BottomBar };
+const meta: Meta<typeof BottomBar> = {
+  title: "Portal/BottomBar",
+  component: BottomBar,
+  argTypes: {
+    items: { control: "object" },
+    ariaLabel: { control: "text" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof BottomBar>;
 
@@ -31,3 +39,10 @@ function PhoneFrame({ current }: { current: string }) {
 
 export const PhoneHome: Story = { render: () => <PhoneFrame current="Beranda" /> };
 export const PhoneNotifications: Story = { render: () => <PhoneFrame current="Notifikasi" /> };
+
+export const Playground: Story = {
+  args: {
+    items: items("Beranda"),
+    ariaLabel: "Navigasi utama",
+  },
+};

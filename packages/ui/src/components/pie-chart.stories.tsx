@@ -7,6 +7,15 @@ const meta: Meta<typeof PieChart> = {
   argTypes: {
     legend: { control: "select", options: ["list", "none"] },
     fallback: { control: "select", options: ["table", "none"] },
+    data: { control: "object" },
+    size: { control: "number" },
+    donut: { control: "boolean" },
+    centerLabel: { control: "text" },
+    centerValue: { control: "text" },
+    maxSlices: { control: "number" },
+    formatValue: { control: false },
+    ariaLabel: { control: "text" },
+    className: { control: "text" },
   },
 };
 export default meta;
@@ -189,6 +198,25 @@ export const NoData: Story = {
   render: () => (
     <div className="w-fit bg-card p-5">
       <PieChart data={[]} ariaLabel="Belum ada data" />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    data: GENDER,
+    size: 168,
+    donut: false,
+    centerLabel: "Total",
+    centerValue: "1.282",
+    legend: "list",
+    fallback: "none",
+    maxSlices: 5,
+    ariaLabel: "Sebaran jenis kelamin anggota",
+  },
+  render: (args) => (
+    <div className="max-w-2xl bg-card p-5">
+      <PieChart {...args} />
     </div>
   ),
 };

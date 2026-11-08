@@ -7,11 +7,25 @@ const meta: Meta<typeof Button> = {
   title: "Portal/Button",
   component: Button,
   args: { children: "Simpan" },
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["default", "secondary", "outline", "ghost", "destructive", "link", "success", "warning"],
+    },
+    size: {
+      control: "select",
+      options: ["xs", "sm", "default", "lg", "icon-xs", "icon-sm", "icon", "icon-lg"],
+    },
+    disabled: { control: "boolean" },
+    children: { control: "text" },
+    onClick: { action: "clicked" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {};
+export const Playground: Story = {};
 export const Variants: Story = {
   render: () => (
     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

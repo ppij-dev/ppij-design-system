@@ -2,7 +2,21 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { UnitCard } from "./unit-card";
 import { Button } from "./button";
 
-const meta: Meta<typeof UnitCard> = { title: "Admin/UnitCard", component: UnitCard };
+const meta: Meta<typeof UnitCard> = {
+  title: "Admin/UnitCard",
+  component: UnitCard,
+  argTypes: {
+    name: { control: "text" },
+    kind: { control: "text" },
+    memberCount: { control: "number" },
+    leadName: { control: "text" },
+    statusLabel: { control: "text" },
+    statusVariant: { control: "select", options: ["default", "success", "warning", "secondary"] },
+    href: { control: "text" },
+    actions: { control: false },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof UnitCard>;
 
@@ -29,6 +43,22 @@ export const WithActions: Story = {
         statusLabel="Aktif"
         actions={<Button size="sm" variant="outline">Kelola</Button>}
       />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    name: "Okayama",
+    kind: "Komsat",
+    memberCount: 128,
+    leadName: "I Nyoman Darma Kotama",
+    statusLabel: "Aktif",
+    statusVariant: "success",
+  },
+  render: (args) => (
+    <div style={{ maxWidth: 360 }}>
+      <UnitCard {...args} />
     </div>
   ),
 };

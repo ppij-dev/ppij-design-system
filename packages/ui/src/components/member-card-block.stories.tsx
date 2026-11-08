@@ -17,6 +17,22 @@ import mapUrl from "../../../../brand/id-map.svg";
 const meta: Meta<typeof MemberCardBlock> = {
   title: "Portal/MemberCardBlock",
   component: MemberCardBlock,
+  argTypes: {
+    locale: { control: "select", options: ["id", "en"] },
+    state: { control: "select", options: ["active", "expiring", "change_pending", "expired_grace", "expired", "suspended"] },
+    memberId: { control: "text" },
+    name: { control: "text" },
+    number: { control: "text" },
+    komsat: { control: "text" },
+    korda: { control: "text" },
+    validUntil: { control: "text" },
+    graceUntil: { control: "text" },
+    suspendReason: { control: "text" },
+    categoryLine: { control: "text" },
+    themePreference: { control: false },
+    logoSrc: { control: "text" },
+    mapSrc: { control: "text" },
+  },
   args: {
     locale: "id",
     memberId: "PPIJ-2026-000123",
@@ -38,3 +54,5 @@ export const Expiring: Story = { args: { state: "expiring", validUntil: "2026-11
 export const ChangePending: Story = { args: { state: "change_pending" } };
 export const ExpiredGrace: Story = { args: { state: "expired_grace", graceUntil: "2026-12-31" } };
 export const Suspended: Story = { args: { state: "suspended", suspendReason: "Menunggu verifikasi dokumen" } };
+
+export const Playground: Story = { args: { state: "active" } };

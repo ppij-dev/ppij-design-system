@@ -7,6 +7,9 @@ const meta: Meta<typeof StatStrip> = {
   argTypes: {
     columns: { control: "select", options: [2, 3, 4, 5, 6] },
     size: { control: "select", options: ["default", "compact"] },
+    items: { control: "object" },
+    label: { control: "text" },
+    className: { control: "text" },
   },
 };
 export default meta;
@@ -104,6 +107,15 @@ export const PhoneWrap: Story = {
   parameters: {
     docs: { description: { story: "Reviewed at 390 and 320px: five items wrap to two columns, the values drop to 18px and no row keeps a trailing hairline." } },
   },
+  render: (args) => (
+    <div className="max-w-5xl">
+      <StatStrip {...args} />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: { items: TOTALS, columns: 5, size: "default", label: "Total gudang data" },
   render: (args) => (
     <div className="max-w-5xl">
       <StatStrip {...args} />

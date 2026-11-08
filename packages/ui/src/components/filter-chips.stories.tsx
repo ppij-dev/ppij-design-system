@@ -5,6 +5,13 @@ import { FilterChips } from "./filter-chips";
 const meta: Meta<typeof FilterChips> = {
   title: "Admin/FilterChips",
   component: FilterChips,
+  argTypes: {
+    chips: { control: "object" },
+    onClearAll: { action: "clearAll" },
+    clearAllLabel: { control: "text" },
+    label: { control: "text" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof FilterChips>;
@@ -104,6 +111,34 @@ export const Empty: Story = {
   render: () => (
     <div className="max-w-2xl">
       <FilterChips chips={[]} />
+    </div>
+  ),
+};
+
+const PLAYGROUND_CHIPS: React.ComponentProps<typeof FilterChips>["chips"] = [
+  { label: "Okayama", value: "Okayama", count: 1032, onRemove: () => undefined },
+  { label: "Tokyo", value: "Tokyo", count: 58, onRemove: () => undefined },
+  { label: "Yokohama", value: "Yokohama", count: 12, onRemove: () => undefined },
+];
+
+/** Keeps the chip list in state so a chip can be removed, and re-seeds it when the Controls panel edits `chips`. */
+function PlaygroundChips({ chips, onClearAll, ...rest }: React.ComponentProps<typeof FilterChips>) {
+  const [list, setList] = React.useState(chips);
+  React.useEffect(() => setList(chips), [chips]);
+  return (
+    <FilterChips
+      {...rest}
+      chips={list.map((chip) => ({ ...chip, onRemove: () => setList((current) => current.filter((item) => item.value !== chip.value)) }))}
+      onClearAll={onClearAll ? () => { setList([]); onClearAll(); } : undefined}
+    />
+  );
+}
+
+export const Playground: Story = {
+  args: { chips: PLAYGROUND_CHIPS, label: "Filter aktif", clearAllLabel: "Hapus semua filter" },
+  render: (args) => (
+    <div className="max-w-2xl">
+      <PlaygroundChips {...args} />
     </div>
   ),
 };

@@ -82,14 +82,15 @@ validation and disabled behaviour SHALL NOT change.
 
 ### Requirement: Status card admin density
 `StatusCard` SHALL accept an optional `density` of `compact` that renders the
-13 pixel body, 12 pixel labels, 14 pixel title and 32 pixel action used by the
-admin surfaces, while its existing `compact` row form, tones, region role and
-action behaviour stay unchanged.
+13 pixel body, 14 pixel title and 32 pixel action used by the admin surfaces,
+while its existing `compact` row form, tones, region role and action behaviour
+stay unchanged. `StatusCard` has no label element, so the admin surfaces'
+12 pixel label step is not part of this requirement.
 
 #### Scenario: The compact density matches the admin surfaces
 - **WHEN** a `StatusCard` with `density="compact"` renders at 900px or wider
-- **THEN** its body, labels, title and action use the compact sizes and its
-  action is at least 32 pixels tall
+- **THEN** its body, title and action use the compact sizes and its action is
+  at least 32 pixels tall
 
 #### Scenario: Existing status cards are unchanged
 - **WHEN** a `StatusCard` renders without `density`

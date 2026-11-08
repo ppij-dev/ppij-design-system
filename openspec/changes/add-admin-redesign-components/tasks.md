@@ -65,8 +65,10 @@ Prototype provenance paths are relative to
 ### Task A3 — `StatusCard`: admin compact density (S)
 
 - [x] `packages/ui/src/components/status-card.tsx`: add
-      `density?: "default" | "compact"` giving a 13px body, 12px labels, 14px
-      title and 32px action, matching `AdminDrawer`'s compact density.
+      `density?: "default" | "compact"` giving a 13px body, 14px title and
+      32px action, matching `AdminDrawer`'s compact density. The 12px label
+      step of that density is dropped here: `StatusCard` has no label element
+      (icon, title, body, action), so it has no target.
 - Props: existing (`icon`, `title`, `body`, `actionLabel`, `actionHref`,
       `onAction`, `tone`, `compact`) plus `density`.
 - Stories: extend `Portal/StatusCard` — default, compact row, admin compact

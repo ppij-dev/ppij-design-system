@@ -1,8 +1,11 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import {
-  IconArrowRight, IconCircleCheck, IconMaximize, IconMinimize, IconChevronDown, IconChevronUp,
+  IconArrowRight, IconCircleCheck,
 } from "@tabler/icons-react";
-import { Badge, Button, Skeleton } from "ppij-design-system";
+import {
+  Badge, Button, Callout, FactList, ListRow, MapCard as MapCardFrame, PanelCard, Skeleton,
+  type StatStripItem,
+} from "ppij-design-system";
 import {
   activeOfKorda, komsats, komsatsOfKorda, kordas, municipalities, totalActive, unmapped,
   type Scope,
@@ -60,16 +63,15 @@ interface MapCardProps {
 }
 
 /**
- * The dashboard hero: a full content-island-width map card. Height steps 420/320/240px at
- * ≥900px / 601–899px / ≤600px; the selection panel floats top-right on desktop and becomes a
- * summary bar below the header on tablet; phones expand to a fullscreen view with a snap sheet.
- * The network strip lives on as the card footer; the level side card renders below the card.
+ * The dashboard hero: a full content-island-width map card. The frame — the 420/320/240px height
+ * steps, the overlay panel on desktop, the inline bar on tablet, the phone snap sheet, the escape
+ * handling and the footer strip — comes from `ppij-design-system` (MapCard). This file keeps the
+ * Leaflet canvas, the geography, the zoom levels, the synthetic bubble data and the metric choice.
  */
 export function MapCard({ scope, scopeName, onOpenStats }: MapCardProps) {
   const [zoom, setZoom] = useState(scope === "national" ? 5 : scope === "korda" ? 8 : 11);
   const [selection, setSelection] = useState<Selection | null>(null);
   const [expanded, setExpanded] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [fitRequest, setFitRequest] = useState<{ key: number; bounds: [[number, number], [number, number]] } | null>(null);
 
   const scopeKomsats = scope === "national" ? komsats : scope === "korda" ? komsatsOfKorda(KORDA_ID) : komsats.filter((k) => k.unit_id === KOMSAT_ID);
@@ -78,29 +80,28 @@ export function MapCard({ scope, scopeName, onOpenStats }: MapCardProps) {
   const lengkapPct = Math.round((completeness.lengkap / completeness.active_total) * 100);
 
   const initialBounds = useMemo(
-    () => boundsOf(scopeKomsats.map((k) => [k.lat, k.lng])),
-    [scopeKomsats],
+    () => (scope === "national" ? JAPAN_BOUNDS : boundsOf(scopeKomsats.map((k) => [k.lat, k.lng]))),
+    // The scope decides the initial fit; the bubbles above it are derived from the zoom level.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [scope],
   );
+
+  const bubbles = useMemo(() => scopedBubbles(scope, zoom), [scope, zoom]);
+
+  // The map canvas remounts when the scope changes so the new bounds are applied.
+  useEffect(() => {
+    setZoom(scope === "national" ? 5 : scope === "korda" ? 8 : 11);
+    setSelection(null);
+    setExpanded(false);
+  }, [scope]);
+
   const initialZoom = scope === "national" ? 5 : scope === "korda" ? 8 : 11;
 
-  useEffect(() => {
-    if (!expanded) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setExpanded(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [expanded]);
-
-  const bubbles = scopedBubbles(scope, zoom);
-
   const select = (bubble: MapBubble) => {
-    const deselect = selection?.unit_id === bubble.unit_id;
-    setSelection(deselect ? null : { unit_id: bubble.unit_id, kind: bubble.kind, name: bubble.name });
-    if (!deselect && bubble.kind === "korda") {
+    setSelection({ unit_id: bubble.unit_id, kind: bubble.kind, name: bubble.name });
+    if (bubble.kind === "korda") {
       setFitRequest({ key: (fitRequest?.key ?? 0) + 1, bounds: boundsOf(komsatsOfKorda(bubble.unit_id).map((k) => [k.lat, k.lng])) });
     }
-    setSheetOpen(true);
   };
 
   const selectedCount = selection
@@ -121,178 +122,146 @@ export function MapCard({ scope, scopeName, onOpenStats }: MapCardProps) {
         ? "Komisariat"
         : "Kota/wilayah";
 
+  /** The selection summary: the same numbers the map bubbles state. */
   const stats = (
-    <div className="map-panel-body">
+    <div className="grid min-w-0 gap-2.5">
       <div>
-        <p className="map-panel-kind">{kindLabel}</p>
-        <p className="map-panel-name">{selection?.name ?? scopeName}</p>
+        <p className="text-xs text-brand-muted">{kindLabel}</p>
+        <p className="text-[13px] font-bold text-brand-ink">{selection?.name ?? scopeName}</p>
       </div>
       <div>
-        <p className="map-panel-kind">Anggota aktif</p>
-        <p className="map-panel-count">{formatCount(selectedCount)}</p>
-        {selection ? <p className="map-panel-share">{share}% dari {formatCount(scopeActive)} anggota aktif</p> : null}
+        <p className="text-xs text-brand-muted">Anggota aktif</p>
+        <p className="text-lg font-extrabold tracking-tight text-brand-ink">{formatCount(selectedCount)}</p>
+        {selection ? <p className="text-xs text-brand-muted">{share}% dari {formatCount(scopeActive)} anggota aktif</p> : null}
       </div>
-      <button type="button" className="map-panel-link" onClick={() => onOpenStats("anggota")}>
-        Lihat statistik anggota <IconArrowRight size={15} />
+      <button
+        type="button"
+        onClick={() => onOpenStats("anggota")}
+        className="inline-flex w-fit items-center gap-1.5 rounded-md text-xs font-bold text-brand-red underline-offset-2 hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none max-[600px]:min-h-11 min-[600px]:min-h-8"
+      >
+        Lihat statistik anggota <IconArrowRight aria-hidden className="size-4" />
       </button>
     </div>
   );
 
+  const footerItems: StatStripItem[] = (scope === "national"
+    ? [
+        { value: String(kordas.length), label: "Koordinator daerah" },
+        { value: String(komsats.length), label: "Komsat aktif" },
+        { value: `${lengkapPct}%`, label: "Profil lengkap" },
+      ]
+    : scope === "korda"
+      ? [
+          { value: formatCount(scopeActive), label: "Anggota aktif" },
+          { value: String(scopeKomsats.length), label: "Komsat aktif" },
+          { value: `${lengkapPct}%`, label: "Profil lengkap" },
+        ]
+      : [
+          { value: formatCount(scopeActive), label: "Anggota terdaftar" },
+          { value: String(municipalities.filter((m) => m.prefecture_code === "13").length), label: "Wilayah aktif" },
+          { value: `${lengkapPct}%`, label: "Profil lengkap" },
+        ]);
+
   return (
-    <section className={`map-card${expanded ? " map-card-expanded" : ""}`} aria-label={title}>
-      <header className="map-card-head">
-        <div>
-          <h2>{title}</h2>
-          <p>Ketuk lingkaran untuk anggota aktif per wilayah. Data contoh di atas peta OpenStreetMap.</p>
-        </div>
-        <div className="map-head-actions">
-          {selection ? (
-            <button type="button" className="map-chip" onClick={() => setSelection(null)}>
-              {selection.name} <span aria-hidden="true">×</span>
-            </button>
-          ) : null}
-          <button type="button" className="map-expand" aria-expanded={expanded} onClick={() => { setExpanded((value) => !value); setSheetOpen(false); }}>
-            {expanded ? <IconMinimize size={16} /> : <IconMaximize size={16} />}
-            {expanded ? "Tutup layar penuh" : "Perbesar peta"}
-          </button>
-        </div>
-      </header>
-
-      <div className="map-canvas">
-        <Suspense fallback={<div className="map-loading"><Skeleton className="h-5 w-44" /><Skeleton className="map-loading-canvas" /></div>}>
-          <LeafletMap
-            bubbles={bubbles}
-            selectedId={selection?.unit_id ?? null}
-            initialZoom={initialZoom}
-            initialBounds={initialBounds}
-            fitRequest={fitRequest}
-            onZoom={setZoom}
-            onSelect={select}
-          />
-        </Suspense>
-        <div className="map-panel-overlay">{stats}</div>
-      </div>
-
-      {!expanded ? (
-        <aside className="map-panel-inline" aria-label="Ringkasan peta">
-          {stats}
-        </aside>
-      ) : null}
-
-      {expanded ? (
-        <div className={`map-sheet${sheetOpen ? " open" : ""}`} aria-label="Ringkasan peta">
-          <button type="button" className="map-sheet-handle" aria-expanded={sheetOpen} onClick={() => setSheetOpen((value) => !value)}>
-            <span className="map-sheet-bar" aria-hidden="true" />
-            <span className="map-sheet-row">{selection ? `${selection.name}: ${formatCount(selectedCount)} anggota` : `${scopeName}: ${formatCount(scopeActive)} anggota aktif`}{sheetOpen ? <IconChevronDown size={15} /> : <IconChevronUp size={15} />}</span>
-          </button>
-          {sheetOpen ? <div className="map-sheet-body">{stats}</div> : null}
-        </div>
-      ) : null}
-
-      <footer className="map-footer">
-        {(scope === "national"
-          ? [
-              { value: String(kordas.length), label: "Koordinator daerah" },
-              { value: String(komsats.length), label: "Komsat aktif" },
-              { value: `${lengkapPct}%`, label: "Profil lengkap" },
-            ]
-          : scope === "korda"
-            ? [
-                { value: formatCount(scopeActive), label: "Anggota aktif" },
-                { value: String(scopeKomsats.length), label: "Komsat aktif" },
-                { value: `${lengkapPct}%`, label: "Profil lengkap" },
-              ]
-            : [
-                { value: formatCount(scopeActive), label: "Anggota terdaftar" },
-                { value: String(municipalities.filter((m) => m.prefecture_code === "13").length), label: "Wilayah aktif" },
-                { value: `${lengkapPct}%`, label: "Profil lengkap" },
-              ]
-        ).map((item) => (
-          <div key={item.label}>
-            <strong>{item.value}</strong>
-            <span>{item.label}</span>
-          </div>
-        ))}
-      </footer>
-      {scope !== "komsat" && unmapped.length > 0 ? (
-        <p className="map-unmapped">
-          {unmapped.length} unit belum dipetakan ({formatCount(unmapped.reduce((sum, u) => sum + u.active_count, 0))} anggota): {unmapped.map((u) => u.name).join(", ")}.
-        </p>
-      ) : null}
-    </section>
+    <MapCardFrame
+      title={title}
+      description="Ketuk lingkaran untuk anggota aktif per wilayah. Data contoh di atas peta OpenStreetMap."
+      panel={stats}
+      footer={footerItems}
+      chip={selection ? { label: selection.name, onClear: () => setSelection(null) } : undefined}
+      expanded={expanded}
+      onExpandChange={(value) => {
+        setExpanded(value);
+        setFitRequest(null);
+      }}
+      sheetSummary={selection ? `${selection.name}: ${formatCount(selectedCount)} anggota` : `${scopeName}: ${formatCount(scopeActive)} anggota aktif`}
+      unmappedNote={
+        scope !== "komsat" && unmapped.length > 0
+          ? <>{unmapped.length} unit belum dipetakan ({formatCount(unmapped.reduce((sum, u) => sum + u.active_count, 0))} anggota): {unmapped.map((u) => u.name).join(", ")}.</>
+          : undefined
+      }
+    >
+      <Suspense fallback={<div className="flex size-full flex-col gap-3 bg-card p-4"><Skeleton aria-hidden="true" className="h-5 w-44" /><Skeleton aria-hidden="true" className="size-full" /></div>}>
+        <LeafletMap
+          bubbles={bubbles}
+          selectedId={selection?.unit_id ?? null}
+          initialZoom={initialZoom}
+          initialBounds={initialBounds}
+          fitRequest={fitRequest}
+          onZoom={setZoom}
+          onSelect={select}
+        />
+      </Suspense>
+    </MapCardFrame>
   );
 }
 
 /**
  * The level side card that production places beside the map, now below it: national sees the
  * Cakupan prefecture list, korda sees the disabled Klaim card, komsat sees the open queue.
+ * The card shell, the rows and the notes come from `ppij-design-system`.
  */
 export function MapSideCard({ scope, onOpenReview }: { scope: Scope; onOpenReview: () => void }) {
   if (scope === "national") {
     const coverage = coverageNational;
     return (
-      <section className="side-card" aria-labelledby="side-cakupan">
-        <div className="section-head">
-          <div>
-            <h2 id="side-cakupan">Cakupan wilayah</h2>
-            <p>Prefektur dengan anggota non-komsat dan peluang komsat baru.</p>
-          </div>
-        </div>
-        <ul className="coverage-list">
+      <PanelCard
+        title="Cakupan wilayah"
+        description="Prefektur dengan anggota non-komsat dan peluang komsat baru."
+        className="max-w-full"
+      >
+        <ul className="grid list-none">
           {coverage.prefectures.map((p) => (
-            <li key={p.prefecture_code}>
-              <span>
-                {p.name_en}
-                {p.state === "partial" ? <small>sebagian</small> : null}
-                {p.candidate_new_komsat ? <Badge variant="secondary">Kandidat komsat</Badge> : null}
-              </span>
-              <strong>{formatCount(p.non_komsat_active)}</strong>
+            <li key={p.prefecture_code} className="border-t border-brand-border">
+              <ListRow
+                title={p.name_en}
+                subtitle={p.state === "partial" ? "sebagian" : undefined}
+                badge={p.candidate_new_komsat ? <Badge variant="secondary">Kandidat komsat</Badge> : null}
+                trailing={<strong className="text-sm font-extrabold tabular-nums text-brand-ink">{formatCount(p.non_komsat_active)}</strong>}
+              />
             </li>
           ))}
-          <li className="coverage-total">
-            <span>Total non-komsat aktif</span>
-            <strong>{formatCount(coverage.non_komsat_active)}</strong>
+          <li className="border-t border-brand-border">
+            <ListRow
+              tone="muted"
+              title="Total non-komsat aktif"
+              trailing={<strong className="text-sm font-extrabold tabular-nums text-brand-ink">{formatCount(coverage.non_komsat_active)}</strong>}
+            />
           </li>
         </ul>
-      </section>
+      </PanelCard>
     );
   }
   if (scope === "korda") {
     return (
-      <section className="side-card" aria-labelledby="side-klaim">
-        <div className="section-head">
-          <div>
-            <h2 id="side-klaim">Klaim wilayah</h2>
-            <Badge variant="secondary">Segera hadir</Badge>
-          </div>
-        </div>
-        <p className="side-card-note">Prefektur dapat diklaim korda pada pembaruan berikutnya. Total non-komsat di Kanto: {formatCount(coverageKorda.non_komsat_active)} ({coverageKorda.prefectures.map((p) => `${p.name_en} ${formatCount(p.non_komsat_active)}`).join(", ")}).</p>
-      </section>
+      <PanelCard title="Klaim wilayah" badge={<Badge variant="secondary">Segera hadir</Badge>}>
+        <Callout tone="neutral">
+          Prefektur dapat diklaim korda pada pembaruan berikutnya. Total non-komsat di Kanto: {formatCount(coverageKorda.non_komsat_active)} ({coverageKorda.prefectures.map((p) => `${p.name_en} ${formatCount(p.non_komsat_active)}`).join(", ")}).
+        </Callout>
+      </PanelCard>
     );
   }
   const stats = statsByScope.komsat;
   return (
-    <section className="side-card" aria-labelledby="side-antrean">
-      <div className="section-head">
-        <div>
-          <h2 id="side-antrean">Antrean verifikasi</h2>
-          <p>Pengajuan yang menunggu keputusan di Komsat Tokyo.</p>
-        </div>
-        <span className="side-count">{formatCount(stats.review.baru)}</span>
+    <PanelCard
+      title="Antrean verifikasi"
+      description="Pengajuan yang menunggu keputusan di Komsat Tokyo."
+      action={<Button variant="ghost" size="sm" onClick={onOpenReview}>Buka Verifikasi <IconArrowRight aria-hidden className="size-4" /></Button>}
+      badge={<Badge variant="secondary">{formatCount(stats.review.baru)}</Badge>}
+    >
+      <FactList
+        variant="rows"
+        items={(["baru", "dikirim_ulang", "diperiksa", "menunggu_anggota"] as const).map((tab) => ({
+          label: tabLabelsShort[tab],
+          value: formatCount(stats.review[tab]),
+        }))}
+      />
+      <div className="mt-3">
+        <Callout tone="success" density="compact" icon={<IconCircleCheck stroke={1.75} aria-hidden />}>
+          Angka sama dengan lencana Verifikasi di navigasi.
+        </Callout>
       </div>
-      <ul className="coverage-list">
-        {(["baru", "dikirim_ulang", "diperiksa", "menunggu_anggota"] as const).map((tab) => (
-          <li key={tab}>
-            <span>{tabLabelsShort[tab]}</span>
-            <strong>{formatCount(stats.review[tab])}</strong>
-          </li>
-        ))}
-      </ul>
-      <Button variant="ghost" size="sm" className="side-card-action" onClick={onOpenReview}>
-        Buka Verifikasi <IconArrowRight size={15} />
-      </Button>
-      <p className="side-card-hint"><IconCircleCheck size={14} /> Angka sama dengan lencana Verifikasi di navigasi.</p>
-    </section>
+    </PanelCard>
   );
 }
 

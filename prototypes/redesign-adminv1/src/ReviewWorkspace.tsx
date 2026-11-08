@@ -3,11 +3,10 @@ import {
   IconAlertCircle, IconArrowRight, IconCheck, IconChevronDown, IconCircleCheck,
   IconClock, IconFileTypePdf, IconId, IconPhoto, IconShieldCheck,
 } from "@tabler/icons-react";
-import {
-  AdminDrawer, Badge, Button, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuTrigger, Input, SearchFilter, Skeleton, Spinner, Table, TableBody, TableCell, Textarea,
-  TableHead, TableHeader, TableRow,
-} from "ppij-design-system";
+import { AdminDrawer, Badge, Button, Callout, DocumentViewer, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent,
+  DropdownMenuItem, DropdownMenuTrigger, ExpandableText, FactList, FilterMenu, Input, SearchFilter, SearchableMultiSelect, Skeleton, Spinner,
+  Tabs, TabsList, TabsTrigger,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Textarea, Timeline, type TimelineItem } from "ppij-design-system";
 import "./ReviewWorkspace.css";
 
 type Scope = "national" | "korda" | "komsat";
@@ -203,9 +202,13 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
 
   return <section className="verification-workspace" aria-label="Antrean verifikasi">
     <div className="verification-intro"><span>{filtered.length === scopedCount ? `${scopedCount} pengajuan contoh` : `${filtered.length} dari ${scopedCount} pengajuan contoh`}</span></div>
-    <div className="verification-tabs" role="tablist" aria-label="Tab antrean">{tabs.map((entry) => <button key={entry.id} role="tab" aria-selected={tab === entry.id} className={tab === entry.id ? "active" : ""} onClick={() => setTab(entry.id)}>{entry.label}<span>{counts[entry.id]}</span></button>)}</div>
+    <Tabs value={tab} onValueChange={(next) => setTab(next as Tab)}>
+          <TabsList appearance="underline" aria-label="Tab antrean">
+            {tabs.map((entry) => <TabsTrigger key={entry.id} value={entry.id} count={counts[entry.id]}>{entry.label}</TabsTrigger>)}
+          </TabsList>
+        </Tabs>
     <SearchFilter className="verification-filters" searchValue={search} onSearchChange={setSearch} searchPlaceholder="Cari nama atau ID pengajuan" filters={<FilterMenu label="Jenis" hideLabel value={kind} allLabel="Semua jenis" options={kinds.map((value) => ({ value, label: value }))} onChange={(value) => setKind(value as Kind | "")} />} advancedTitle="Filter verifikasi lanjutan" advancedActiveCount={unit.length + Number(Boolean(ownership)) + Number(older) + Number(flags)} advancedFilters={<>
-      <SearchableUnitMenu label="Komsat" values={unit} options={units} multiple onChange={setUnit} />
+      <SearchableMultiSelect label="Komsat" values={unit} options={units} allLabel="Semua komsat" onChange={setUnit} />
       <FilterMenu label="Kepemilikan" value={ownership} allLabel="Semua pengajuan" options={[{ value: "unclaimed", label: "Belum diambil" }, { value: "claimed", label: "Sedang diperiksa" }]} onChange={setOwnership} />
       <label className="verification-check"><input type="checkbox" checked={older} onChange={(event) => setOlder(event.target.checked)} /> Lebih dari 7 hari</label>
       <label className="verification-check"><input type="checkbox" checked={flags} onChange={(event) => setFlags(event.target.checked)} /> Ada tanda</label>
@@ -231,20 +234,44 @@ export function ReviewWorkspace({ scope, initialSelectedId, onNotice }: { scope:
           {feedback.length > 1 && <Button size="sm" variant="ghost" onClick={() => setFeedback((current) => current.filter((_, i) => i !== index))}>Hapus bagian</Button>}
         </div>)}<Button variant="outline" size="sm" onClick={() => setFeedback((current) => [...current, { target: "Kartu pelajar", reason: "", note: "" }])}>Tambah bagian</Button></> : null}
         {action === "reject" && actionStep === 1 ? <><h3>Alasan penolakan</h3><p>Berikan alasan yang jelas untuk dicatat pada pengajuan.</p><label>Alasan<textarea value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Tulis alasan penolakan" /></label></> : null}
-        {(action === "forward" || action === "assignKomsat") ? <><h3>{action === "forward" ? "Teruskan ke komsat" : "Tetapkan komsat"}</h3><p>{action === "forward" ? "Kirim pengajuan kepada pemeriksa di komsat tujuan." : "Pindahkan penetapan komsat beserta alasan peninjauannya."}</p><SearchableUnitMenu label="Komsat tujuan" values={targetKomsat ? [targetKomsat] : []} options={units.filter((value) => value !== selected.unit)} onChange={(values) => setTargetKomsat(values[0] ?? "")} /><label>{action === "forward" ? "Catatan (opsional)" : "Alasan penetapan"}<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={action === "forward" ? "Catatan untuk pemeriksa" : "Tulis alasan penetapan"} /></label></> : null}
+        {(action === "forward" || action === "assignKomsat") ? <><h3>{action === "forward" ? "Teruskan ke komsat" : "Tetapkan komsat"}</h3><p>{action === "forward" ? "Kirim pengajuan kepada pemeriksa di komsat tujuan." : "Pindahkan penetapan komsat beserta alasan peninjauannya."}</p><SearchableMultiSelect single label="Komsat tujuan" values={targetKomsat ? [targetKomsat] : []} options={units.filter((value) => value !== selected.unit)} allLabel="Pilih komsat" onChange={(values) => setTargetKomsat(values[0] ?? "")} /><label>{action === "forward" ? "Catatan (opsional)" : "Alasan penetapan"}<textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={action === "forward" ? "Catatan untuk pemeriksa" : "Tulis alasan penetapan"} /></label></> : null}
         {error && <p className="verification-error" role="alert"><IconAlertCircle size={17} />{error}</p>}
         <label className="verification-failure-toggle"><input type="checkbox" checked={simulateFailure} disabled={saving} onChange={(event) => setSimulateFailure(event.target.checked)} /> Simulasikan gagal menyimpan</label>
         <p className="verification-demo-note">Pratinjau desain: konfirmasi hanya mengubah data contoh di halaman ini.</p>
       </div> : <div className="verification-detail">
-        <div className="verification-sample-note"><IconShieldCheck size={18} /> Data sintetis untuk meninjau alur admin</div>
+        <Callout density="compact" tone="neutral" icon={<IconShieldCheck size={18} aria-hidden="true" />}>Data sintetis untuk meninjau alur admin</Callout>
         <div className="verification-summary"><div><strong>{selected.unit} · {selected.kind}</strong><small>Aturan penetapan: {selected.binding} · {selected.daysWaiting} hari menunggu</small></div><Badge variant={selected.tab === "selesai" ? "success" : selected.tab === "menunggu_anggota" ? "warning" : "secondary"}>{tabs.find((entry) => entry.id === selected.tab)?.label}</Badge></div>
-        {selected.flags.length > 0 && <div className="verification-flag"><IconAlertCircle size={18} /> {selected.flags.join(" · ")}</div>}
-        {selected.owner && readOnly && <div className="verification-claim"><p>Sedang diperiksa oleh {selected.owner}. Keputusan hanya bisa dibuat setelah mengambil alih pemeriksaan.</p><Button size="sm" variant="outline" onClick={() => { setTakenOver((current) => [...current, selected.id]); onNotice("Pemeriksaan diambil alih. Keputusan contoh dapat dibuat."); }}>Ambil alih pemeriksaan</Button></div>}
-        {selected.owner && !readOnly && <div className="verification-claim"><IconCircleCheck size={18} /> Pemeriksaan diambil alih untuk pratinjau ini.</div>}
+        {selected.flags.length > 0 && <Callout tone="warning" icon={<IconAlertCircle size={18} aria-hidden="true" />}>{selected.flags.join(" · ")}</Callout>}
+        {selected.owner && readOnly && <Callout tone="warning" title={`Sedang diperiksa oleh ${selected.owner}`} action={<Button size="sm" variant="outline" onClick={() => { setTakenOver((current) => [...current, selected.id]); onNotice("Pemeriksaan diambil alih. Keputusan contoh dapat dibuat."); }}>Ambil alih pemeriksaan</Button>}>Keputusan hanya bisa dibuat setelah mengambil alih pemeriksaan.</Callout>}
+        {selected.owner && !readOnly && <Callout tone="success" icon={<IconCircleCheck size={18} aria-hidden="true" />}>Pemeriksaan diambil alih untuk pratinjau ini.</Callout>}
         <section className="verification-section"><h3>Data pendaftaran</h3><p>Diurutkan seperti langkah registrasi anggota.</p>{selected.groups.map((group) => <div className="verification-field-group" key={group.title}><h4>{group.title}</h4><dl>{group.fields.map((field) => <div key={field.label}><dt>{field.label}</dt><dd>{field.value}</dd></div>)}</dl></div>)}</section>
-        <section className="verification-section"><h3>Kartu pelajar</h3><p>Dokumen yang dikumpulkan pada registrasi. Pratinjau ini memakai berkas contoh.</p><div className="verification-doc-tabs" role="group" aria-label="Sisi kartu pelajar"><button className={documentSide === "front" ? "active" : ""} aria-pressed={documentSide === "front"} onClick={() => setDocumentSide("front")}>Sisi depan</button><button className={documentSide === "back" ? "active" : ""} aria-pressed={documentSide === "back"} onClick={() => setDocumentSide("back")}>Sisi belakang</button></div><div className="verification-document-island"><div className="verification-file-row">{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={22} /> : <IconPhoto size={22} />}<div><strong>Kartu pelajar · {documentSide === "front" ? "sisi depan" : "sisi belakang"}</strong><span>Berkas contoh · {(documentSide === "front" ? selected.front : selected.back) === "pdf" ? "PDF" : "JPG"}</span></div></div><div className="verification-document-stage"><div className="verification-document-paper"><span>PRATINJAU BERKAS CONTOH</span>{(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={45} stroke={1.4} /> : <IconId size={45} stroke={1.4} />}<strong>KARTU PELAJAR</strong><i /><i /><small>Tanpa data pribadi</small></div></div><dl className="verification-document-facts"><div><dt>Nama</dt><dd>{selected.name}</dd></div><div><dt>Jenjang</dt><dd>{fieldValue(selected, "Jenjang")}</dd></div><div><dt>Institusi / Fakultas</dt><dd>{fieldValue(selected, "Institusi")} / {fieldValue(selected, "Fakultas")}</dd></div><div><dt>Tinggal dari / sampai</dt><dd>{monthYear(fieldValue(selected, "Tinggal sejak"))} sampai {monthYear(fieldValue(selected, "Tinggal sampai"))}</dd></div></dl></div></section>
-        <section className="verification-section"><h3>Riwayat pemeriksaan</h3>{selected.history.length ? <><ol className="verification-history">{[...selected.history].reverse().slice(0, historyExpanded ? undefined : 3).map((entry, index) => <li key={`${selected.id}-${entry.date}-${index}`}><time>{entry.date}</time><strong>{entry.title}</strong><HistoryDetail detail={entry.detail} /></li>)}</ol>{selected.history.length > 3 && <button type="button" className="verification-history-more" aria-expanded={historyExpanded} onClick={() => setHistoryExpanded((value) => !value)}>{historyExpanded ? "Tampilkan 3 terbaru" : `Lihat selengkapnya (${selected.history.length - 3} peristiwa)`}</button>}</> : <p>Belum ada keputusan atau umpan balik pada putaran ini.</p>}</section>
-        {actionsHidden && <div className={selected.tab === "menunggu_anggota" ? "verification-readonly is-waiting" : "verification-readonly"}>{selected.tab === "menunggu_anggota" ? <IconClock size={18} /> : <IconCircleCheck size={18} />}{selected.tab === "selesai" ? "Pengajuan ini sudah selesai. Keputusan tidak tersedia." : "Menunggu perbaikan dari anggota. Keputusan tersedia setelah pengiriman ulang."}</div>}
+        <section className="verification-section"><h3>Kartu pelajar</h3><p>Dokumen yang dikumpulkan pada registrasi. Pratinjau ini memakai berkas contoh.</p><DocumentViewer
+          locale="id"
+          label="Pratinjau kartu pelajar"
+          value={documentSide}
+          onChange={(id) => setDocumentSide(id as "front" | "back")}
+          sides={[
+            { id: "front", label: "Sisi depan", kind: selected.front === "pdf" ? "pdf" : "image", name: "Kartu pelajar · sisi depan", meta: `Berkas contoh · ${selected.front === "pdf" ? "PDF" : "JPG"}` },
+            { id: "back", label: "Sisi belakang", kind: selected.back === "pdf" ? "pdf" : "image", name: "Kartu pelajar · sisi belakang", meta: `Berkas contoh · ${selected.back === "pdf" ? "PDF" : "JPG"}` },
+          ]}
+          facts={[
+            { label: "Nama", value: selected.name },
+            { label: "Jenjang", value: fieldValue(selected, "Jenjang") },
+            { label: "Institusi / Fakultas", value: `${fieldValue(selected, "Institusi")} / ${fieldValue(selected, "Fakultas")}`, span: true },
+            { label: "Tinggal dari / sampai", value: `${monthYear(fieldValue(selected, "Tinggal sejak"))} sampai ${monthYear(fieldValue(selected, "Tinggal sampai"))}`, span: true },
+          ]}
+        >
+          <div className="grid min-h-[178px] w-[min(100%,300px)] content-start gap-[7px] rounded-lg border border-[#d9e0e5] bg-card px-5 py-[18px] shadow-[0_7px_20px_rgba(24,34,43,.08)]">
+            <span className="text-[9px] font-extrabold tracking-[.12em] text-[#9d2940]">PRATINJAU BERKAS CONTOH</span>
+            {(documentSide === "front" ? selected.front : selected.back) === "pdf" ? <IconFileTypePdf size={45} stroke={1.4} aria-hidden /> : <IconId size={45} stroke={1.4} aria-hidden />}
+            <strong className="text-sm tracking-[.04em] text-[#202b33]">KARTU PELAJAR</strong>
+            <i className="block h-[5px] w-[72%] rounded bg-[#e7ebee]" />
+            <i className="block h-[5px] w-[45%] rounded bg-[#e7ebee]" />
+            <small className="mt-[3px] text-[10px] text-brand-muted">Tanpa data pribadi</small>
+          </div>
+        </DocumentViewer></section>
+        <section className="verification-section"><h3>Riwayat pemeriksaan</h3>{selected.history.length ? <Timeline defaultVisibleCount={3} items={[...selected.history].reverse().map((entry): TimelineItem => ({ title: entry.title, time: entry.date, state: "complete", description: <ExpandableText>{entry.detail}</ExpandableText> }))} onExpandChange={(value) => setHistoryExpanded(value)} /> : <p>Belum ada keputusan atau umpan balik pada putaran ini.</p>}</section>
+        {actionsHidden && <Callout tone={selected.tab === "menunggu_anggota" ? "info" : "success"} icon={selected.tab === "menunggu_anggota" ? <IconClock size={18} aria-hidden="true" /> : <IconCircleCheck size={18} aria-hidden="true" />}>{selected.tab === "selesai" ? "Pengajuan ini sudah selesai. Keputusan tidak tersedia." : "Menunggu perbaikan dari anggota. Keputusan tersedia setelah pengiriman ulang."}</Callout>}
       </div>)}
     </AdminDrawer>
   </section>;
@@ -264,27 +291,4 @@ function HistoryDetail({ detail }: { detail: string }) {
   const [expanded, setExpanded] = useState(false);
   const canExpand = detail.length > 70;
   return <><span className={expanded ? "verification-history-detail" : "verification-history-detail is-clamped"}>{detail}</span>{canExpand && <button className="verification-history-toggle" type="button" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)}>{expanded ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}</button>}</>;
-}
-
-export function SearchableUnitMenu({ label, values, options, onChange, multiple = false }: { label: string; values: string[]; options: string[]; onChange: (values: string[]) => void; multiple?: boolean }) {
-  const [query, setQuery] = useState("");
-  const searchRef = useRef<HTMLInputElement>(null);
-  const matches = options.filter((option) => option.toLocaleLowerCase("id").includes(query.trim().toLocaleLowerCase("id")));
-  const selectedLabel = values.length === 0 ? multiple ? "Semua komsat" : "Pilih komsat" : values.length === 1 ? values[0] : `${values.length} komsat dipilih`;
-  return <div className="verification-filter-control">
-    <span>{label}</span>
-    <DropdownMenu onOpenChange={(open) => { if (open) window.requestAnimationFrame(() => searchRef.current?.focus()); else setQuery(""); }}>
-      <DropdownMenuTrigger asChild><Button type="button" variant="outline" className="verification-filter-trigger" aria-label={`${label}: ${selectedLabel}`}>{selectedLabel}<IconChevronDown size={16} /></Button></DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="verification-filter-content verification-unit-menu">
-        <div className="verification-unit-search"><Input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (!["Escape", "Tab", "ArrowDown"].includes(event.key)) event.stopPropagation(); }} placeholder="Cari komsat" aria-label="Cari komsat" /></div>
-        {multiple && <DropdownMenuItem onSelect={(event) => { event.preventDefault(); onChange([]); }}>Semua komsat</DropdownMenuItem>}
-        {matches.length ? matches.map((option) => <DropdownMenuCheckboxItem key={option} checked={values.includes(option)} onCheckedChange={(checked) => onChange(multiple ? checked ? [...values, option] : values.filter((value) => value !== option) : checked ? [option] : [])} onSelect={(event) => { if (multiple) event.preventDefault(); }}>{option}</DropdownMenuCheckboxItem>) : <p className="verification-unit-empty">Komsat tidak ditemukan.</p>}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </div>;
-}
-
-export function FilterMenu({ label, value, allLabel, options, onChange, hideLabel = false }: { label: string; value: string; allLabel: string; options: { value: string; label: string }[]; onChange: (value: string) => void; hideLabel?: boolean }) {
-  const selectedLabel = options.find((option) => option.value === value)?.label ?? allLabel;
-  return <div className="verification-filter-control">{!hideLabel && <span>{label}</span>}<DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" className="verification-filter-trigger" aria-label={`${label}: ${selectedLabel}`}>{selectedLabel}<IconChevronDown size={16} /></Button></DropdownMenuTrigger><DropdownMenuContent align="start" className="verification-filter-content"><DropdownMenuItem onSelect={() => onChange("")}><IconCheck size={16} className={value ? "verification-menu-check-hidden" : ""} />{allLabel}</DropdownMenuItem>{options.map((option) => <DropdownMenuItem key={option.value} onSelect={() => onChange(option.value)}><IconCheck size={16} className={value === option.value ? "" : "verification-menu-check-hidden"} />{option.label}</DropdownMenuItem>)}</DropdownMenuContent></DropdownMenu></div>;
 }

@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
-  IconAdjustmentsHorizontal, IconAlertCircle, IconArrowRight, IconEye, IconEyeOff,
+  IconAdjustmentsHorizontal, IconAlertCircle, IconArrowRight, IconClock, IconEye, IconEyeOff,
   IconLock, IconPencil, IconSearch, IconShieldLock, IconUsers,
 } from "@tabler/icons-react";
 import {
-  AdminDrawer, Badge, Button, Input, MonthPicker, PillRadio, SearchFilter, Select, SelectContent,
-  SelectItem, SelectTrigger, SelectValue, Table, TableBody, TableCell, TableHead, TableHeader,
-  TableRow, Textarea, Timeline, TypeAhead,
+  AdminDrawer, Badge, Button, Callout, FactList, FormField, FormGrid, Input, ListRow, MonthPicker,
+  PageHeader, PillRadio, RevealValue as PackageRevealValue, SearchFilter, SearchableMultiSelect, Select,
+  SelectContent, SelectItem, SelectTrigger, SelectValue, Table, TableBody, TableCell, TableHead,
+  TableHeader, TableRow, Textarea, Timeline, TypeAhead,
 } from "ppij-design-system";
-import { SearchableMultiSelect } from "./SearchableMultiSelect";
-import { SearchableUnitMenu } from "./ReviewWorkspace";
 import "./MemberWorkspace.css";
 
 type Scope = "national" | "korda" | "komsat";
@@ -239,13 +238,9 @@ function Chips({ values, empty = "Belum diisi" }: { values: string[]; empty?: st
 }
 
 /** A masked value with the Tampilkan action that represents the audited admin reveal. */
-function RevealValue({ field, masked, clear, revealed, onReveal, onHide }: { field: string; masked: string; clear: string; revealed: boolean; onReveal: (field: string) => void; onHide: (field: string) => void }) {
-  return <span className="member-reveal-line">
-    <span className={revealed ? "member-reveal-value" : "member-masked-value"} aria-label={revealed ? undefined : "Nilai tersembunyi"}>{revealed ? clear : masked}</span>
-    <button type="button" className="member-reveal-toggle" onClick={() => (revealed ? onHide(field) : onReveal(field))}>
-      {revealed ? <><IconEyeOff size={14} />Sembunyikan</> : <><IconEye size={14} />Tampilkan</>}
-    </button>
-  </span>;
+/** The app keeps the field id; the masked value, the toggle and its accessible name are the package's. */
+function RevealField({ field, masked, clear, revealed, onReveal, onHide }: { field: string; masked: string; clear: string; revealed: boolean; onReveal: (field: string) => void; onHide: (field: string) => void }) {
+  return <PackageRevealValue masked={masked} clear={clear} revealed={revealed} onReveal={() => onReveal(field)} onHide={() => onHide(field)} />;
 }
 
 function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canOverrideCategory, onEdit, onOverride, onCompleteEducation, onStatus }: {
@@ -262,16 +257,16 @@ function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canO
       <div className="member-detail-stamp"><IconUsers size={16} aria-hidden="true" /><span>Data sintetis untuk meninjau tampilan direktori</span></div>
       <Button size="sm" variant="outline" onClick={onEdit}><IconPencil size={15} /> Ubah data anggota</Button>
     </div>
-    <p className="member-detail-audit"><IconShieldLock size={15} aria-hidden="true" /><span>Nilai bertanda tersembunyi hanya terbuka lewat <strong>Tampilkan</strong>. Setiap pembukaan tercatat dalam audit.</span></p>
+    <Callout density="compact" tone="neutral" icon={<IconShieldLock size={15} aria-hidden="true" />}>Nilai bertanda tersembunyi hanya terbuka lewat <strong>Tampilkan</strong>. Setiap pembukaan tercatat dalam audit.</Callout>
     <section><h3>Data diri</h3><Rows rows={[
       { label: "Nama lengkap", value: profile.fullName, span: true },
       { label: "Jenis kelamin", value: profile.gender === "L" ? "Laki-laki" : "Perempuan" },
       { label: "Provinsi asal", value: profile.originProvince },
-      { label: "Tanggal lahir", value: <RevealValue field="birthDate" masked={maskDate(profile.birthDate)} clear={formatDate(profile.birthDate)} revealed={revealed.includes("birthDate")} onReveal={onReveal} onHide={onHide} />, span: true },
+      { label: "Tanggal lahir", value: <RevealField field="birthDate" masked={maskDate(profile.birthDate)} clear={formatDate(profile.birthDate)} revealed={revealed.includes("birthDate")} onReveal={onReveal} onHide={onHide} />, span: true },
     ]} /></section>
     <section><h3>Kontak</h3><Rows rows={[
       { label: "Nama panggilan", value: profile.nickname },
-      { label: "Nomor telepon atau WhatsApp", value: <RevealValue field="phone" masked={maskPhone(profile.phone)} clear={profile.phone} revealed={revealed.includes("phone")} onReveal={onReveal} onHide={onHide} /> },
+      { label: "Nomor telepon atau WhatsApp", value: <RevealField field="phone" masked={maskPhone(profile.phone)} clear={profile.phone} revealed={revealed.includes("phone")} onReveal={onReveal} onHide={onHide} /> },
       { label: "LINE ID", value: profile.lineId },
       { label: "Email akun", value: member.email },
     ]} /></section>
@@ -289,11 +284,7 @@ function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canO
       { label: "Lab atau pembimbing", value: profile.lab || "—" },
       { label: "Nomor pelajar", value: profile.studentNumber || "—" },
     ]} />
-      {!profile.entryMonth || !profile.expectedGraduation ? <div className="member-detail-prompt">
-        <IconAlertCircle size={16} aria-hidden="true" />
-        <div><strong>Data studi belum lengkap</strong><p>Bulan masuk dan perkiraan lulus menentukan kategori anggota. Lengkapi lewat “Ubah data anggota”.</p></div>
-        <Button size="sm" variant="outline" onClick={onCompleteEducation}><IconPencil size={15} /> Lengkapi data studi</Button>
-      </div> : null}
+      {!profile.entryMonth || !profile.expectedGraduation ? <Callout tone="warning" icon={<IconClock size={16} aria-hidden="true" />} title="Tanggal studi belum ditentukan" action={<Button size="sm" variant="outline" onClick={onCompleteEducation}><IconPencil size={15} /> Lengkapi data studi</Button>}>Lengkapi tanggal mulai dan selesai studi agar kategori anggota bisa ditetapkan oleh sistem.</Callout> : null}
     </section>
     <section><h3>Pendanaan</h3><Rows rows={[{ label: "Pendanaan saat ini", value: <Chips values={profile.funding.filter((row) => !row.to).map((row) => row.value)} />, span: true }]} />
       {profile.funding.some((row) => row.to) && <div className="member-subsection"><h4>Riwayat pendanaan</h4><ul className="member-dated-list">{profile.funding.filter((row) => row.to).map((row) => <li key={`${row.value}-${row.to}`}><span>{row.value}</span><small>{row.from} – {row.to}</small></li>)}</ul></div>}
@@ -301,10 +292,10 @@ function MemberDetail({ member, profile, scope, revealed, onReveal, onHide, canO
     <section><h3>Minat</h3><Chips values={profile.interests} /></section>
     <section><h3>Izin tinggal dan kontak darurat</h3><Rows rows={[
       { label: "Status izin tinggal", value: profile.residenceStatus },
-      { label: "Izin tinggal berlaku sampai", value: <RevealValue field="residenceExpiry" masked={maskExpiry(profile.residenceExpiry)} clear={formatDate(profile.residenceExpiry)} revealed={revealed.includes("residenceExpiry")} onReveal={onReveal} onHide={onHide} /> },
-      { label: "Kontak darurat", value: <RevealValue field="emergency" masked={maskEmergency(profile.emergency)} clear={`${profile.emergency.name} (${profile.emergency.relationship}) · ${profile.emergency.phone} · ${profile.emergency.address}`} revealed={revealed.includes("emergency")} onReveal={onReveal} onHide={onHide} />, span: true },
+      { label: "Izin tinggal berlaku sampai", value: <RevealField field="residenceExpiry" masked={maskExpiry(profile.residenceExpiry)} clear={formatDate(profile.residenceExpiry)} revealed={revealed.includes("residenceExpiry")} onReveal={onReveal} onHide={onHide} /> },
+      { label: "Kontak darurat", value: <RevealField field="emergency" masked={maskEmergency(profile.emergency)} clear={`${profile.emergency.name} (${profile.emergency.relationship}) · ${profile.emergency.phone} · ${profile.emergency.address}`} revealed={revealed.includes("emergency")} onReveal={onReveal} onHide={onHide} />, span: true },
     ]} />
-      <p className="member-detail-note-inline"><IconLock size={14} aria-hidden="true" />Izin tinggal dan kontak darurat disimpan terenkripsi dan hanya terbuka lewat aksi audit.</p>
+      <Callout density="compact" tone="neutral" icon={<IconLock size={14} aria-hidden="true" />}>Izin tinggal dan kontak darurat disimpan terenkripsi dan hanya terbuka lewat aksi audit.</Callout>
     </section>
     <section><h3>Keanggotaan</h3><Rows rows={[
       { label: "Nomor anggota", value: <span className="member-mono">{member.id}</span> },
@@ -424,8 +415,8 @@ function MemberEditForm({ member, profile, scope, focusEducation = false, onSave
     });
   };
   return <form id="member-edit-form" className="member-edit" noValidate onSubmit={submit} data-testid="member-edit-form">
-    <p className="member-edit-note"><IconLock size={15} aria-hidden="true" /><span>Hanya data pendaftaran yang ditinjau yang diubah di sini. Kontak, domisili, pendanaan, dan minat diperbarui sendiri oleh anggota di Profil.</span></p>
-    {errors.form && <p className="member-edit-error-form" role="alert"><IconAlertCircle size={16} aria-hidden="true" />{errors.form}</p>}
+    <Callout density="compact" tone="neutral" icon={<IconLock size={15} aria-hidden="true" />}>Hanya data pendaftaran yang ditinjau yang diubah di sini. Kontak, domisili, pendanaan, dan minat diperbarui sendiri oleh anggota di Profil.</Callout>
+    {errors.form && <Callout tone="danger" icon={<IconAlertCircle size={16} aria-hidden="true" />}>{errors.form}</Callout>}
     <div className="member-edit-grid">
       <label className="member-edit-field"><span>Nama lengkap</span><Input value={fullName} onChange={(event) => setFullName(event.target.value)} aria-invalid={Boolean(errors.fullName)} />{errors.fullName && <small className="member-edit-error" role="alert">{errors.fullName}</small>}</label>
       <div className="member-edit-field"><span>Tanggal lahir</span>
@@ -446,7 +437,7 @@ function MemberEditForm({ member, profile, scope, focusEducation = false, onSave
       <label className="member-edit-field"><span>Lab atau pembimbing</span><Input value={lab} onChange={(event) => setLab(event.target.value)} placeholder="Contoh: Lab Sistem Informasi" /></label>
       <label className="member-edit-field"><span>Nomor pelajar</span><Input value={studentNumber} onChange={(event) => setStudentNumber(event.target.value)} placeholder="Contoh: 76123456" /></label>
       <div className="member-edit-field member-edit-wide"><span>Komsat</span>
-        {komsatFixed ? <p className="member-edit-fixed">{profile.komsat}<small>Admin komsat tidak dapat memindahkan anggota ke komsat lain.</small></p> : <SearchableUnitMenu label="Komsat tujuan" values={[komsat]} options={scopeUnits[scope]} onChange={(values) => setKomsat(values[0] ?? profile.komsat)} />}
+        {komsatFixed ? <p className="member-edit-fixed">{profile.komsat}<small>Admin komsat tidak dapat memindahkan anggota ke komsat lain.</small></p> : <SearchableMultiSelect single label="Komsat tujuan" values={[komsat]} options={scopeUnits[scope]} allLabel="Pilih komsat" onChange={(values) => setKomsat(values[0] ?? profile.komsat)} />}
         {!komsatFixed && <small className="member-edit-hint">Hanya komsat di dalam cakupan ruang kerja ini yang ditawarkan. Bila cakupan berubah sebelum disimpan, server menolak dengan 403 komsat_scope_required.</small>}
         {errors.komsat && <small className="member-edit-error" role="alert">{errors.komsat}</small>}
       </div>
@@ -472,7 +463,7 @@ function CategoryOverrideForm({ profile, onSave }: { profile: ProfileData; onSav
     onSave(category, category === "LUAR_BIASA" ? subtype : null, reason.trim());
   };
   return <form id="category-override-form" className="member-edit" noValidate onSubmit={submit} data-testid="category-override-form">
-    <p className="member-edit-note"><IconShieldLock size={15} aria-hidden="true" /><span>Kategori berasal dari data akademik (AD/ART Pasal 6). Penetapan manual berlaku sampai perubahan data akademik berikutnya disetujui.</span></p>
+    <Callout density="compact" tone="neutral" icon={<IconShieldLock size={15} aria-hidden="true" />}>Kategori berasal dari data akademik (AD/ART Pasal 6). Penetapan manual berlaku sampai perubahan data akademik berikutnya disetujui.</Callout>
     <fieldset className="member-edit-choice"><legend>Kategori</legend>
       <PillRadio ariaLabel="Kategori" value={category} onChange={(value) => setCategory(value as "BIASA" | "LUAR_BIASA")} options={[{ value: "BIASA", label: "Anggota Biasa" }, { value: "LUAR_BIASA", label: "Anggota Luar Biasa" }]} />
       {errors.category && <small className="member-edit-error" role="alert">{errors.category}</small>}

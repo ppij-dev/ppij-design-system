@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { IconArrowRight } from "@tabler/icons-react";
+import { DistributionBar, FiguresBand as FiguresBandShell, FiguresBandSeparator, type FiguresBandGroup } from "ppij-design-system";
 import { komsats, komsatsOfKorda, kordas, type Scope } from "./mapData";
 import { coverageKorda, formatCount, statsByScope, type Bucket, type Distribution } from "./statsData";
 import type { StatsTopic } from "./MapCard";
@@ -9,6 +8,10 @@ import type { StatsTopic } from "./MapCard";
  * with one question, one headline, and one deep link. Every number maps to a named production
  * field (comments name the endpoint + field); the fabricated "Kartu diterbitkan" card is gone.
  * At komsat scope the organisasi group is omitted, mirroring production (no org tiles there).
+ *
+ * The band itself, its column steps, the group anatomy and the stacked bars come from
+ * `ppij-design-system` (FiguresBand, DistributionBar); this file only selects the metrics and
+ * their production contracts.
  */
 
 interface FiguresBandProps {
@@ -16,154 +19,122 @@ interface FiguresBandProps {
   onOpenTopic: (topic: StatsTopic) => void;
 }
 
-/** Degree composition mini bar (production: distributions.degree_level items + other + unknown). */
-function MiniBar({ distribution, total }: { distribution: Distribution; total: number }) {
+/** The band's own colour steps: the degree ramp and the completeness traffic lights. */
+const DEGREE_SHADES = ["#c8102e", "#d85269", "#efbbc4"];
+const DEGREE_REST = "#f1f2f3";
+const COMPLETENESS_SHADES = ["#1E7A46", "#E2A02B", "#8A9099"];
+
+/** Degree composition (production: `distributions.degree_level` items + other + unknown). */
+function degreeSegments(distribution: Distribution) {
   const top = distribution.items.slice(0, 3);
   const rest = distribution.other + distribution.unknown + distribution.items.slice(3).reduce((sum, b: Bucket) => sum + b.count, 0);
-  const shades = ["#c8102e", "#d85269", "#efbbc4"];
-  return (
-    <div
-      className="figure-mini-bar"
-      role="img"
-      aria-label={top.map((b, i) => `${b.label} ${formatCount(b.count)}`).join(", ") + (rest > 0 ? `, lainnya ${formatCount(rest)}` : "")}
-    >
-      {top.map((bucket, i) => (
-        <i key={bucket.key} style={{ width: `${(bucket.count / total) * 100}%`, background: shades[i] }} title={`${bucket.label}: ${formatCount(bucket.count)}`} />
-      ))}
-      {rest > 0 ? <i style={{ width: `${(rest / total) * 100}%`, background: "#f1f2f3" }} title={`Lainnya: ${formatCount(rest)}`} /> : null}
-    </div>
-  );
+  return [
+    ...top.map((bucket, index) => ({ label: bucket.label, value: bucket.count, color: DEGREE_SHADES[index] })),
+    ...(rest > 0 ? [{ label: "Lainnya", value: rest, color: DEGREE_REST }] : []),
+  ];
 }
 
-/** Completeness stacked bar (production: completeness lengkap/belum_lengkap/belum_aktivasi). */
-function CompletenessBar({ scope }: { scope: Scope }) {
+/** Completeness (production: `completeness.lengkap` / `belum_lengkap` / `belum_aktivasi`). */
+function completenessSegments(scope: Scope) {
   const c = statsByScope[scope].completeness;
-  const segments = [
-    { label: "Lengkap", count: c.lengkap, background: "#1E7A46" },
-    { label: "Belum lengkap", count: c.belum_lengkap, background: "#E2A02B" },
-    { label: "Belum aktivasi", count: c.belum_aktivasi, background: "#8A9099" },
+  return [
+    { label: "Lengkap", value: c.lengkap, color: COMPLETENESS_SHADES[0] },
+    { label: "Belum lengkap", value: c.belum_lengkap, color: COMPLETENESS_SHADES[1] },
+    { label: "Belum aktivasi", value: c.belum_aktivasi, color: COMPLETENESS_SHADES[2] },
   ];
-  return (
-    <div>
-      <div
-        className="figure-stack"
-        role="img"
-        aria-label={segments.map((s) => `${s.label} ${formatCount(s.count)}`).join(", ")}
-      >
-        {segments.map((s) => (
-          <i key={s.label} style={{ width: `${(s.count / c.active_total) * 100}%`, background: s.background }} title={`${s.label}: ${formatCount(s.count)}`} />
-        ))}
-      </div>
-      <p className="figure-legend">
-        {segments.map((s) => (
-          <span key={s.label}>
-            <i style={{ background: s.background }} /> {formatCount(s.count)}
-          </span>
-        ))}
-      </p>
-    </div>
-  );
 }
 
 export function FiguresBand({ scope, onOpenTopic }: FiguresBandProps) {
   const stats = statsByScope[scope];
   const degree = stats.distributions.degree_level;
+  const mode = degree.items[0];
   const degreeTotal = degree.items.reduce((sum, b) => sum + b.count, 0) + degree.other + degree.unknown;
   const scopeKomsats = scope === "national" ? komsats : komsatsOfKorda("u-kanto");
   const delta = stats.tiles.new_this_month;
+  const decimals = new Intl.NumberFormat("id-ID", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
-  const groups: {
-    topic: StatsTopic;
-    label: string;
-    value: string;
-    warn?: boolean;
-    body: ReactNode;
-    link: string;
-  }[] = [
+  const groups: FiguresBandGroup[] = [
     {
-      topic: "anggota",
       label: "Anggota aktif",
       value: formatCount(stats.tiles.active_members),
-      body: (
+      sub: (
         <>
-          <p className="figure-sub">
-            <strong>+{formatCount(delta)}</strong> baru bulan ini
-            <span className="figure-sep" />
-            {degree.items[0].label} {Math.round((degree.items[0].count / degreeTotal) * 100)}%
-          </p>
-          <MiniBar distribution={degree} total={degreeTotal} />
+          <strong>+{formatCount(delta)}</strong> baru bulan ini
+          <FiguresBandSeparator />
+          {mode.label} {Math.round((mode.count / degreeTotal) * 100)}%
         </>
       ),
-      link: "Statistik anggota",
+      visual: (
+        <DistributionBar
+          segments={degreeSegments(degree)}
+          legend="none"
+          ariaLabel={`Komposisi jenjang studi, ${formatCount(degreeTotal)} anggota`}
+        />
+      ),
+      linkLabel: "Statistik anggota",
+      onSelect: () => onOpenTopic("anggota"),
     },
     {
-      topic: "verifikasi",
       label: "Menunggu verifikasi",
       value: formatCount(stats.tiles.pending_verification),
-      warn: true,
-      body: (
-        <p className="figure-sub">
+      tone: "warn",
+      sub: (
+        <>
           {formatCount(stats.review.baru)} baru · {formatCount(stats.review.dikirim_ulang)} dikirim ulang · {formatCount(stats.review.diperiksa)} diperiksa
           {stats.avg_review_days_90d !== null ? (
             <>
-              <span className="figure-sep" />
-              rata-rata {new Intl.NumberFormat("id-ID", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(stats.avg_review_days_90d)} hari
+              <FiguresBandSeparator />
+              rata-rata {decimals.format(stats.avg_review_days_90d)} hari
             </>
           ) : null}
-        </p>
-      ),
-      link: "Statistik verifikasi",
-    },
-    {
-      topic: "anggota",
-      label: "Kartu & masa berlaku",
-      value: formatCount(stats.tiles.cards_active),
-      body: (
-        <>
-          <p className="figure-sub">
-            <strong>+{formatCount(stats.tiles.cards_issued_this_month)}</strong> kartu terbit bulan ini
-            <span className="figure-sep" />
-            {formatCount(stats.tiles.expiring_within_60_days)} berlaku ≤ 60 hari
-          </p>
-          <CompletenessBar scope={scope} />
         </>
       ),
-      link: "Kelengkapan & kartu",
+      linkLabel: "Statistik verifikasi",
+      onSelect: () => onOpenTopic("verifikasi"),
+    },
+    {
+      label: "Kartu & masa berlaku",
+      value: formatCount(stats.tiles.cards_active),
+      sub: (
+        <>
+          <strong>+{formatCount(stats.tiles.cards_issued_this_month)}</strong> kartu terbit bulan ini
+          <FiguresBandSeparator />
+          {formatCount(stats.tiles.expiring_within_60_days)} berlaku ≤ 60 hari
+        </>
+      ),
+      visual: (
+        <DistributionBar
+          segments={completenessSegments(scope)}
+          legend="inline"
+          ariaLabel={`Kelengkapan berkas, ${formatCount(stats.completeness.active_total)} anggota`}
+        />
+      ),
+      linkLabel: "Kelengkapan & kartu",
+      onSelect: () => onOpenTopic("anggota"),
     },
   ];
 
   if (scope !== "komsat") {
     groups.push({
-      topic: "organisasi",
       label: "Organisasi",
       value: formatCount(scopeKomsats.length),
-      body: (
-        <p className="figure-sub">
+      sub: (
+        <>
           {scope === "national" ? `di ${formatCount(kordas.length)} korda` : `wilayah Kanto · ${coverageKorda.prefectures.length} prefektur`}
-          <span className="figure-sep" />
+          <FiguresBandSeparator />
           komsat aktif
-        </p>
+        </>
       ),
-      link: "Statistik organisasi",
+      linkLabel: "Statistik organisasi",
+      onSelect: () => onOpenTopic("organisasi"),
     });
   }
 
   return (
-    <section className="figures-band" aria-label="Angka kunci">
-      <div className="band-head">
-        <h2>Angka kunci</h2>
-        <p>Satu kelompok per pertanyaan; ketuk untuk membuka Statistik.</p>
-      </div>
-      <div className="band-groups" data-count={groups.length}>
-        {groups.map((group) => (
-          <button key={group.label} type="button" className="figure-group" onClick={() => onOpenTopic(group.topic)}>
-            <span className="figure-label">{group.label}</span>
-            <span className={`figure-value${group.warn ? " warn" : ""}`}>{group.value}</span>
-            {group.body}
-            <span className="figure-link">{group.link} <IconArrowRight size={14} /></span>
-          </button>
-        ))}
-      </div>
-    </section>
+    <FiguresBandShell
+      title="Angka kunci"
+      description="Satu kelompok per pertanyaan; ketuk untuk membuka Statistik."
+      groups={groups}
+    />
   );
 }

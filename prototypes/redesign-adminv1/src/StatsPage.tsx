@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 import { IconDownload, IconFilter, IconFilterOff, IconSearch, IconTrendingDown, IconTrendingUp, IconX } from "@tabler/icons-react";
-import { Badge, Button, PageHeader, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "ppij-design-system";
+import {
+  Badge, BarChart, Button, Callout, DistributionBar, FactList, FilterChips, PageHeader, PanelCard,
+  PieChart, SearchableMultiSelect, StatStrip, Table, TableBody, TableCell, TableHead, TableHeader,
+  TableRow, Tabs, TabsList, TabsTrigger,
+} from "ppij-design-system";
 import { komsats, komsatsOfKorda, kordas, type Scope } from "./mapData";
 import { coverageKorda, coverageNational, formatCount } from "./statsData";
 import {
@@ -9,7 +13,6 @@ import {
   type FacetKey, type Filters, type WarehouseRow,
 } from "./warehouseData";
 import type { StatsTopic } from "./MapCard";
-import { SearchableMultiSelect } from "./SearchableMultiSelect";
 
 /**
  * The Statistik page as a data warehouse: one filterable dataset, facet menus over every
@@ -43,34 +46,27 @@ function FacetBars({ rows, filters, facet, title, limit = 6, footnote }: {
   const total = counts.reduce((sum, [, n]) => sum + n, 0) || 1;
   const rest = facetCounts(rows, filters, facet).length - counts.length;
   return (
-    <section className="stat-card" aria-label={title}>
-      <div className="stat-card-head"><h3>{title}</h3></div>
-      <ul className="dist-list">
-        {counts.map(([value, count]) => (
-          <li key={value}>
-            <span>{value}</span>
-            <div aria-hidden="true"><i style={{ width: `${Math.max(3, (count / total) * 100)}%` }} /></div>
-            <strong>{formatCount(count)}</strong>
-          </li>
-        ))}
-      </ul>
+    <PanelCard title={title} headingLevel={3}>
+      <BarChart
+        orientation="horizontal"
+        data={counts.map(([value, count]) => ({ label: value, value: count, hint: `${value}: ${formatCount(count)}` }))}
+        ariaLabel={`${title}, ${formatCount(total)} baris`}
+      />
       {footnote ? <p className="stat-footnote">{footnote}</p> : <p className="stat-footnote">{rest > 0 ? `+${rest} nilai lain dalam data.` : "Dari data terfilter."}</p>}
-    </section>
+    </PanelCard>
   );
 }
 
 function TrendFromRows({ rows, title }: { rows: WarehouseRow[]; title: string }) {
   const byMonth = countByMonth(rows);
-  const max = Math.max(1, ...byMonth.map((m) => m.count));
   const last = byMonth[byMonth.length - 1]?.count ?? 0;
   const prev = byMonth[byMonth.length - 2]?.count ?? 0;
   const pct = prev > 0 ? Math.round(((last - prev) / prev) * 100) : 0;
   const up = pct >= 0;
   return (
-    <section className="stat-card trend-card" aria-label={title}>
-      <div className="stat-card-head">
+    <PanelCard title={title} headingLevel={3}>
+      <div className="mb-1">
         <div>
-          <h3>{title}</h3>
           <p className="trend-total">
             <strong>{formatCount(last)}</strong> {monthLabel("2026-10")}
             <Badge variant={up ? "success" : "destructive"}>
@@ -79,18 +75,14 @@ function TrendFromRows({ rows, title }: { rows: WarehouseRow[]; title: string })
           </p>
         </div>
       </div>
-      <div className="trend-chart" role="img" aria-label={`${title}, April sampai Oktober 2026`}>
-        {byMonth.map(({ month, count }) => (
-          <div className="trend-col" key={month}>
-            <div className="trend-bars">
-              <i className="trend-red" style={{ height: `${Math.max(4, (count / max) * 100)}%` }} title={`${monthLabel(month)}: ${formatCount(count)}`} />
-            </div>
-            <span>{monthLabel(month)}</span>
-          </div>
-        ))}
-      </div>
+      <BarChart
+        data={byMonth.map(({ month, count }) => ({ label: monthLabel(month), value: count, hint: `${monthLabel(month)}: ${formatCount(count)}` }))}
+        height={150}
+        highlightLast
+        ariaLabel={`${title}, April sampai Oktober 2026`}
+      />
       <p className="stat-footnote">Produksi: GET /v1/admin/stats/timeseries (docs/admin-integration/stats.md, gap 1) — seri di sini dihitung dari data terfilter.</p>
-    </section>
+    </PanelCard>
   );
 }
 
@@ -167,7 +159,7 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
     );
   };
 
-  return <div className="verification-page-island stats-page">
+  return <PanelCard padding="page" className="grid gap-0 stats-page">
     <PageHeader
       title="Statistik"
       description={`Gudang data ${scopeName}: saring bebas, baca agregatnya, unduh sebagai CSV. Setiap angka mengikuti filter aktif.`}
@@ -184,11 +176,13 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
     />
 
     <div className="warehouse-toolbar">
-      <div className="tabs stats-tabs" role="tablist" aria-label="Tampilan statistik">
-        {views.filter((v) => v.id !== "organisasi" || scope !== "komsat").map((v) => (
-          <button key={v.id} role="tab" aria-selected={topic === v.id} className={topic === v.id ? "selected" : ""} onClick={() => onTopic(v.id)}>{v.label}</button>
-        ))}
-      </div>
+      <Tabs value={topic} onValueChange={(next) => onTopic(next as StatsTopic)}>
+        <TabsList appearance="underline" aria-label="Tampilan statistik">
+          {views.filter((v) => v.id !== "organisasi" || scope !== "komsat").map((v) => (
+            <TabsTrigger key={v.id} value={v.id}>{v.label}</TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
     </div>
 
     {filtersOpen ? (
@@ -217,55 +211,61 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
     ) : null}
 
     {activeCount > 0 ? (
-      <div className="warehouse-chips" aria-label="Filter aktif">
-        {filters.monthsBack > 0 ? (
-          <button type="button" className="warehouse-chip" onClick={() => setFilters((current) => ({ ...current, monthsBack: 0 }))}>
-            {filters.monthsBack} bulan terakhir <IconX size={13} />
-          </button>
-        ) : null}
-        {activeFacets.map(([key, value]) => (
-          <button key={`${key}-${value}`} type="button" className="warehouse-chip" onClick={() => toggleValue(key, value)}>
-            {facetLabels[key]}: {value} <strong>{formatCount(countWithValue(scopedRows, filters, key, value))}</strong> <IconX size={13} />
-          </button>
-        ))}
-        <button type="button" className="warehouse-chip-clear" onClick={clearAll}>
-          <IconFilterOff size={13} /> Reset semua
-        </button>
-      </div>
+      <FilterChips
+        label="Filter aktif"
+        clearAllLabel="Reset semua"
+        chips={[
+          ...(filters.monthsBack > 0 ? [{ label: `${filters.monthsBack} bulan terakhir`, value: "monthsBack", onRemove: () => setFilters((current) => ({ ...current, monthsBack: 0 })) }] : []),
+          ...activeFacets.map(([key, value]) => ({
+            label: `${facetLabels[key]}: ${value}`,
+            value: `${key}:${value}`,
+            count: countWithValue(scopedRows, filters, key, value),
+            onRemove: () => toggleValue(key, value),
+          })),
+        ]}
+        onClearAll={clearAll}
+      />
     ) : null}
 
-    <div className="warehouse-totals">
-      <div><strong>{formatCount(filtered.length)}</strong><span>Baris data</span></div>
-      <div><strong>{formatCount(aktif.length)}</strong><span>Anggota aktif</span></div>
-      <div><strong>{formatCount(pending.length)}</strong><span>Menunggu verifikasi</span></div>
-      <div><strong>{formatCount(aktif.filter((r) => r.registered === "2026-10").length)}</strong><span>Baru bulan ini</span></div>
-      <div><strong>{formatCount(aktif.filter((r) => r.card === "Kartu aktif").length)}</strong><span>Kartu aktif</span></div>
-      {avgWaiting !== null ? <div><strong>{new Intl.NumberFormat("id-ID", { maximumFractionDigits: 1 }).format(avgWaiting)}</strong><span>Hari menunggu (rata-rata)</span></div> : null}
-    </div>
+    <StatStrip
+      label="Total gudang data"
+      className="mb-4"
+      items={[
+        { value: formatCount(filtered.length), label: "Baris data" },
+        { value: formatCount(aktif.length), label: "Anggota aktif" },
+        { value: formatCount(pending.length), label: "Menunggu verifikasi" },
+        { value: formatCount(aktif.filter((r) => r.registered === "2026-10").length), label: "Baru bulan ini" },
+        { value: formatCount(aktif.filter((r) => r.card === "Kartu aktif").length), label: "Kartu aktif" },
+        ...(avgWaiting !== null ? [{ value: new Intl.NumberFormat("id-ID", { maximumFractionDigits: 1 }).format(avgWaiting), label: "Hari menunggu (rata-rata)" }] : []),
+      ]}
+    />
 
     {topic === "anggota" ? (
       <>
         <div className="stats-grid-two">
           <TrendFromRows rows={filtered} title="Pendaftaran per bulan" />
-          <section className="stat-card" aria-label="Kelengkapan data">
-            <div className="stat-card-head">
-              <div>
-                <h3>Kelengkapan & aktivasi</h3>
-                <p className="trend-total"><strong>{formatCount(cTotal)}</strong> baris terfilter</p>
-              </div>
-            </div>
-            <div className="completeness-stack" role="img" aria-label={`Lengkap ${formatCount(cLengkap)}, belum lengkap ${formatCount(cBelum)}, belum aktivasi ${formatCount(cAktivasi)}`}>
-              <i style={{ width: `${(cLengkap / cTotal) * 100}%`, background: "#1E7A46" }} />
-              <i style={{ width: `${(cBelum / cTotal) * 100}%`, background: "#E2A02B" }} />
-              <i style={{ width: `${(cAktivasi / cTotal) * 100}%`, background: "#8A9099" }} />
-            </div>
-            <ul className="completeness-legend">
-              <li><i style={{ background: "#1E7A46" }} /> Lengkap <strong>{formatCount(cLengkap)}</strong></li>
-              <li><i style={{ background: "#E2A02B" }} /> Belum lengkap <strong>{formatCount(cBelum)}</strong></li>
-              <li><i style={{ background: "#8A9099" }} /> Belum aktivasi <strong>{formatCount(cAktivasi)}</strong></li>
-            </ul>
+          <PanelCard title="Kelengkapan & aktivasi" headingLevel={3} badge={<Badge variant="secondary">{formatCount(cTotal)} baris</Badge>}>
+            <DistributionBar
+              size="md"
+              legend="list"
+              className="[&>div]:h-[18px]"
+              segments={[
+                { label: "Lengkap", value: cLengkap, color: "#1E7A46" },
+                { label: "Belum lengkap", value: cBelum, color: "#E2A02B" },
+                { label: "Belum aktivasi", value: cAktivasi, color: "#8A9099" },
+              ]}
+              ariaLabel={`Kelengkapan data, ${formatCount(cTotal)} baris terfilter`}
+            />
             <p className="stat-footnote">Agregat lintas facet dihitung dari baris terfilter; produksi memakai kontrak gudang data (stats.md, gap 4).</p>
-          </section>
+          </PanelCard>
+          <PanelCard title="Anggota Biasa vs Luar Biasa" headingLevel={3}>
+            <PieChart
+              data={facetCounts(filtered, filters, "category").map(([label, value]) => ({ label, value }))}
+              maxSlices={2}
+              ariaLabel={`Komposisi kategori anggota, ${formatCount(filtered.length)} baris terfilter`}
+            />
+            <p className="stat-footnote">Produksi: field kategori dari GET /v1/admin/anggota. "Jenis kelamin" belum punya field di data contoh ini, jadi ceritanya ada di Storybook (Admin/PieChart), sesuai keputusan pemilik.</p>
+          </PanelCard>
         </div>
         <div className="stats-grid-two">
           <FacetBars rows={filtered} filters={filters} facet="degree" title="Jenjang pendidikan" limit={7} />
@@ -396,5 +396,5 @@ export function StatsPage({ scope, scopeName, topic, onTopic }: {
         </section>
       </div>
     ) : null}
-  </div>;
+  </PanelCard>;
 }

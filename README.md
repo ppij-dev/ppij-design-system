@@ -29,6 +29,24 @@ Exports: React components from the package root,
 Until the first npm publish, install the same package from the public GitHub
 repo: `npm install github:ppij-dev/ppij-design-system`.
 
+A consumer needs two things of its own, both proved by installing a packed
+tarball into an app with no credentials:
+
+- **Tailwind CSS v4.** `ppij-design-system/tokens.css` opens with
+  `@import "tailwindcss"`, so the app installs `tailwindcss` and
+  `@tailwindcss/vite` (or the equivalent PostCSS plugin) and imports the token
+  file once. The components' classes are Tailwind utilities; without the plugin
+  the token import fails to resolve.
+- **The automatic JSX runtime.** Any React 19 app does this already
+  (`@vitejs/plugin-react`, or `esbuild: { jsx: "automatic" }`); with the classic
+  runtime a page compiles to `React.createElement` and needs `React` in scope.
+
+```tsx
+import { PanelCard, PieChart } from "ppij-design-system";
+import "ppij-design-system/tokens.css";
+import tokens from "ppij-design-system/tokens.json";
+```
+
 ## View the guideline
 
 The design guideline and every component live in Storybook, published at

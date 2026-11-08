@@ -302,11 +302,8 @@ Nothing in `ppij-identity` changes during this migration.
 
 ## Open Questions
 
-1. **Should the three pending `0.3.1` items ship as `0.3.1` first?**
-   Recommendation: no — fold them into `0.4.0` (batch 1). They are three small
-   fixes, `0.3.1` was never cut, and a separate release costs the owner a
-   second 2FA publish. Unless `ppij-identity` needs the 44px close button or
-   the 13px input before the admin components land, one release is cheaper.
+1. ~~**Should the three pending `0.3.1` items ship as `0.3.1` first?**~~ — **decided 2026-11-08 (Q91)**:
+   fold them into `0.4.0` (batch 1); no `0.3.1` release is cut. Kept here only as the decision record.
 2. **Do the five adjustments belong in `design-system` or in the new
    `admin-components` capability (D7)?**
    Recommendation: `design-system`, because that is the capability the five
@@ -331,9 +328,7 @@ Nothing in `ppij-identity` changes during this migration.
    Introduction page's existing "shared atoms live under Portal" rule. The
    alternative — everything new under `Admin` — reads as ownership of the
    admin surface, which is not what these primitives are.
-6. **Do we need a real `CHANGELOG.md` and a `VERSION` sync now, or in the
-   foundation's batch 13?**
-   Recommendation: do the minimum here (add `CHANGELOG.md`, make `VERSION`
-   read `0.4.0` and have the build sync it into `packages/ui/package.json`),
-   because `0.4.0` is the first release an app will pin, and a hand-edited
-   version pair is exactly how the current `0.1.0`/`0.3.0` mismatch happened.
+6. ~~**Do we need a real `CHANGELOG.md` and a `VERSION` sync now, or in the
+   foundation's batch 13?**~~ — **decided 2026-11-08 (Q92)**: do it now, as part of `0.4.0` (add
+   `CHANGELOG.md`, make `VERSION` read `0.4.0` and have the build sync it into `packages/ui/package.json`),
+   because `0.4.0` is the first release an app will pin. Kept here only as the decision record.

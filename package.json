@@ -1,7 +1,7 @@
 {
   "name": "ppij-design-system-workspace",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.0",
   "type": "module",
   "workspaces": [
     "packages/ui",
@@ -9,10 +9,12 @@
     "prototypes/redesign-adminv1"
   ],
   "scripts": {
+    "version:sync": "node scripts/sync-version.mjs",
+    "version:check": "node scripts/check-version.mjs",
     "tokens": "node scripts/generate-tokens.mjs",
-    "build": "node scripts/generate-tokens.mjs && npm run build -w ppij-design-system && npm run build-storybook -w ppij-design-system",
+    "build": "node scripts/sync-version.mjs && node scripts/generate-tokens.mjs && npm run build -w ppij-design-system && npm run build-storybook -w ppij-design-system",
     "lint": "npm run build -w ppij-design-system -- --noEmit 2>/dev/null || (cd packages/ui && npx tsc -p tsconfig.json --noEmit)",
-    "test": "node scripts/check-stories.mjs && node --test scripts/check-tokens.test.mjs",
+    "test": "node scripts/check-version.mjs && node scripts/check-stories.mjs && node --test scripts/check-tokens.test.mjs",
     "dev": "npm run storybook -w ppij-design-system"
   }
 }

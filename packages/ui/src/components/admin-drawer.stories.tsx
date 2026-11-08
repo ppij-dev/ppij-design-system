@@ -86,3 +86,47 @@ export const WideInvitation: Story = {
   parameters: { docs: { description: { story: "560px desktop drawer for detailed review. Bottom sheets remain full width." } } },
   render: (args) => <InvitationDemo size={args.size} density={args.density} />,
 };
+
+/** The close control is the drawer's only always-present action, so it carries the touch band. */
+function CloseTargetDemo({ density = "compact", closeLabel }: Pick<AdminDrawerProps, "density"> & { closeLabel?: string }) {
+  const [open, setOpen] = React.useState(true);
+  return <>
+    <Button size="sm" onClick={() => setOpen(true)}>Buka panel</Button>
+    <AdminDrawer open={open} onOpenChange={setOpen} title="Ubah cakupan anggota" description="Panel pengelolaan anggota." locale="id" size="sm" density={density} closeLabel={closeLabel}
+      footer={<Button size="sm" onClick={() => setOpen(false)}>Simpan</Button>}>
+      <p>Tombol tutup di kanan atas adalah target sentuh panel ini; ukurannya 44×44 di bawah 600px.</p>
+    </AdminDrawer>
+  </>;
+}
+
+export const CompactPhoneClose: Story = {
+  args: { density: "compact" },
+  parameters: {
+    docs: { description: { story: "Compact phone bottom sheet (390×844). The close control is 44×44 — `max-[600px]:size-11` overrides the 36px `icon` size — and it keeps its Perbarui/Tutup accessible name from the locale label, with the standard 3px focus ring." } },
+  },
+  render: () => <CloseTargetDemo density="compact" />,
+};
+
+export const CompactDesktopClose: Story = {
+  args: { density: "compact" },
+  parameters: {
+    docs: { description: { story: "Compact desktop panel (1440×900). From 600px up the close control keeps the compact `icon-sm` size (32px), the existing compact drawer behaviour; only the phone sheet grows." } },
+  },
+  render: () => <CloseTargetDemo density="compact" />,
+};
+
+export const DefaultDensityClose: Story = {
+  args: { density: "default" },
+  parameters: {
+    docs: { description: { story: "Default density at 1440×900: the close control stays the 36px `icon` size from 600px up, which is the pre-0.4.0 desktop behaviour." } },
+  },
+  render: () => <CloseTargetDemo density="default" />,
+};
+
+export const CloseLabelOverride: Story = {
+  args: { density: "compact" },
+  parameters: {
+    docs: { description: { story: "`closeLabel` replaces the locale string and the accessible name follows it; the 44×44 phone target is unchanged." } },
+  },
+  render: () => <CloseTargetDemo density="compact" closeLabel="Tutup panel" />,
+};

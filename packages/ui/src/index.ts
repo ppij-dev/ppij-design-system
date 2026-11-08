@@ -4,7 +4,7 @@ export { Badge, badgeVariants } from "./components/badge";
 export {
   Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent,
 } from "./components/card";
-export { Input } from "./components/input";
+export { Input, type InputProps, type InputTextSize } from "./components/input";
 export { Label } from "./components/label";
 export {
   Select, SelectContent, SelectGroup, SelectItem, SelectLabel,

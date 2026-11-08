@@ -124,12 +124,14 @@ export function AdminDrawer({
             {description ? <DrawerDescription className={cn("break-words", density === "compact" && "text-xs leading-5")}>{description}</DrawerDescription> : null}
           </div>
           <DrawerClose asChild>
+            {/* 44px close target below 600px (the phone sheet is thumb-reached);
+                icon-sm 32px in compact desktop and icon 36px in default from 600px up. */}
             <Button
               type="button"
               variant="ghost"
               size={density === "compact" && isDesktop ? "icon-sm" : "icon"}
               aria-label={(closeLabel ?? labels[locale].close)}
-              className="shrink-0"
+              className="shrink-0 max-[600px]:size-11"
             >
               <IconX className="size-4" />
             </Button>

@@ -33,7 +33,7 @@ export {
   DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub,
   DropdownMenuSubTrigger, DropdownMenuSubContent,
 } from "./components/dropdown-menu";
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants } from "./components/tabs";
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants, type TabsAppearance } from "./components/tabs";
 export {
   Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption,
 } from "./components/table";
@@ -49,6 +49,10 @@ export { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMe
 export { FormPanel } from "./components/form-panel";
 export { MemberCard, MemberCardBack, type MemberCardProps, type MemberCardBackProps, type MemberCardTheme } from "./components/member-card";
 export { PageHeader, type PageHeaderProps } from "./components/page-header";
+export { AdminTopBar, type AdminTopBarProps, type AdminTopBarIdentity, type TopBarPathItem, type TopBarLocale } from "./components/admin-top-bar";
+export { WorkspaceSelector, type WorkspaceSelectorProps, type WorkspaceOption, type WorkspaceLocale } from "./components/workspace-selector";
+export { IdentityChip, type IdentityChipProps } from "./components/identity-chip";
+export { AccountSheet, type AccountSheetProps, type AccountSheetItem, type AccountSheetLocale } from "./components/account-sheet";
 export { PanelCard, type PanelCardProps, type PanelCardHeadingLevel, type PanelCardPadding } from "./components/panel-card";
 export { ListRow, type ListRowProps, type ListRowTone } from "./components/list-row";
 export { FactList, type FactListProps, type FactListItem, type FactListVariant } from "./components/fact-list";

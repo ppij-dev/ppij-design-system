@@ -611,17 +611,17 @@ stands for.
 
 ### Task F1 — Migrate the prototype to the package (M)
 
-- [ ] Import the 21 new components from `ppij-design-system` in
+- [x] Import the 21 new components from `ppij-design-system` in
       `App.tsx`, `FiguresBand.tsx`, `MapCard.tsx`, `MemberPage.tsx`,
       `MemberWorkspace.tsx`, `ManagementPage.tsx`, `ReviewWorkspace.tsx` and
       `StatsPage.tsx`.
-- [ ] Delete `prototypes/redesign-adminv1/src/SearchableMultiSelect.tsx`,
+- [x] Delete `prototypes/redesign-adminv1/src/SearchableMultiSelect.tsx`,
       `SearchableMultiSelect.css`, the local `SearchableUnitMenu` and
       `FilterMenu` in `ReviewWorkspace.tsx`, and every CSS block those and the
       migrated compositions leave behind in `index.css`,
       `ReviewWorkspace.css`, `MemberWorkspace.css`, `MemberPage.css` and
       `ManagementPage.css`.
-- [ ] Keep `docs/admin-integration/README.md` and the five page handoffs
+- [x] Keep `docs/admin-integration/README.md` and the five page handoffs
       accurate: point the app at the new components and record any handoff
       sentence that changes (for example the `SearchableMultiSelect`
       filter-API gap wording stays, because the contract did not change).
@@ -633,15 +633,15 @@ stands for.
 
 ### Task F2 — Gate and release proof (M)
 
-- [ ] `CHANGELOG.md` entry for `0.4.0` listing the 21 components, the five
+- [x] `CHANGELOG.md` entry for `0.4.0` listing the 21 components, the five
       adjustments and the chart decision.
-- [ ] Bump to `0.4.0`: root `VERSION`, `packages/ui/package.json` (via the
+- [x] Bump to `0.4.0`: root `VERSION`, `packages/ui/package.json` (via the
       A4 sync), and confirm `npm pack` in `packages/ui` contains `dist`
       components plus `tokens.css` and `tokens.json`.
-- [ ] Install the packed tarball into a scratch consumer with no credentials,
+- [x] Install the packed tarball into a scratch consumer with no credentials,
       import the root, `tokens.css` and `tokens.json`, and render
       `AdminTopBar`, `PanelCard`, `PieChart` and `MapCard`.
-- [ ] `scripts/gate.sh` on a clean committed tree prints `ALL PASS`.
+- [x] `scripts/gate.sh` on a clean committed tree prints `ALL PASS`.
 - Proof: the scratch consumer renders; the `npm pack` listing is pasted into
       the task; the gate output is pasted into the task.
 

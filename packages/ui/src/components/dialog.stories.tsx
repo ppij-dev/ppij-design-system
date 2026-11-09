@@ -4,10 +4,41 @@ import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
 
-const meta: Meta<typeof Dialog> = { title: "Portal/Dialog", component: Dialog };
+const meta: Meta<typeof Dialog> = {
+  title: "Portal/Dialog",
+  component: Dialog,
+  argTypes: {
+    open: { control: "boolean" },
+    onOpenChange: { action: "openChange" },
+    modal: { control: "boolean" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Dialog>;
 
+export const Playground: Story = {
+  render: (args) => (
+    <Dialog {...args}>
+      <DialogTrigger asChild><Button>Ganti nama komsat</Button></DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Ganti nama komsat</DialogTitle>
+          <DialogDescription>
+            Nama baru tampil di direktori anggota dan kartu anggota digital.
+          </DialogDescription>
+        </DialogHeader>
+        <div style={{ display: "grid", gap: 6 }}>
+          <Label htmlFor="playground-komsat">Nama komsat</Label>
+          <Input id="playground-komsat" defaultValue="Okayama" />
+        </div>
+        <DialogFooter>
+          <DialogClose asChild><Button variant="outline">Batal</Button></DialogClose>
+          <Button>Simpan nama</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+};
 export const SmallForm: Story = {
   render: () => (
     <Dialog>

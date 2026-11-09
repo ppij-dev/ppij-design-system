@@ -1,7 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Skeleton } from "./skeleton";
 
-const meta: Meta<typeof Skeleton> = { title: "Portal/Skeleton", component: Skeleton };
+const meta: Meta<typeof Skeleton> = {
+  title: "Portal/Skeleton",
+  component: Skeleton,
+  argTypes: {
+    label: { control: "text" },
+    busy: { control: "boolean" },
+    "aria-hidden": { control: "boolean" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Skeleton>;
 
@@ -23,4 +32,8 @@ export const ListRows: Story = {
       <Skeleton style={{ height: 18, width: "82%" }} /><Skeleton style={{ height: 18, width: "64%" }} />
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: { label: "Memuat profil anggota", busy: true, className: "h-4 w-64" },
 };

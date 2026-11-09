@@ -5,6 +5,16 @@ import { FilterMenu } from "./filter-menu";
 const meta: Meta<typeof FilterMenu> = {
   title: "Admin/FilterMenu",
   component: FilterMenu,
+  argTypes: {
+    label: { control: "text" },
+    value: { control: "text" },
+    options: { control: "object" },
+    allLabel: { control: "text" },
+    onChange: { action: "change" },
+    hideLabel: { control: "boolean" },
+    disabled: { control: "boolean" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof FilterMenu>;
@@ -104,6 +114,22 @@ export const Phone: Story = {
   render: () => (
     <div style={{ maxWidth: 320 }}>
       <Opened><Filter label="Jenis" allLabel="Semua jenis" options={KINDS} /></Opened>
+    </div>
+  ),
+};
+
+/** Holds the value in state so the menu can change it, and re-seeds it when the Controls panel edits `value`. */
+function PlaygroundMenu({ value: initial, onChange, ...rest }: React.ComponentProps<typeof FilterMenu>) {
+  const [value, setValue] = React.useState(initial);
+  React.useEffect(() => setValue(initial), [initial]);
+  return <FilterMenu {...rest} value={value} onChange={(next) => { setValue(next); onChange(next); }} />;
+}
+
+export const Playground: Story = {
+  args: { label: "Jenis", value: "", allLabel: "Semua jenis", options: KINDS, hideLabel: false, disabled: false },
+  render: (args) => (
+    <div className="max-w-xs">
+      <PlaygroundMenu {...args} />
     </div>
   ),
 };

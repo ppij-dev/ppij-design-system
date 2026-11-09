@@ -8,7 +8,23 @@ import { Label } from "./label";
 const meta: Meta<typeof AdminDrawer> = {
   title: "Admin/AdminDrawer",
   component: AdminDrawer,
-  argTypes: { size: { control: "select", options: ["sm", "md", "lg"] }, density: { control: "select", options: ["compact", "default"] } },
+  argTypes: {
+    open: { control: "boolean" },
+    onOpenChange: { action: "onOpenChange" },
+    title: { control: "text" },
+    description: { control: "text" },
+    locale: { control: "select", options: ["id", "en"] },
+    closeLabel: { control: "text" },
+    backLabel: { control: "text" },
+    density: { control: "select", options: ["compact", "default"] },
+    step: { control: "select", options: [1, 2] },
+    onBack: { action: "onBack" },
+    children: { control: false },
+    footer: { control: false },
+    onCloseAutoFocus: { action: "onCloseAutoFocus" },
+    size: { control: "select", options: ["sm", "md", "lg"] },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof AdminDrawer>;
@@ -129,4 +145,56 @@ export const CloseLabelOverride: Story = {
     docs: { description: { story: "`closeLabel` replaces the locale string and the accessible name follows it; the 44×44 phone target is unchanged." } },
   },
   render: () => <CloseTargetDemo density="compact" closeLabel="Tutup panel" />,
+};
+
+/** Playground keeps the open state local; the body and footer follow the step control. */
+function PlaygroundDrawer(props: AdminDrawerProps) {
+  const [open, setOpen] = React.useState(props.open);
+  React.useEffect(() => {
+    setOpen(props.open);
+  }, [props.open]);
+  return (
+    <div>
+      <Button size="sm" onClick={() => setOpen(true)}>
+        Buka panel
+      </Button>
+      <AdminDrawer
+        {...props}
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          props.onOpenChange(next);
+        }}
+        footer={
+          props.step === 2 ? (
+            <Button onClick={() => setOpen(false)}>Konfirmasi setujui</Button>
+          ) : (
+            <Button onClick={() => setOpen(false)}>Lanjutkan</Button>
+          )
+        }
+      >
+        {props.step === 2 ? (
+          <p>Setujui pendaftaran anggota ini? Status berubah menjadi aktif dan kartu anggota diterbitkan.</p>
+        ) : (
+          <div style={{ display: "grid", gap: 10 }}>
+            <div style={{ display: "grid", gap: 6 }}><Label>Nama</Label><Input defaultValue="I Nyoman Darma Kotama" readOnly /></div>
+            <div style={{ display: "grid", gap: 6 }}><Label>Komsat</Label><Input defaultValue="Okayama" readOnly /></div>
+          </div>
+        )}
+      </AdminDrawer>
+    </div>
+  );
+}
+
+export const Playground: Story = {
+  args: {
+    open: true,
+    title: "Tinjau anggota",
+    description: "Periksa berkas, lalu lanjutkan ke konfirmasi.",
+    locale: "id",
+    density: "default",
+    step: 1,
+    size: "md",
+  },
+  render: (args) => <PlaygroundDrawer {...args} />,
 };

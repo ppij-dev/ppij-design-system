@@ -2,7 +2,19 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { IconUser, IconSettings, IconId } from "@tabler/icons-react";
 import { AccountMenu } from "./account-menu";
 
-const meta: Meta<typeof AccountMenu> = { title: "Portal/AccountMenu", component: AccountMenu };
+const meta: Meta<typeof AccountMenu> = {
+  title: "Portal/AccountMenu",
+  component: AccountMenu,
+  argTypes: {
+    name: { control: "text" },
+    detail: { control: "text" },
+    initials: { control: "text" },
+    items: { control: "object" },
+    signOutLabel: { control: "text" },
+    onSignOut: { action: "onSignOut" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof AccountMenu>;
 
@@ -21,4 +33,18 @@ export const InTopBar: Story = {
       />
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: {
+    name: "I Nyoman Darma Kotama",
+    detail: "Komsat Okayama",
+    initials: "DK",
+    items: [
+      { label: "Profil saya", href: "#" },
+      { label: "Kartu anggota", href: "#" },
+      { label: "Pengaturan akun", href: "#" },
+    ],
+    signOutLabel: "Keluar",
+  },
 };

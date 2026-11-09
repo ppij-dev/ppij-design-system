@@ -5,6 +5,21 @@ import { SearchableMultiSelect } from "./searchable-multi-select";
 const meta: Meta<typeof SearchableMultiSelect> = {
   title: "Admin/SearchableMultiSelect",
   component: SearchableMultiSelect,
+  argTypes: {
+    label: { control: "text" },
+    values: { control: "object" },
+    options: { control: "object" },
+    onChange: { action: "onChange" },
+    allLabel: { control: "text" },
+    compact: { control: "boolean" },
+    single: { control: "boolean" },
+    showAllOption: { control: "boolean" },
+    searchPlaceholder: { control: "text" },
+    emptyLabel: { control: "text" },
+    visibleLabel: { control: "boolean" },
+    disabled: { control: "boolean" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof SearchableMultiSelect>;
@@ -138,4 +153,24 @@ export const EmptyOptions: Story = {
       <Pick label="Komsat" allLabel="Semua komsat" options={[]} />
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: { label: "Komsat", values: ["Okayama", "Tokyo"], options: KOMSAT, allLabel: "Semua komsat", compact: false, single: false },
+  render: (args) => {
+    const [values, setValues] = React.useState(args.values);
+    React.useEffect(() => setValues(args.values), [args.values]);
+    return (
+      <div className="max-w-sm">
+        <SearchableMultiSelect
+          {...args}
+          values={values}
+          onChange={(next) => {
+            setValues(next);
+            args.onChange(next);
+          }}
+        />
+      </div>
+    );
+  },
 };

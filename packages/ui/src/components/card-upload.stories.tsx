@@ -2,7 +2,16 @@ import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { CardUpload, type CardSideState } from "./card-upload";
 
-const meta: Meta<typeof CardUpload> = { title: "Wizard/CardUpload", component: CardUpload };
+const meta: Meta<typeof CardUpload> = {
+  title: "Wizard/CardUpload",
+  component: CardUpload,
+  argTypes: {
+    front: { control: "object" },
+    back: { control: "object" },
+    note: { control: "text" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof CardUpload>;
 
@@ -23,5 +32,13 @@ export const Capture: Story = {
         />
       </div>
     );
+  },
+};
+
+export const Playground: Story = {
+  args: {
+    front: { label: "Sisi depan", state: "empty", onCapture: () => undefined, onPick: () => undefined },
+    back: { label: "Sisi belakang", optional: true, state: "empty", onCapture: () => undefined, onPick: () => undefined },
+    note: "Foto kartu hanya untuk verifikasi keanggotaan dan dihapus 30 hari setelah keputusan pendaftaran.",
   },
 };

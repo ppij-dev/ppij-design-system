@@ -5,6 +5,13 @@ import { FiguresBand, FiguresBandSeparator, type FiguresBandGroup } from "./figu
 const meta: Meta<typeof FiguresBand> = {
   title: "Admin/FiguresBand",
   component: FiguresBand,
+  argTypes: {
+    title: { control: "text" },
+    description: { control: "text" },
+    groups: { control: "object" },
+    columns: { control: "number" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof FiguresBand>;
@@ -189,6 +196,19 @@ export const Phone: Story = {
   render: () => (
     <div style={{ maxWidth: 320 }}>
       <FiguresBand title="Cakupan Komsat Okayama" description="Angka per 2 November 2026" groups={KOMSAT} />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    title: "Cakupan Komsat Okayama",
+    description: "Angka per 2 November 2026",
+    groups: KOMSAT,
+  },
+  render: (args) => (
+    <div className="max-w-5xl">
+      <FiguresBand {...args} />
     </div>
   ),
 };

@@ -3,9 +3,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "./button";
 import { Badge } from "./badge";
 
-const meta: Meta<typeof Card> = { title: "Portal/Card", component: Card };
+type PlaygroundArgs = { title?: string; description?: string };
+
+const meta: Meta<PlaygroundArgs> = {
+  title: "Portal/Card",
+  component: Card,
+  argTypes: {
+    title: { control: "text" },
+    description: { control: "text" },
+  },
+};
 export default meta;
-type Story = StoryObj<typeof Card>;
+type Story = StoryObj<PlaygroundArgs>;
 
 export const Default: Story = {
   render: () => (
@@ -20,6 +29,23 @@ export const Default: Story = {
           <span style={{ fontSize: 13, color: "#5b6168" }}>sejak 12 Okt 2026</span>
         </div>
         <p style={{ margin: "10px 0 0" }}>Data anggota tampil di sini. Kartu memakai token warna dan radius dari sistem desain.</p>
+      </CardContent>
+      <CardFooter>
+        <Button>Lihat profil</Button>
+      </CardFooter>
+    </Card>
+  ),
+};
+export const Playground: Story = {
+  args: { title: "Keanggotaan PPIJ", description: "Status pendaftaran anggota" },
+  render: ({ title, description, ...args }) => (
+    <Card {...args} style={{ maxWidth: 420 }}>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p style={{ margin: 0 }}>Data anggota tampil di sini. Kartu memakai token warna dan radius dari sistem desain.</p>
       </CardContent>
       <CardFooter>
         <Button>Lihat profil</Button>

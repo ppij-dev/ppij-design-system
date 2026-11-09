@@ -12,6 +12,13 @@ const meta: Meta<typeof PanelCard> = {
     padding: { control: "select", options: ["panel", "page", "none"] },
     density: { control: "select", options: ["default", "compact"] },
     headingLevel: { control: "select", options: [2, 3, 4, 5, 6] },
+    title: { control: "text" },
+    description: { control: "text" },
+    action: { control: false },
+    badge: { control: false },
+    icon: { control: false },
+    children: { control: false },
+    className: { control: "text" },
   },
 };
 export default meta;
@@ -112,6 +119,23 @@ export const NarrowLongTitle: Story = {
     <div style={{ maxWidth: 320 }}>
       <PanelCard {...args} action={<Button size="sm" variant="outline">Periksa</Button>}>
         <p className="text-[13px] text-brand-muted">Badan panel tetap terbaca di lebar tersempit.</p>
+      </PanelCard>
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    title: "Perlu tindakan",
+    description: "Antrean verifikasi dan undangan yang menunggu.",
+    padding: "panel",
+    density: "default",
+    headingLevel: 2,
+  },
+  render: (args) => (
+    <div className="max-w-2xl">
+      <PanelCard {...args} icon={<IconChartDots3 stroke={1.75} />} action={<Button size="sm" variant="outline">Unduh CSV</Button>}>
+        <p className="text-[13px] text-brand-muted">Isi panel masuk di sini.</p>
       </PanelCard>
     </div>
   ),

@@ -2,7 +2,21 @@ import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
 import { FileUpload, type FileUploadStatus } from "./file-upload";
 
-const meta: Meta<typeof FileUpload> = { title: "Portal/FileUpload", component: FileUpload };
+const meta: Meta<typeof FileUpload> = {
+  title: "Portal/FileUpload",
+  component: FileUpload,
+  argTypes: {
+    label: { control: "text" },
+    hint: { control: "text" },
+    accept: { control: "text" },
+    status: { control: "select", options: ["empty", "uploading", "done", "error"] },
+    fileName: { control: "text" },
+    progress: { control: "number" },
+    errorText: { control: "text" },
+    onPick: { action: "pick" },
+    onRemove: { action: "remove" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof FileUpload>;
 
@@ -41,6 +55,22 @@ function Demo() {
   );
 }
 
+export const Playground: Story = {
+  args: {
+    label: "Foto untuk kartu anggota",
+    hint: "JPG atau PNG, maks 5 MB, latar polos.",
+    accept: "image/png,image/jpeg",
+    status: "empty",
+    fileName: "foto-kartu.jpg",
+    progress: 40,
+    errorText: "Ukuran berkas melebihi 5 MB.",
+  },
+  render: (args) => (
+    <div style={{ maxWidth: 480 }}>
+      <FileUpload {...args} />
+    </div>
+  ),
+};
 export const Interactive: Story = { render: () => <Demo /> };
 
 export const ErrorState: Story = {

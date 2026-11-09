@@ -5,6 +5,14 @@ import { PanelCard } from "./panel-card";
 const meta: Meta<typeof IdentityChip> = {
   title: "Admin/IdentityChip",
   component: IdentityChip,
+  argTypes: {
+    name: { control: "text" },
+    detail: { control: "text" },
+    initials: { control: "text" },
+    onClick: { action: "click" },
+    collapsed: { control: "boolean" },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof IdentityChip>;
@@ -79,6 +87,15 @@ export const InSidebarFooter: Story = {
       <PanelCard padding="none" className="flex min-h-72 flex-col justify-end py-2.5">
         <IdentityChip name="Contoh Pengurus A" detail="Admin Nasional" initials="PA" onClick={() => undefined} />
       </PanelCard>
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: { name: "Contoh Pengurus A", detail: "Admin Nasional", initials: "PA", collapsed: false },
+  render: (args) => (
+    <div className="w-[254px] rounded-xl border border-brand-border bg-card p-3.5">
+      <IdentityChip {...args} />
     </div>
   ),
 };

@@ -2,7 +2,20 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Textarea } from "./textarea";
 import { Label } from "./label";
 
-const meta: Meta<typeof Textarea> = { title: "Portal/Textarea", component: Textarea };
+const meta: Meta<typeof Textarea> = {
+  title: "Portal/Textarea",
+  component: Textarea,
+  argTypes: {
+    placeholder: { control: "text" },
+    defaultValue: { control: "text" },
+    rows: { control: "number" },
+    disabled: { control: "boolean" },
+    readOnly: { control: "boolean" },
+    required: { control: "boolean" },
+    onChange: { action: "changed" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Textarea>;
 
@@ -19,4 +32,8 @@ export const Notes: Story = {
       </div>
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: { placeholder: "Tulis singkat, dua atau tiga kalimat." },
 };

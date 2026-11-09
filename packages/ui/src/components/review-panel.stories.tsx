@@ -1,7 +1,18 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ReviewPanel } from "./review-panel";
 
-const meta: Meta<typeof ReviewPanel> = { title: "Wizard/ReviewPanel", component: ReviewPanel };
+const meta: Meta<typeof ReviewPanel> = { title: "Wizard/ReviewPanel", component: ReviewPanel,
+  argTypes: {
+    title: { control: "text" },
+    children: { control: "text" },
+    editable: { control: "boolean" },
+    onEdit: { action: "onEdit" },
+    editLabel: { control: "text" },
+    incomplete: { control: "boolean" },
+    incompleteLabel: { control: "text" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof ReviewPanel>;
 
@@ -19,4 +30,15 @@ export const Section: Story = {
       </ReviewPanel>
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: {
+    title: "Pendanaan",
+    children: "Sumber dana: beasiswa dan dukungan keluarga.",
+    editable: true,
+    editLabel: "Edit bagian ini",
+    incomplete: false,
+    incompleteLabel: "Belum lengkap",
+  },
 };

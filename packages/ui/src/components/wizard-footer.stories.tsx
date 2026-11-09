@@ -1,7 +1,23 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { WizardFooter } from "./wizard-footer";
 
-const meta: Meta<typeof WizardFooter> = { title: "Wizard/WizardFooter", component: WizardFooter, parameters: { layout: "fullscreen" } };
+const meta: Meta<typeof WizardFooter> = {
+  title: "Wizard/WizardFooter",
+  component: WizardFooter,
+  parameters: { layout: "fullscreen" },
+  argTypes: {
+    onBack: { action: "onBack" },
+    onContinue: { action: "onContinue" },
+    backLabel: { control: "text" },
+    continueLabel: { control: "text" },
+    backDisabled: { control: "boolean" },
+    continueDisabled: { control: "boolean" },
+    continueLoading: { control: "boolean" },
+    loadingLabel: { control: "text" },
+    showArrow: { control: "boolean" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof WizardFooter>;
 
@@ -18,6 +34,23 @@ export const Submitting: Story = {
   render: () => (
     <div className="min-h-40">
       <WizardFooter onBack={() => {}} onContinue={() => {}} continueLabel="Kirim Pendaftaran" showArrow={false} continueLoading />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    backLabel: "Kembali",
+    continueLabel: "Lanjut",
+    loadingLabel: "Mengirim…",
+    backDisabled: false,
+    continueDisabled: false,
+    continueLoading: false,
+    showArrow: true,
+  },
+  render: (args) => (
+    <div className="min-h-40">
+      <WizardFooter {...args} />
     </div>
   ),
 };

@@ -3,7 +3,17 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { SubmitOverlay } from "./submit-overlay";
 import { Button } from "./button";
 
-const meta: Meta<typeof SubmitOverlay> = { title: "Wizard/SubmitOverlay", component: SubmitOverlay, parameters: { layout: "fullscreen" } };
+type SubmitOverlayArgs = React.ComponentProps<typeof SubmitOverlay> & { open?: boolean };
+const meta: Meta<SubmitOverlayArgs> = { title: "Wizard/SubmitOverlay", component: SubmitOverlay, parameters: { layout: "fullscreen" },
+  argTypes: {
+    phase: { control: "select", options: ["sending", "sent"] },
+    title: { control: "text" },
+    line: { control: "text" },
+    className: { control: "text" },
+    // Story-only toggle: SubmitOverlay has no open prop; the story hides the layer when false.
+    open: { control: "boolean" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof SubmitOverlay>;
 
@@ -25,4 +35,9 @@ export const SendingThenSent: Story = {
       </div>
     );
   },
+};
+
+export const Playground: StoryObj<SubmitOverlayArgs> = {
+  args: { open: true, phase: "sending", title: "Mengirim pendaftaran...", line: "Jangan tutup halaman ini." },
+  render: ({ open, ...args }) => <>{open ? <SubmitOverlay {...args} /> : null}</>,
 };

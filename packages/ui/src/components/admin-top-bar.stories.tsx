@@ -7,7 +7,21 @@ import { AdminTopBar } from "./admin-top-bar";
 const meta: Meta<typeof AdminTopBar> = {
   title: "Admin/AdminTopBar",
   component: AdminTopBar,
-  argTypes: { variant: { control: "select", options: ["desktop", "phone"] } },
+  argTypes: {
+    variant: { control: "select", options: ["desktop", "phone"] },
+    locale: { control: "select", options: ["id", "en"] },
+    path: { control: "object" },
+    title: { control: "text" },
+    meta: { control: "object" },
+    actions: { control: false },
+    onNotificationsClick: { action: "onNotificationsClick" },
+    notificationCount: { control: "number" },
+    identity: { control: "object" },
+    onIdentityClick: { action: "onIdentityClick" },
+    brand: { control: "object" },
+    leading: { control: false },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof AdminTopBar>;
@@ -118,4 +132,16 @@ export const English: Story = {
   },
   parameters: { docs: { description: { story: "The English locale names the breadcrumb landmark, the bell and the identity button." } } },
   render: (args) => <AdminTopBar {...args} />,
+};
+
+export const Playground: Story = {
+  args: {
+    variant: "desktop",
+    path: [{ label: "Admin", href: "#admin" }, { label: "Organisasi", href: "#organisasi" }],
+    title: "Komsat Okayama",
+    meta: ["Sabtu, 31 Oktober 2026", "Waktu Jepang"],
+    notificationCount: 12,
+    identity: IDENTITY,
+    locale: "id",
+  },
 };

@@ -4,7 +4,17 @@ import { Button } from "./button";
 import { Avatar, AvatarFallback } from "./avatar";
 import { IconBell } from "@tabler/icons-react";
 
-const meta: Meta<typeof TopBar> = { title: "Public/TopBar", component: TopBar };
+const meta: Meta<typeof TopBar> = {
+  title: "Public/TopBar",
+  component: TopBar,
+  argTypes: {
+    brand: { control: false },
+    brandHref: { control: "text" },
+    links: { control: "object" },
+    actions: { control: false },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof TopBar>;
 
@@ -42,4 +52,16 @@ export const PortalBar: Story = {
       </>}
     />
   ),
+};
+
+export const Playground: Story = {
+  args: {
+    brandHref: "/",
+    links: [
+      { label: "Beranda", href: "#", current: true },
+      { label: "Tentang", href: "#" },
+      { label: "Komsat", href: "#" },
+    ],
+  },
+  render: (args) => <TopBar {...args} brand={brand} actions={<Button size="sm">Masuk</Button>} />,
 };

@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Stepper } from "./stepper";
 
-const meta: Meta<typeof Stepper> = { title: "Portal/Stepper", component: Stepper };
+const meta: Meta<typeof Stepper> = { title: "Portal/Stepper", component: Stepper,
+  argTypes: {
+    steps: { control: "object" },
+    current: { control: "number" },
+    stepWord: { control: "text" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Stepper>;
 
@@ -29,3 +36,7 @@ export const Registration: Story = {
 
 export const FirstStep: Story = { render: () => <Stepper steps={steps} current={1} /> };
 export const LastStep: Story = { render: () => <Stepper steps={steps} current={7} /> };
+
+export const Playground: Story = {
+  args: { steps, current: 3, stepWord: "Langkah" },
+};

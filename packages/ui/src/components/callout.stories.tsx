@@ -11,6 +11,11 @@ const meta: Meta<typeof Callout> = {
   argTypes: {
     tone: { control: "select", options: ["info", "success", "warning", "danger", "neutral"] },
     density: { control: "select", options: ["default", "compact"] },
+    title: { control: "text" },
+    children: { control: "text" },
+    icon: { control: false },
+    action: { control: false },
+    className: { control: "text" },
   },
 };
 export default meta;
@@ -131,4 +136,14 @@ export const MigratedNotes: Story = {
       <Callout tone="warning" icon={<IconClock stroke={1.75} aria-hidden />} title="Tanggal studi belum ditentukan" action={<Button size="sm" variant="outline">Lengkapi data studi</Button>}>`.member-detail-prompt` — Kategori menunggu tanggal mulai dan selesai studi.</Callout>
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: {
+    tone: "info",
+    icon: <IconInfoCircle stroke={1.75} aria-hidden />,
+    title: "Pratinjau",
+    children: "Pratinjau memakai data sintetis. Angka dan tanggal di halaman ini bukan data produksi.",
+    density: "default",
+  },
 };

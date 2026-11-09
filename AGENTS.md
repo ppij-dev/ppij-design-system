@@ -18,6 +18,15 @@ email surfaces.
   green before a merge, a release, or a deploy, on a clean tree.
 - A component is done only when its Storybook story renders. No story means
   the component does not exist.
+- Every component added or updated must ship interactive Storybook Controls.
+  This is a must, not a nice to have. The story file needs a `Playground`
+  story whose `render` (or plain `args`) passes `args` straight to the
+  component, plus `argTypes` for every public prop: `select` for unions and
+  variants, `boolean` for flags, `text` for strings, `number` for counts, and
+  `action` for callbacks. Keep the fixed layout stories (Variants, States,
+  long text) beside it. A change to a component's props is not done until its
+  `argTypes` match. Fixed page demos that have no component source file are
+  exempt; `scripts/check-stories.mjs` enforces the rest.
 
 ## Commands
 

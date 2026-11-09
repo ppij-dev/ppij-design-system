@@ -2,7 +2,17 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ExpandableText } from "./expandable-text";
 import { Timeline } from "./timeline";
 
-const meta: Meta<typeof Timeline> = { title: "Portal/Timeline", component: Timeline };
+const meta: Meta<typeof Timeline> = { title: "Portal/Timeline", component: Timeline,
+  argTypes: {
+    items: { control: "object" },
+    defaultVisibleCount: { control: "number" },
+    defaultExpanded: { control: "boolean" },
+    expandLabel: { control: "text" },
+    collapseLabel: { control: "text" },
+    onExpandChange: { action: "onExpandChange" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Timeline>;
 
@@ -142,6 +152,15 @@ export const Phone: Story = {
   render: () => (
     <div style={{ maxWidth: 320 }}>
       <Timeline items={HISTORY} defaultVisibleCount={3} />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: { items: HISTORY, defaultVisibleCount: 3, defaultExpanded: false },
+  render: (args) => (
+    <div style={{ maxWidth: 480 }}>
+      <Timeline key={String(args.defaultExpanded)} {...args} />
     </div>
   ),
 };

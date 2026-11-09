@@ -8,7 +8,11 @@ import { Textarea } from "./textarea";
 const meta: Meta<typeof FormGrid> = {
   title: "Admin/FormGrid",
   component: FormGrid,
-  argTypes: { columns: { control: "select", options: [1, 2] } },
+  argTypes: {
+    columns: { control: "select", options: [1, 2] },
+    className: { control: "text" },
+    children: { control: false },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof FormGrid>;
@@ -131,6 +135,20 @@ export const MemberEditForm: Story = {
           <Button type="button" variant="outline" size="sm">Batal</Button>
           <Button type="button" size="sm">Simpan perubahan</Button>
         </div>
+      </FormGrid>
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: { columns: 2 },
+  render: (args) => (
+    <div className="max-w-2xl">
+      <FormGrid {...args}>
+        <FormField label="Nama lengkap" hint="Nama sesuai KTP."><Input placeholder="Nama sesuai KTP" /></FormField>
+        <FormField label="Komsat"><UnitSelect id="komsat-playground" /></FormField>
+        <FormField label="Nama panggilan"><Input placeholder="Nama yang dipakai sehari-hari" /></FormField>
+        <FormField label="Alamat di Jepang" wide hint="Termasuk kode pos dan nama asrama."><Input placeholder="1-1-1 Tsushima-naka, Kita-ku" /></FormField>
       </FormGrid>
     </div>
   ),

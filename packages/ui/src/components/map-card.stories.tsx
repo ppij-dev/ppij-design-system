@@ -7,6 +7,24 @@ import { Skeleton } from "./skeleton";
 const meta: Meta<typeof MapCard> = {
   title: "Admin/MapCard",
   component: MapCard,
+  argTypes: {
+    title: { control: "text" },
+    description: { control: "text" },
+    children: { control: false },
+    panel: { control: false },
+    panelLabel: { control: "text" },
+    footer: { control: "object" },
+    chip: { control: "object" },
+    onExpandChange: { action: "expandChange" },
+    expanded: { control: "boolean" },
+    expandLabel: { control: "text" },
+    collapseLabel: { control: "text" },
+    sheetSummary: { control: "text" },
+    unmappedNote: { control: "text" },
+    loading: { control: "boolean" },
+    loadingFallback: { control: false },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof MapCard>;
@@ -213,6 +231,54 @@ export const NoFooter: Story = {
       <MapCard title="Cakupan nasional" description="Angka per 2 November 2026" panel={<Panel />}>
         <CanvasPlaceholder />
       </MapCard>
+    </div>
+  ),
+};
+
+/** Holds the selection, the chip and fullscreen in state, so the Playground responds to the canvas and the controls. */
+function PlaygroundMap({ title, description, panelLabel, footer, chip, expanded: initialExpanded, onExpandChange, expandLabel, collapseLabel, sheetSummary, unmappedNote, loading, className }: React.ComponentProps<typeof MapCard>) {
+  const [selection, setSelection] = React.useState<string | undefined>("u-tokyo");
+  const [expanded, setExpanded] = React.useState(initialExpanded ?? false);
+  React.useEffect(() => setExpanded(initialExpanded ?? false), [initialExpanded]);
+  const picked = BUBBLES.find((bubble) => bubble.id === selection);
+  return (
+    <MapCard
+      title={title}
+      description={description}
+      panelLabel={panelLabel}
+      footer={footer}
+      chip={chip && picked ? { label: picked.name, onClear: () => setSelection(undefined) } : undefined}
+      expanded={expanded}
+      onExpandChange={(next) => { setExpanded(next); onExpandChange?.(next); }}
+      expandLabel={expandLabel}
+      collapseLabel={collapseLabel}
+      sheetSummary={sheetSummary}
+      unmappedNote={unmappedNote}
+      loading={loading}
+      className={className}
+      panel={<Panel name={picked?.name ?? "Komsat Tokyo"} count={picked?.count ?? 402} />}
+    >
+      <CanvasPlaceholder selectedId={selection} onSelect={setSelection} />
+    </MapCard>
+  );
+}
+
+export const Playground: Story = {
+  args: {
+    title: "Cakupan nasional",
+    description: "Ketuk lingkaran untuk anggota aktif per wilayah. Angka per 2 November 2026.",
+    panelLabel: "Ringkasan peta",
+    footer: FOOTER,
+    chip: { label: "Komsat Tokyo", onClear: () => undefined },
+    expanded: false,
+    expandLabel: "Perbesar peta",
+    collapseLabel: "Tutup layar penuh",
+    sheetSummary: "Komsat Tokyo: 402 anggota aktif",
+    loading: false,
+  },
+  render: (args) => (
+    <div className="max-w-5xl">
+      <PlaygroundMap {...args} />
     </div>
   ),
 };

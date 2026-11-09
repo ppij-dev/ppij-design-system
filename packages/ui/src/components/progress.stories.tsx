@@ -1,7 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Progress } from "./progress";
 
-const meta: Meta<typeof Progress> = { title: "Portal/Progress", component: Progress };
+const meta: Meta<typeof Progress> = {
+  title: "Portal/Progress",
+  component: Progress,
+  argTypes: {
+    value: { control: "number" },
+    max: { control: "number" },
+    className: { control: "text" },
+  },
+};
 export default meta;
 type Story = StoryObj<typeof Progress>;
 
@@ -18,4 +26,8 @@ export const Completion: Story = {
       ))}
     </div>
   ),
+};
+
+export const Playground: Story = {
+  args: { value: 60, max: 100 },
 };

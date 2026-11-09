@@ -5,7 +5,18 @@ import { StatusCard } from "./status-card";
 const meta: Meta<typeof StatusCard> = {
   title: "Portal/StatusCard",
   component: StatusCard,
-  argTypes: { density: { control: "select", options: ["default", "compact"] } },
+  argTypes: {
+    icon: { control: false },
+    title: { control: "text" },
+    body: { control: "text" },
+    actionLabel: { control: "text" },
+    actionHref: { control: "text" },
+    onAction: { action: "onAction" },
+    tone: { control: "select", options: ["default", "warning", "danger", "info", "muted"] },
+    compact: { control: "boolean" },
+    density: { control: "select", options: ["default", "compact"] },
+    className: { control: "text" },
+  },
 };
 export default meta;
 type Story = StoryObj<typeof StatusCard>;
@@ -85,6 +96,24 @@ export const WithoutAction: Story = {
     <div style={{ display: "grid", gap: 12, maxWidth: 620 }}>
       <StatusCard density="compact" tone="muted" icon={<IconCircleCheck stroke={1.75} />} title="Keanggotaan sudah berakhir" body="Ajukan pendaftaran baru untuk aktif kembali." />
       <StatusCard density="compact" tone="warning" icon={<IconAlertTriangle stroke={1.75} />} title="3 berkas perlu diperbaiki" body="Periksa catatan verifikator, lalu kirim ulang." />
+    </div>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    icon: <IconClockHour4 stroke={1.75} />,
+    title: "Pendaftaran terkirim ke Komsat Okayama",
+    body: "Terkirim 1 Oktober 2026. Verifikasi biasanya selesai dalam 7 hari kerja.",
+    actionLabel: "Lihat status",
+    actionHref: "#",
+    tone: "default",
+    compact: false,
+    density: "default",
+  },
+  render: (args) => (
+    <div style={{ maxWidth: 620 }}>
+      <StatusCard {...args} />
     </div>
   ),
 };

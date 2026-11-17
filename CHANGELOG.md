@@ -12,6 +12,16 @@ drifted apart.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 the versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2026-11-17
+
+### Changed
+
+- `ServiceTiles`: `ServiceTile` now accepts an optional per-tile `icon`
+  (`React.ReactNode`, rendered in brand red instead of the group's default
+  `icon`), an optional `description` (`string`, rendered below the title in
+  muted `text-xs font-normal`), and an optional `external` (`boolean`, setting
+  `target="_blank"` and `rel="noopener noreferrer"` on the anchor).
+
 ## [0.4.1] - 2026-11-08
 
 Accessibility fixes found by the `ppij-identity` E2E integration, where axe

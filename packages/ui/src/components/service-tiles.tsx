@@ -6,6 +6,12 @@ import { cn } from "../lib/utils"
 export interface ServiceTile {
   title: string
   href: string
+  /** Optional tile-specific icon shown in brand red instead of the group's default icon. */
+  icon?: React.ReactNode
+  /** Optional short description rendered below the title. */
+  description?: string
+  /** Opens the link in a new tab with rel="noopener noreferrer" when true. */
+  external?: boolean
 }
 
 export interface ServiceTileGroup {
@@ -49,10 +55,14 @@ export function ServiceTiles({ groups, className }: ServiceTilesProps) {
                 <li key={tile.title} className="flex">
                   <a
                     href={tile.href}
+                    {...(tile.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                     className="flex min-h-11 w-full flex-col gap-2 rounded-xl border border-brand-border bg-card p-4 font-semibold text-brand-ink hover:border-brand-red focus-visible:outline-2 focus-visible:outline-brand-red"
                   >
-                    <span className="text-brand-red">{group.icon}</span>
+                    <span className="text-brand-red">{tile.icon ?? group.icon}</span>
                     {tile.title}
+                    {tile.description ? (
+                      <span className="text-xs font-normal text-brand-muted">{tile.description}</span>
+                    ) : null}
                   </a>
                 </li>
               ))}

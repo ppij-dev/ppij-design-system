@@ -1,6 +1,10 @@
 # PPIJ Brand
 
 - Logo: `ppij-logo.png` (from ppij-identity-sso web/public, 2026-10-28)
+- Logo guideline and SVG files: `logo/` (page `logo/brand-ppi-jepang.html`, PDF
+  `logo/brand-ppi-jepang.pdf`). A proposal for AD/ART 2027-2028; the Primer
+  logo applies to official documents until Kongres approves it. Published at
+  https://ppij-dev.github.io/ppij-design-system/brand/logo/brand-ppi-jepang.html
 - Primary color: PPIJ red `#C8102E` (token `brand-red` in tokens/tokens.json)
 - Ink `#1C1F23`, muted `#5B6168`, border `#E3E5E8`, background `#F6F6F4`
 - Type: Plus Jakarta Sans, with Noto Sans JP for Japanese text

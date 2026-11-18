@@ -8,6 +8,6 @@ lint:
 test:
 	node scripts/check-version.mjs
 	node scripts/check-stories.mjs
-	node --test scripts/check-tokens.test.mjs
+	node --test scripts/check-tokens.test.mjs scripts/check-brand-logo.test.mjs
 dev:
 	cd packages/ui && npm run storybook

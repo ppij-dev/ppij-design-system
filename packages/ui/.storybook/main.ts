@@ -5,7 +5,7 @@ const config: StorybookConfig = {
   stories: ["../src/docs/*.mdx", "../src/components/*.stories.tsx"],
   addons: ["@storybook/addon-essentials", "@storybook/addon-docs"],
   framework: { name: "@storybook/react-vite", options: {} },
-  staticDirs: ["../public"],
+  staticDirs: ["../public", { from: "../../../brand/logo", to: "/brand/logo" }],
   viteFinal: async (config) => {
     config.plugins = [...(config.plugins ?? []), tailwindcss()];
     return config;

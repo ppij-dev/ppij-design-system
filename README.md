@@ -59,6 +59,10 @@ import tokens from "ppij-design-system/tokens.json";
 The design guideline and every component live in Storybook, published at
 https://ppij-dev.github.io/ppij-design-system/
 
+The logo guideline (Pedoman Identitas Visual) is on the Brand page there, and as
+a standalone page with downloadable SVG files and a PDF at
+https://ppij-dev.github.io/ppij-design-system/brand/logo/brand-ppi-jepang.html (source in `brand/logo/`).
+
 ## Consume, never copy
 
 Applications pin a released version of `ppij-design-system`.

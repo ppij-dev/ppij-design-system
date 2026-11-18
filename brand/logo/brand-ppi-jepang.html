@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Pedoman identitas visual PPI Jepang: logo, variasi warna, latar gelap, tipografi, dan berkas SVG.">
+<title>Brand PPI Jepang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&text=%E5%9C%A8%E6%97%A5%E3%82%A4%E3%83%B3%E3%83%89%E3%83%8D%E3%82%B7%E3%82%A2%E7%95%99%E5%AD%A6%E7%94%9F%E5%8D%94%E4%BC%9A&display=swap">
+<style>
+/* Layout: a brand book. Full-bleed colour bands carry the logo; text sits in one 1120px column with a narrow label rail on wide screens. */
+:root {
+  --paper: #ffffff;
+  --paper-2: #f6f6f4;
+  --ink: #141517;
+  --muted: #5b6168;
+  --rule: #e3e5e8;
+  --red-text: #c8102e;
+  --logo-text: #000000;
+
+  --ppij-red: #ed2326;
+  --ppij-black: #000000;
+  --ppij-white: #ffffff;
+
+  --display: "Jost", "Century Gothic", sans-serif;
+  --sans: "Plus Jakarta Sans", "Noto Sans JP", system-ui, sans-serif;
+  --jp: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0b0b0c; --paper-2: #161617; --ink: #f2f2ef; --muted: #a3a8ad; --rule: #2a2a2c; --red-text: #ff5a5f; --logo-text: #ffffff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0b0b0c; --paper-2: #161617; --ink: #f2f2ef; --muted: #a3a8ad; --rule: #2a2a2c; --red-text: #ff5a5f; --logo-text: #ffffff;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.bleed-inner { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* logo symbols take their inks from these two properties */
+.logo { display: block; width: 100%; height: auto; overflow: visible; }
+.v-primary { --le: var(--ppij-red); --lt: var(--ppij-black); }
+.v-inverse-black { --le: var(--ppij-red); --lt: var(--ppij-white); }
+.v-inverse-white { --le: var(--ppij-white); --lt: var(--ppij-white); }
+.v-theme { --le: var(--ppij-red); --lt: var(--logo-text); }
+.g-white { background: var(--ppij-white); }
+.g-black { background: var(--ppij-black); }
+.g-red { background: var(--ppij-red); }
+
+/* masthead */
+.mast { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; border-bottom: 1px solid var(--rule); }
+.mast .logo { width: 168px; }
+.mast p { margin: 0; font-size: 13px; color: var(--muted); text-align: right; }
+
+/* hero */
+.hero { padding-block: 64px 40px; display: grid; gap: 20px; }
+.eyebrow { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--red-text); }
+h1 { margin: 0; font-family: var(--display); font-weight: 600; font-size: clamp(44px, 8vw, 96px); line-height: .95; letter-spacing: -0.01em; text-wrap: balance; }
+.lead { margin: 0; max-width: 62ch; font-size: 18px; line-height: 1.6; color: var(--muted); }
+.status { display: inline-flex; align-items: center; gap: 10px; margin: 4px 0 0; padding: 8px 14px; border: 1px solid var(--rule); border-radius: 999px; font-size: 13px; width: fit-content; max-width: 100%; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--red-text); flex: none; }
+
+.triptych { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.triptych > div { aspect-ratio: 4 / 3.2; display: grid; place-items: center; }
+.triptych .logo { width: 46%; }
+.trip-caption { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-block: 12px 0; font-size: 13px; color: var(--muted); }
+.trip-caption b { color: var(--ink); font-weight: 600; }
+
+/* sections */
+section.block { padding-block: 72px; border-top: 1px solid var(--rule); display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+section.block:first-of-type { border-top: 0; }
+.rail h2 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1.15; text-wrap: balance; }
+.rail p { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+.body { min-width: 0; display: grid; gap: 28px; align-content: start; }
+.body > p, .prose p { margin: 0; max-width: 66ch; }
+.prose { display: grid; gap: 12px; }
+h3 { margin: 0; font-size: 15px; font-weight: 700; }
+code { font-family: var(--mono); font-size: .86em; background: var(--paper-2); padding: 1px 5px; border-radius: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); }
+th { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+td:first-child { font-weight: 600; white-space: nowrap; }
+.table-scroll { overflow-x: auto; }
+.table-scroll table { min-width: 560px; }
+
+/* emblem meaning */
+.meaning { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 32px; align-items: center; }
+.meaning .stage { background: var(--ppij-white); padding: 40px 32px; border: 1px solid var(--rule); }
+.motto { margin: 0; font-family: var(--display); font-size: 22px; line-height: 1.35; font-weight: 500; text-wrap: balance; }
+.motto small { display: block; margin-top: 8px; font-family: var(--sans); font-size: 13px; color: var(--muted); font-weight: 400; }
+
+/* arrangements */
+.arrange { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.arrange figure { margin: 0; display: grid; gap: 10px; }
+.arrange .stage { background: var(--ppij-white); border: 1px solid var(--rule); min-height: 200px; display: grid; place-items: center; padding: 28px; }
+.arrange figcaption { font-size: 14px; }
+.arrange figcaption b { display: block; font-weight: 600; }
+.arrange figcaption span { color: var(--muted); font-size: 13px; }
+.w-stacked { width: 34%; } .w-side { width: 92%; } .w-full { width: 86%; } .w-emblem { width: 34%; }
+
+/* colourways grid */
+.ways { display: grid; gap: 2px; }
+.way { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.3fr); gap: 2px; }
+.way > div { display: grid; place-items: center; padding: 28px 24px; min-height: 150px; }
+.way .w-stacked { width: 52%; } .way .w-full { width: 100%; }
+.way-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; font-size: 13px; }
+.way-legend b { display: block; font-size: 14px; }
+.way-legend span { color: var(--muted); }
+.hole-note { margin: 0; padding: 14px 16px; background: var(--paper-2); font-size: 14px; max-width: 66ch; }
+
+/* construction */
+.diagram { background: var(--ppij-white); border: 1px solid var(--rule); padding: 20px; overflow-x: auto; }
+.diagram svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.dg-guide { stroke: #c8102e; stroke-width: 2.5; stroke-dasharray: 10 8; fill: none; }
+.dg-box { fill: rgba(200, 16, 46, .08); stroke: #c8102e; stroke-width: 2; }
+.dg-label { fill: #c8102e; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 600; font-size: 30px; }
+.dg-zone { fill: none; stroke: #5b6168; stroke-width: 2; stroke-dasharray: 6 6; }
+
+.minsizes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 36px; padding: 24px; background: var(--ppij-white); border: 1px solid var(--rule); }
+.minsizes figure { margin: 0; display: grid; gap: 8px; justify-items: start; }
+.minsizes svg { display: block; width: auto; }
+.minsizes figcaption { font-size: 12px; color: #5b6168; line-height: 1.4; }
+.minsizes figcaption b { color: #141517; display: block; font-size: 13px; }
+
+/* don'ts */
+.donts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.donts figure { margin: 0; display: grid; gap: 8px; }
+.donts .stage { aspect-ratio: 16 / 10; display: grid; place-items: center; overflow: hidden; background: var(--ppij-white); border: 1px solid var(--rule); position: relative; }
+.donts .stage::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top right, transparent calc(50% - 1.5px), var(--red-text) calc(50% - 1.5px), var(--red-text) calc(50% + 1.5px), transparent calc(50% + 1.5px)); opacity: .9; }
+.donts .logo { width: 34%; }
+.donts figcaption { font-size: 14px; }
+.donts figcaption b { color: var(--red-text); }
+.d-stretch .logo { transform: scaleX(1.55); }
+.d-rotate .logo { transform: rotate(-16deg); }
+.d-recolor { --le: #2c5cc5; --lt: #2c5cc5; }
+.d-effect .logo { filter: drop-shadow(5px 7px 0 rgba(0,0,0,.45)); }
+.d-ground { background: var(--ppij-red) !important; border-color: transparent !important; }
+.d-busy { background: repeating-linear-gradient(45deg, #1c1f23 0 10px, #e9e9e6 10px 20px) !important; }
+
+
+/* dark grounds */
+.rules td:first-child { white-space: normal; }
+.grounds { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; }
+.ground { display: grid; grid-template-rows: 1fr auto; min-width: 0; }
+.ground .face { aspect-ratio: 1.25; display: grid; place-items: center; padding: 16px; position: relative; }
+.ground .face .logo { width: 78%; }
+.ground .face.fail::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top right, transparent calc(50% - 1.5px), #ffffff calc(50% - 1.5px), #ffffff calc(50% + 1.5px), transparent calc(50% + 1.5px)); mix-blend-mode: difference; }
+.ground .cap { padding: 10px 8px 12px 0; font-size: 12px; line-height: 1.4; border-bottom: 1px solid var(--rule); }
+.ground .cap b { display: block; font-size: 13px; }
+.ground .cap code { font-size: 11px; }
+.ground .cap .v { display: block; margin-top: 4px; font-weight: 600; }
+.ground .cap .v.ok { color: var(--ink); } .ground .cap .v.no { color: var(--red-text); }
+.checker { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 24px; padding: 20px; border: 1px solid var(--rule); }
+.checker h3 { margin-bottom: 4px; }
+.checker label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.field { display: flex; gap: 8px; }
+.field input[type=color] { width: 52px; height: 44px; padding: 2px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); cursor: pointer; flex: none; }
+.field input[type=text] { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); font: 500 16px var(--mono); text-transform: uppercase; }
+.field input:focus-visible { outline: 2px solid var(--red-text); outline-offset: 2px; }
+.readout { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.readout li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--rule); padding-bottom: 6px; }
+.readout li span:last-child { font-family: var(--mono); font-size: 13px; text-align: right; }
+.verdict { margin: 14px 0 0; padding: 12px 14px; font-size: 14px; line-height: 1.5; background: var(--paper-2); border-left: 4px solid var(--ink); }
+.verdict.no { border-left-color: var(--red-text); }
+.verdict b { display: block; font-size: 15px; }
+.preview { min-height: 260px; display: grid; place-items: center; gap: 24px; padding: 32px; align-content: center; position: relative; }
+.preview .logo.a { width: min(240px, 52%); } .preview .logo.b { width: min(420px, 90%); }
+.preview.fail::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top right, transparent calc(50% - 1.5px), #ffffff calc(50% - 1.5px), #ffffff calc(50% + 1.5px), transparent calc(50% + 1.5px)); mix-blend-mode: difference; }
+
+/* colour */
+.swatches { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2px; }
+.swatch { min-height: 220px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; }
+.swatch b { font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1.1; }
+.swatch dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.swatch dt { opacity: .75; } .swatch dd { margin: 0; font-family: var(--mono); font-size: 12.5px; }
+.sw-red { background: var(--ppij-red); color: #ffffff; }
+.sw-black { background: var(--ppij-black); color: #ffffff; }
+.sw-white { background: var(--ppij-white); color: #000000; border: 1px solid var(--rule); }
+.ui-colors { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.chip { display: grid; gap: 8px; font-size: 13px; }
+.chip i { display: block; height: 56px; border: 1px solid var(--rule); }
+.chip b { font-size: 14px; }
+.chip span { color: var(--muted); }
+
+/* type */
+.specimen { display: grid; gap: 4px; padding: 28px; background: var(--paper-2); }
+.specimen .big { font-family: var(--display); font-weight: 600; font-size: clamp(40px, 7vw, 84px); line-height: 1; letter-spacing: .04em; overflow-wrap: anywhere; }
+.specimen .abc { font-family: var(--display); font-size: 22px; letter-spacing: .02em; color: var(--muted); overflow-wrap: anywhere; }
+.typerow { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 20px; padding-block: 18px; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.typerow .meta { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.typerow .meta b { display: block; color: var(--ink); font-size: 13px; }
+.t-display { font-family: var(--display); font-weight: 600; font-size: 44px; line-height: 1.1; }
+.t-title { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1.2; }
+.t-body { font-size: 16px; line-height: 26px; }
+.t-label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.t-jp { font-family: var(--jp); font-size: 18px; }
+
+/* names */
+.names { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.names div { padding: 18px; border: 1px solid var(--rule); display: grid; gap: 6px; }
+.names span { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.names p { margin: 0; font-size: 17px; font-weight: 500; }
+.names .jp { font-family: var(--jp); }
+
+/* files */
+.files { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.file { border: 1px solid var(--rule); display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+.file .stage { height: 132px; display: grid; place-items: center; padding: 20px; }
+.file .stage .logo { max-height: 92px; width: auto; max-width: 100%; }
+.file .info { padding: 12px 14px; display: grid; gap: 8px; align-content: start; }
+.file .info code { background: none; padding: 0; font-size: 12px; overflow-wrap: anywhere; }
+.copy { justify-self: start; font: 600 13px var(--sans); padding: 7px 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.copy:hover { border-color: var(--ink); }
+.copy:focus-visible, a:focus-visible { outline: 2px solid var(--red-text); outline-offset: 2px; }
+.copy[data-done] { color: var(--red-text); border-color: var(--red-text); }
+.fallback { width: 100%; height: 90px; font: 11px var(--mono); }
+
+footer { padding-block: 40px 64px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 12px 32px; justify-content: space-between; }
+footer .logo { width: 140px; }
+
+@media (max-width: 860px) {
+  section.block { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 52px; }
+  .meaning, .arrange { grid-template-columns: minmax(0, 1fr); }
+  .donts, .files, .names { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grounds { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .checker { grid-template-columns: minmax(0, 1fr); }
+  .ui-colors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .swatches { grid-template-columns: minmax(0, 1fr); }
+  .swatch { min-height: 140px; }
+  .typerow { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
+@media (max-width: 560px) {
+  .triptych, .trip-caption, .way-legend { grid-template-columns: minmax(0, 1fr); }
+  .way { grid-template-columns: minmax(0, 1fr); }
+  .donts, .files, .names { grid-template-columns: minmax(0, 1fr); }
+  .mast p { display: none; }
+  .grounds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .copy { transition: border-color .15s, color .15s; }
+}
+
+body { margin: 0; }
+.pdf { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); background: transparent; font: 600 13px var(--sans); text-decoration: none; white-space: nowrap; }
+.pdf:hover { background: var(--ink); color: var(--paper); }
+.pdf:focus-visible, .dl:focus-visible { outline: 2px solid var(--red-text); outline-offset: 2px; }
+.mast .actions { display: flex; align-items: center; gap: 20px; }
+.file .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dl { display: inline-block; font: 600 13px var(--sans); padding: 7px 12px; border-radius: 8px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); text-decoration: none; }
+.dl:hover { opacity: .85; }
+@media (max-width: 560px) { .mast .actions { gap: 0; } }
+
+@page { size: A4; margin: 14mm 12mm; }
+@media print {
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-size: 14px; }
+  .pdf, .copy, .dl, .checker, .status { display: none !important; }
+  .hero { padding-block: 24px 12px; }
+  section.block { padding-block: 26px; gap: 14px; }
+  .triptych > div { aspect-ratio: auto; height: 200px; }
+  .arrange figure, .donts figure, .file, .ground, .swatch, .names > div, .way, .minsizes, .diagram, .typerow, .meaning, tr, .hole-note { break-inside: avoid; }
+  h2, h3, .rail { break-after: avoid; }
+  .diagram, .table-scroll { overflow: visible; }
+  .diagram svg, .table-scroll table { min-width: 0; }
+  .file .stage { height: 124px; padding: 14px; }
+  .file .stage .logo { max-height: 96px; }
+  /* keep the desktop grids on paper; the narrow-screen rules would stack everything */
+  .meaning { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 20px; }
+  .meaning .stage { padding: 16px; }
+  .arrange { grid-template-columns: repeat(2, minmax(0, 1fr)); break-inside: avoid; }
+  .arrange .stage { min-height: 0; padding: 14px; }
+  .triptych, .trip-caption, .way-legend { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .way { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.3fr); }
+  .way > div { min-height: 110px; padding: 18px; }
+  .ways, .grounds, .donts, .swatches, .ui-colors, .names, .minsizes { break-inside: avoid; }
+  .grounds { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .donts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .files { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .names { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .swatches { grid-template-columns: 1.4fr 1fr 1fr; }
+  .swatch { min-height: 150px; }
+  .ui-colors { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .typerow { grid-template-columns: 180px minmax(0, 1fr); }
+  footer { padding-block: 16px 0; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="p-emblem" fill-rule="evenodd" d="M294.50 343.73C289.71 343.56 285.47 343.30 274.38 342.50C267.73 342.03 264.03 341.73 260.50 341.37C258.51 341.18 256.14 340.95 255.25 340.86C250.69 340.44 238.54 338.92 235.38 338.37C234.27 338.18 232.81 337.95 232.12 337.87C231.44 337.78 229.64 337.50 228.12 337.24C226.61 336.98 223.97 336.54 222.25 336.25C214.26 334.93 203.69 332.94 200.38 332.14C195.93 331.07 194.22 330.67 190.00 329.72C185.50 328.70 177.66 326.72 174.12 325.70C173.16 325.43 171.64 325.00 170.75 324.75C168.90 324.24 164.47 322.97 161.88 322.21C158.82 321.32 139.94 314.99 138.38 314.33C136.68 313.62 136.30 313.47 132.12 311.87C130.47 311.24 128.51 310.49 127.75 310.20C126.59 309.75 123.28 308.34 113.50 304.12C111.37 303.20 98.25 296.71 94.75 294.85C89.17 291.88 79.89 286.49 76.13 284.04C68.64 279.16 67.55 278.42 63.12 275.22C60.54 273.35 55.07 269.18 53.42 267.81C52.71 267.22 51.00 265.82 49.62 264.70C46.81 262.39 31.75 247.46 29.10 244.35C21.51 235.42 14.74 225.28 10.69 216.75C9.74 214.76 8.59 212.33 8.12 211.36C6.29 207.51 4.45 202.06 2.51 194.69C0.32 186.40 0.18 185.07 0.17 171.75C0.17 158.72 0.36 156.90 2.66 148.25C3.87 143.68 6.60 135.56 7.75 133.13C10.42 127.43 12.61 123.07 13.50 121.63C14.09 120.66 14.91 119.26 15.33 118.50C16.07 117.14 19.34 112.16 21.25 109.50C21.79 108.74 22.83 107.30 23.55 106.28C24.28 105.27 25.43 103.75 26.11 102.91C27.96 100.63 38.12 90.50 38.56 90.50C38.82 90.50 39.24 91.33 39.87 93.06C41.45 97.39 43.00 101.28 43.99 103.37C44.51 104.47 45.67 107.06 46.58 109.13C47.48 111.19 48.73 113.83 49.36 115.00C49.99 116.17 51.29 118.67 52.25 120.55C54.34 124.66 60.66 135.81 62.54 138.68C63.27 139.82 64.20 141.28 64.61 141.93C67.10 145.97 71.34 152.12 75.10 157.13C79.29 162.71 85.52 170.66 86.75 172.00C87.32 172.62 88.55 174.03 89.48 175.13C90.42 176.23 91.62 177.60 92.15 178.16C92.69 178.72 95.41 181.59 98.19 184.54C103.63 190.30 111.80 198.09 116.12 201.63C116.95 202.31 118.53 203.65 119.62 204.62C120.72 205.59 122.58 207.11 123.75 208.00C124.92 208.90 127.01 210.52 128.41 211.62C133.80 215.89 145.25 223.63 151.50 227.24C153.22 228.23 155.19 229.39 155.88 229.81C156.56 230.24 158.87 231.51 161.00 232.63C163.13 233.76 166.06 235.30 167.50 236.07C168.94 236.83 171.47 238.05 173.12 238.76C174.78 239.48 177.36 240.65 178.88 241.37C181.57 242.65 182.30 242.95 187.38 244.88C188.75 245.40 190.89 246.25 192.12 246.76C195.53 248.17 201.70 250.22 208.25 252.11C209.83 252.57 211.74 253.13 212.50 253.36C216.48 254.55 217.27 254.78 218.88 255.22C219.84 255.48 221.75 255.93 223.12 256.22C228.61 257.36 231.67 258.02 232.65 258.27C233.78 258.57 232.57 257.42 254.50 278.97C261.17 285.52 269.32 293.52 272.62 296.75C280.58 304.55 291.89 315.67 299.75 323.41C315.84 339.26 318.82 342.13 319.21 342.20C319.48 342.24 323.55 338.28 330.62 331.07C336.68 324.91 347.08 314.37 353.75 307.63C360.42 300.90 367.00 294.25 368.38 292.86C369.75 291.47 376.33 284.82 383.00 278.09C389.67 271.36 403.39 257.48 413.50 247.24C423.61 237.01 432.89 227.62 434.14 226.38C435.38 225.14 444.66 215.76 454.76 205.54C464.86 195.31 476.87 183.17 481.45 178.56L489.78 170.18L486.20 166.57C484.23 164.58 480.21 160.52 477.25 157.54C437.78 117.75 422.88 102.54 422.88 102.03C422.88 101.51 422.96 101.52 425.50 102.20C434.44 104.58 444.99 108.24 450.99 111.05C452.16 111.60 454.36 112.61 455.88 113.29C457.39 113.97 459.47 115.02 460.50 115.61C461.53 116.20 463.50 117.26 464.88 117.96C467.41 119.24 468.56 119.90 474.06 123.22C477.58 125.34 481.57 127.97 486.25 131.27C491.94 135.27 502.61 143.70 507.25 147.86C517.72 157.24 529.43 168.77 535.86 176.01C536.41 176.62 537.80 178.19 538.96 179.50C540.12 180.81 541.46 182.31 541.94 182.84C543.57 184.63 545.49 186.95 553.05 196.25C554.34 197.83 556.44 200.53 557.73 202.25C559.02 203.97 560.49 205.88 560.99 206.50C566.37 213.12 581.21 234.82 587.06 244.63C588.12 246.41 589.10 248.04 589.24 248.25C589.37 248.46 590.11 249.67 590.89 250.96C592.27 253.22 592.30 253.33 592.20 254.78C592.09 256.27 592.09 256.27 589.98 258.41C587.15 261.29 581.06 266.78 578.65 268.63C577.57 269.45 576.13 270.57 575.45 271.13C567.86 277.24 548.79 289.49 540.01 293.88C538.98 294.39 537.46 295.22 536.63 295.73C534.43 297.06 521.98 303.10 517.38 305.07C516.55 305.42 514.13 306.47 512.00 307.40C506.81 309.66 504.18 310.75 503.95 310.75C503.67 310.75 497.67 313.07 494.88 314.27C493.09 315.03 477.03 320.47 473.05 321.66C468.65 322.98 467.59 323.29 465.75 323.78C463.46 324.39 461.19 325.04 458.88 325.73C456.05 326.58 448.69 328.46 444.50 329.39C440.99 330.18 438.84 330.68 432.25 332.25C429.84 332.83 421.43 334.45 416.75 335.24C415.03 335.53 412.73 335.94 411.62 336.14C410.52 336.34 408.44 336.68 407.00 336.89C405.56 337.09 404.21 337.31 404.00 337.37C403.13 337.62 394.53 338.88 388.75 339.59C377.75 340.95 368.08 341.89 358.75 342.51C356.76 342.64 352.76 342.92 349.88 343.13C346.99 343.34 341.42 343.62 337.51 343.75C329.39 344.03 302.53 344.02 294.50 343.73ZM300.62 289.25C290.45 279.08 282.09 270.58 282.04 270.38C281.93 269.85 282.17 269.89 285.07 270.84C293.51 273.63 300.78 274.89 312.00 275.52C322.14 276.08 334.24 274.80 343.38 272.20C347.44 271.04 351.08 269.87 354.17 268.72C357.51 267.48 358.25 267.30 358.25 267.75C358.25 267.98 355.50 270.84 342.74 283.87C339.78 286.90 335.39 291.40 332.99 293.87C330.59 296.35 326.72 300.31 324.39 302.67C322.07 305.04 320.06 307.15 319.94 307.36C319.82 307.58 319.59 307.75 319.42 307.75C319.25 307.75 310.79 299.43 300.62 289.25ZM314.88 253.56C312.18 253.43 303.85 252.53 301.59 252.11C294.52 250.82 289.05 249.18 283.25 246.60C280.22 245.26 275.13 242.61 273.38 241.47C272.41 240.84 270.95 239.90 270.12 239.38C264.28 235.67 256.55 228.63 251.63 222.54C250.06 220.59 249.71 220.12 247.28 216.62C245.20 213.62 241.62 207.17 240.24 203.94C239.22 201.57 237.00 195.48 237.00 195.07C237.00 194.90 236.79 194.10 236.53 193.31C233.34 183.47 232.32 172.09 233.62 160.75C234.32 154.66 235.39 150.01 237.64 143.32C239.80 136.89 240.77 134.78 244.94 127.39C249.08 120.08 256.70 111.25 263.88 105.46C267.69 102.38 268.70 101.67 272.38 99.48C274.02 98.49 275.77 97.43 276.25 97.11C278.66 95.51 288.56 91.42 293.65 89.91C297.00 88.92 301.38 88.04 306.50 87.34C310.94 86.73 320.60 86.75 325.81 87.37C335.46 88.54 341.00 90.05 350.88 94.25C354.20 95.66 359.68 98.70 363.62 101.33C374.85 108.81 384.69 120.15 391.22 133.13C394.29 139.23 395.06 141.30 397.49 150.00C398.19 152.48 398.94 156.29 399.43 159.75C400.07 164.26 400.06 176.34 399.42 180.75C398.95 183.94 397.91 189.12 397.51 190.25C397.39 190.59 396.98 192.00 396.61 193.37C395.42 197.83 393.54 202.72 391.34 207.10C388.34 213.07 388.50 212.82 384.23 218.87C376.23 230.24 362.58 241.38 350.75 246.20C349.72 246.62 347.78 247.42 346.44 247.98C340.49 250.46 333.40 252.09 324.62 252.98C319.24 253.52 317.03 253.66 314.88 253.56ZM603.37 240.94C601.56 236.85 596.99 227.46 595.49 224.75C594.92 223.72 594.02 222.03 593.49 221.00C591.33 216.84 585.61 207.16 582.46 202.32C579.72 198.12 577.69 195.07 576.33 193.13C575.56 192.03 574.41 190.38 573.78 189.47C570.59 184.91 564.05 176.49 559.52 171.13C551.28 161.37 538.41 148.21 529.79 140.72C522.13 134.07 514.16 127.62 508.27 123.31C504.93 120.86 492.45 112.45 489.85 110.89C482.01 106.19 476.98 103.25 474.81 102.11C469.55 99.35 462.69 95.89 461.12 95.20C460.16 94.78 457.64 93.61 455.53 92.59C453.41 91.58 449.25 89.78 446.28 88.61C443.31 87.43 440.54 86.31 440.12 86.13C439.71 85.95 439.09 85.72 438.75 85.62C438.41 85.52 438.01 85.35 437.88 85.24C437.59 85.01 419.82 79.10 417.00 78.29C413.45 77.27 409.92 76.33 405.00 75.09C401.62 74.24 400.36 73.95 395.50 72.88C394.47 72.66 393.34 72.29 393.00 72.07C392.66 71.86 386.25 65.48 378.76 57.90C371.27 50.32 359.74 38.67 353.13 32.00C346.52 25.33 338.17 16.89 334.57 13.25C330.97 9.61 326.72 5.32 325.14 3.72C323.55 2.12 322.25 0.63 322.25 0.41C322.25 0.04 323.28 0.00 333.81 0.01C342.89 0.02 345.72 0.09 347.00 0.38C348.02 0.60 350.12 0.74 352.64 0.74C355.31 0.75 357.07 0.87 357.89 1.10C358.57 1.29 360.86 1.51 363.00 1.59C365.32 1.67 367.43 1.88 368.25 2.11C369.07 2.34 370.68 2.50 372.25 2.51C373.69 2.51 375.61 2.68 376.50 2.87C377.39 3.07 378.91 3.24 379.88 3.24C380.84 3.25 382.41 3.42 383.38 3.62C384.34 3.82 385.69 3.99 386.38 4.00C387.06 4.00 388.24 4.17 389.00 4.38C389.76 4.58 391.17 4.75 392.15 4.75C393.12 4.75 394.47 4.92 395.15 5.12C395.82 5.33 397.05 5.50 397.88 5.50C398.70 5.50 399.77 5.62 400.25 5.77C400.73 5.91 402.08 6.13 403.25 6.24C405.61 6.48 407.75 6.87 409.59 7.40C410.26 7.59 411.27 7.75 411.84 7.75C412.41 7.75 413.66 7.98 414.63 8.25C415.59 8.53 416.81 8.75 417.33 8.75C417.86 8.75 418.99 8.92 419.83 9.12C420.68 9.33 423.23 9.84 425.50 10.26C430.72 11.22 433.08 11.72 434.48 12.16C435.09 12.35 435.82 12.50 436.11 12.50C436.40 12.50 437.93 12.82 439.51 13.21C441.08 13.61 443.50 14.18 444.88 14.49C446.25 14.81 448.27 15.32 449.38 15.64C450.48 15.96 453.29 16.69 455.62 17.26C457.96 17.82 460.77 18.57 461.88 18.91C469.37 21.24 471.08 21.76 472.75 22.20C477.50 23.45 496.00 29.87 501.38 32.12C503.58 33.05 505.51 33.81 509.25 35.24C510.28 35.64 511.80 36.29 512.62 36.70C513.45 37.10 514.39 37.51 514.71 37.61C515.03 37.72 516.89 38.56 518.84 39.48C520.78 40.41 522.91 41.36 523.56 41.60C525.03 42.14 536.46 47.90 537.99 48.87C538.61 49.26 540.13 50.10 541.37 50.75C542.62 51.40 544.09 52.21 544.64 52.56C545.19 52.90 546.37 53.55 547.26 54.00C548.15 54.45 549.49 55.23 550.25 55.74C551.01 56.25 552.75 57.32 554.12 58.12C557.43 60.05 565.55 65.39 568.38 67.49C569.61 68.41 571.36 69.70 572.25 70.35C573.14 70.99 574.66 72.14 575.62 72.90C576.59 73.66 577.99 74.73 578.75 75.30C579.51 75.86 580.63 76.79 581.25 77.37C581.87 77.95 582.94 78.84 583.62 79.35C584.85 80.27 593.13 88.38 600.76 96.16C604.43 99.90 605.49 101.19 610.76 108.25C613.40 111.78 616.95 117.15 617.88 119.00C618.26 119.76 619.07 121.16 619.70 122.13C621.62 125.09 625.12 132.65 627.17 138.25C627.65 139.56 628.25 141.19 628.50 141.87C629.52 144.66 631.80 154.08 632.12 156.89C632.22 157.71 632.45 159.01 632.65 159.79C633.16 161.83 633.15 181.70 632.64 183.87C632.45 184.70 632.21 186.11 632.12 187.00C631.68 191.24 628.12 203.85 625.94 208.87C625.47 209.97 624.55 212.10 623.90 213.61C623.25 215.11 622.33 217.00 621.86 217.81C621.39 218.62 621.00 219.33 621.00 219.38C621.00 219.54 616.47 227.39 615.60 228.75C612.94 232.89 608.98 238.26 606.89 240.56C604.66 243.01 604.31 243.05 603.37 240.94ZM204.12 231.65C203.16 231.20 200.81 230.06 198.89 229.13C196.97 228.20 194.60 227.08 193.63 226.64C192.66 226.19 190.68 225.15 189.24 224.33C187.80 223.51 185.61 222.29 184.38 221.63C178.30 218.37 164.60 209.76 159.08 205.73C157.68 204.71 155.37 203.06 153.95 202.07C150.69 199.77 146.29 196.41 142.12 193.02C137.02 188.87 129.52 182.58 127.88 181.06C118.40 172.34 115.49 169.56 111.30 165.28C101.98 155.76 94.88 147.95 89.00 140.75C88.24 139.83 87.25 138.63 86.78 138.10C84.80 135.82 78.93 128.40 77.00 125.75C75.85 124.17 74.47 122.31 73.93 121.63C73.38 120.94 71.97 119.02 70.78 117.35C69.60 115.69 68.03 113.50 67.30 112.48C65.36 109.77 61.62 104.13 59.10 100.13C57.89 98.20 56.05 95.31 55.01 93.70C53.97 92.09 52.28 89.35 51.25 87.62C50.22 85.88 49.01 83.87 48.57 83.17C47.59 81.59 47.57 81.25 48.40 80.26C49.63 78.81 62.95 68.44 66.87 65.90C68.30 64.97 71.19 63.05 73.72 61.35C75.64 60.05 84.39 54.59 85.97 53.69C86.47 53.41 87.66 52.77 88.62 52.26C89.59 51.75 91.22 50.87 92.25 50.29C95.33 48.58 112.63 40.02 114.31 39.38C115.17 39.06 117.17 38.17 118.75 37.41C120.33 36.65 122.07 35.86 122.62 35.66C125.43 34.62 127.08 33.98 129.12 33.13C133.82 31.18 136.49 30.14 140.12 28.87C142.19 28.15 145.34 27.03 147.12 26.39C151.66 24.76 156.91 23.03 158.25 22.73C158.87 22.59 160.67 22.09 162.25 21.60C164.79 20.83 168.66 19.66 173.38 18.25C174.20 18.00 176.79 17.34 179.12 16.77C181.46 16.20 183.99 15.58 184.75 15.38C185.51 15.17 186.80 14.85 187.62 14.65C188.45 14.45 190.76 13.88 192.75 13.39C198.17 12.05 199.56 11.75 200.23 11.75C200.57 11.75 201.64 11.54 202.61 11.28C204.84 10.70 206.27 10.39 209.25 9.88C210.56 9.66 212.30 9.35 213.12 9.20C213.95 9.04 215.30 8.84 216.12 8.74C216.95 8.65 218.36 8.39 219.25 8.18C222.63 7.36 223.43 7.21 225.27 6.99C226.31 6.87 227.47 6.65 227.85 6.51C228.22 6.37 229.00 6.25 229.58 6.24C230.15 6.24 231.30 6.07 232.12 5.87C232.95 5.67 234.37 5.51 235.27 5.50C236.18 5.50 237.47 5.33 238.15 5.13C238.82 4.92 239.88 4.75 240.50 4.75C241.12 4.75 242.24 4.58 243.00 4.38C243.76 4.17 245.11 4.00 246.00 3.99C246.89 3.99 248.36 3.82 249.25 3.62C250.14 3.43 251.66 3.26 252.63 3.26C253.59 3.25 255.16 3.08 256.13 2.88C257.09 2.68 258.89 2.51 260.12 2.50C261.36 2.50 262.99 2.33 263.73 2.13C264.48 1.93 266.79 1.70 268.86 1.61C270.93 1.51 273.24 1.28 273.99 1.09C274.94 0.85 277.02 0.75 280.87 0.75C284.81 0.74 286.80 0.64 287.88 0.38C289.09 0.09 291.94 0.02 302.69 0.01C315.32 0.00 316.00 0.02 316.00 0.45C316.00 0.88 308.71 8.22 295.50 21.10C292.13 24.38 286.23 30.18 282.38 33.97C278.52 37.77 272.61 43.58 269.24 46.88C265.86 50.18 257.09 58.78 249.75 66.00C242.41 73.22 233.75 81.71 230.52 84.87C227.28 88.04 220.81 94.40 216.13 99.01C211.45 103.63 201.94 112.96 195.00 119.75C188.06 126.54 178.38 136.04 173.50 140.86C168.62 145.69 159.98 154.18 154.31 159.73C148.39 165.53 144.00 170.03 144.00 170.28C144.00 170.53 144.17 170.82 144.38 170.94C144.58 171.05 147.65 174.01 151.19 177.51C154.73 181.01 163.31 189.44 170.25 196.25C204.64 229.98 206.50 231.82 206.50 232.19C206.50 232.66 206.03 232.56 204.12 231.65ZM414.75 209.05C414.75 208.81 414.97 208.17 415.24 207.64C415.77 206.60 417.72 200.92 418.25 198.87C423.51 178.49 423.50 162.08 418.20 141.25C417.79 139.63 416.63 136.13 415.89 134.27C415.16 132.42 415.13 132.25 415.57 132.25C416.01 132.25 453.38 169.67 453.38 170.11C453.38 170.44 446.78 177.29 431.37 193.00C427.93 196.51 422.90 201.65 420.20 204.44C417.50 207.22 415.17 209.50 415.02 209.50C414.87 209.50 414.75 209.30 414.75 209.05ZM198.90 187.31C189.61 178.00 182.00 170.25 182.00 170.10C182.00 169.94 183.49 168.38 185.31 166.63C189.37 162.73 197.05 155.19 207.56 144.81C211.92 140.49 215.61 137.04 215.75 137.12C216.10 137.34 216.06 138.04 215.64 139.05C215.44 139.52 214.94 141.36 214.52 143.14C214.10 144.92 213.65 146.77 213.52 147.25C213.14 148.68 212.04 154.91 211.62 158.07C210.75 164.52 210.75 176.22 211.62 182.52C212.52 189.00 214.18 196.64 215.89 202.08C216.22 203.15 216.50 204.08 216.50 204.14C216.50 204.81 213.43 201.87 198.90 187.31ZM352.25 70.85C350.26 70.08 343.27 67.97 340.88 67.42C335.89 66.28 331.36 65.55 324.93 64.87C322.56 64.61 310.59 64.70 307.50 64.99C299.81 65.71 291.95 67.18 287.40 68.74C286.59 69.02 285.83 69.25 285.71 69.25C285.00 69.25 286.05 68.02 290.44 63.70C312.08 42.43 318.85 35.87 319.22 35.80C319.71 35.72 354.50 70.60 354.50 71.16C354.50 71.63 354.13 71.57 352.25 70.85Z"/>
+    <path id="p-word" fill-rule="evenodd" d="M571.26 491.60C570.77 491.45 569.61 491.14 568.68 490.91C566.42 490.34 563.84 488.77 561.64 486.63C559.68 484.71 558.67 483.35 557.64 481.25C557.27 480.49 556.75 479.46 556.49 478.95C556.22 478.44 556.00 477.90 556.00 477.74C556.00 477.58 555.84 477.10 555.65 476.66C555.29 475.86 555.09 474.90 554.77 472.56C554.68 471.84 554.46 471.11 554.30 470.95C554.11 470.76 554.00 469.80 553.99 468.39C553.99 466.90 553.86 465.91 553.62 465.50C553.32 464.97 553.27 459.84 553.27 430.50C553.27 401.16 553.32 396.03 553.62 395.50C553.86 395.09 553.99 394.10 553.99 392.61C554.00 391.02 554.11 390.20 554.37 389.86C554.57 389.59 554.74 388.97 554.74 388.48C554.75 387.52 555.94 383.61 556.60 382.37C556.82 381.96 557.00 381.44 557.00 381.22C557.00 381.00 557.21 380.55 557.47 380.22C557.72 379.89 558.18 379.12 558.49 378.50C559.23 377.00 563.01 373.39 565.21 372.07C566.18 371.49 567.68 370.84 568.54 370.61C569.41 370.39 570.32 370.10 570.57 369.96C571.23 369.61 582.29 369.62 582.95 369.97C583.24 370.13 583.73 370.25 584.05 370.25C585.56 370.25 590.60 372.95 592.38 374.71C594.11 376.42 596.42 380.13 597.63 383.16C598.69 385.79 599.20 387.92 599.46 390.75C599.55 391.78 599.72 392.77 599.83 392.94C600.06 393.30 600.11 410.36 599.88 410.74C599.62 411.16 585.88 411.09 585.54 410.67C585.36 410.46 585.23 407.41 585.17 401.74C585.11 397.00 584.98 392.68 584.88 392.13C584.67 391.02 582.83 388.38 581.78 387.69C580.75 387.00 578.69 386.50 576.93 386.50C574.48 386.50 571.76 388.04 570.75 390.00C570.09 391.30 569.71 392.65 569.43 394.75C569.09 397.32 569.10 464.22 569.44 466.75C569.97 470.68 571.02 472.50 573.49 473.75C574.84 474.43 575.21 474.50 577.38 474.50C579.26 474.50 579.97 474.40 580.70 474.02C582.26 473.20 583.69 471.71 584.43 470.13L585.12 468.63L585.20 455.16C585.25 445.25 585.19 441.60 584.98 441.35C584.76 441.09 584.00 441.00 582.02 441.00C580.28 441.00 579.25 440.90 579.05 440.70C578.66 440.31 578.62 424.11 579.00 423.87C579.39 423.63 599.55 423.70 599.80 423.95C600.06 424.21 600.09 468.16 599.82 468.57C599.71 468.74 599.55 469.72 599.46 470.75C599.14 474.29 598.38 476.95 596.70 480.41C595.61 482.65 595.16 483.26 592.29 486.26C590.31 488.33 589.64 488.85 587.92 489.69C585.94 490.65 585.28 490.87 582.62 491.49C580.98 491.88 572.43 491.96 571.26 491.60ZM235.25 491.01C235.04 490.87 234.58 490.76 234.22 490.75C233.86 490.75 233.43 490.60 233.28 490.41C233.07 490.16 233.01 487.74 233.06 481.97L233.12 473.87L236.38 473.84C238.16 473.82 239.94 473.68 240.33 473.53C240.72 473.38 241.33 473.25 241.70 473.25C243.13 473.25 245.60 471.06 246.52 469.00L247.12 467.63L247.19 419.52C247.24 384.67 247.33 371.33 247.53 371.09C247.94 370.59 262.31 370.59 262.72 371.09C263.10 371.55 262.95 468.85 262.57 471.25C262.43 472.14 262.12 473.38 261.89 474.00C261.66 474.62 261.32 475.71 261.12 476.43C260.92 477.14 260.49 478.27 260.16 478.93C259.83 479.59 259.31 480.63 258.99 481.25C258.68 481.87 258.14 482.77 257.79 483.25C256.86 484.53 254.44 487.00 254.11 487.00C253.95 487.00 253.61 487.24 253.35 487.53C252.23 488.77 247.80 490.46 244.75 490.80C241.50 491.17 235.68 491.29 235.25 491.01ZM33.55 490.45C33.11 490.01 33.11 371.49 33.55 371.05C33.92 370.68 60.90 370.62 62.11 370.99C62.53 371.12 63.55 371.41 64.38 371.65C65.20 371.88 66.73 372.49 67.77 373.01C69.63 373.93 72.75 376.10 72.75 376.48C72.75 376.59 73.28 377.29 73.94 378.04C75.48 379.82 77.72 384.51 78.26 387.13C78.38 387.68 78.60 388.63 78.76 389.25C78.91 389.87 79.12 391.50 79.21 392.87C79.30 394.25 79.52 395.62 79.69 395.92C80.17 396.77 80.13 419.95 79.65 420.63C79.46 420.91 79.24 422.08 79.16 423.25C78.93 426.58 78.74 427.81 78.36 428.66C78.16 429.10 78.00 429.69 78.00 429.99C78.00 430.28 77.78 430.96 77.50 431.50C77.22 432.04 77.00 432.66 77.00 432.87C77.00 433.37 75.89 435.57 74.99 436.87C74.60 437.43 73.35 438.83 72.19 440.00C70.29 441.93 69.86 442.23 67.49 443.28C64.76 444.48 63.05 444.99 61.68 445.01C61.24 445.01 60.59 445.18 60.25 445.37C59.77 445.65 58.50 445.73 54.74 445.74C51.28 445.75 49.76 445.84 49.55 446.05C49.32 446.28 49.25 451.55 49.25 468.25C49.25 484.95 49.18 490.22 48.95 490.45C48.73 490.67 46.67 490.75 41.25 490.75C35.83 490.75 33.77 490.67 33.55 490.45ZM99.55 490.45C99.11 490.01 99.11 371.49 99.55 371.05C99.92 370.68 126.90 370.62 128.11 370.99C128.53 371.12 129.55 371.41 130.38 371.65C131.20 371.88 132.73 372.49 133.77 373.01C135.63 373.93 138.75 376.10 138.75 376.48C138.75 376.59 139.28 377.29 139.94 378.04C141.48 379.82 143.72 384.51 144.26 387.13C144.38 387.68 144.60 388.63 144.76 389.25C144.91 389.87 145.12 391.50 145.21 392.87C145.30 394.25 145.52 395.62 145.69 395.92C146.17 396.77 146.13 419.95 145.65 420.63C145.46 420.91 145.24 422.08 145.16 423.25C144.93 426.58 144.74 427.81 144.36 428.66C144.16 429.10 144.00 429.69 144.00 429.99C144.00 430.28 143.78 430.96 143.50 431.50C143.22 432.04 143.00 432.66 143.00 432.87C143.00 433.37 141.89 435.57 140.99 436.87C140.60 437.43 139.35 438.83 138.19 440.00C136.29 441.93 135.86 442.23 133.49 443.28C130.76 444.48 129.05 444.99 127.68 445.01C127.24 445.01 126.59 445.18 126.25 445.37C125.77 445.65 124.50 445.73 120.74 445.74C117.28 445.75 115.76 445.84 115.55 446.05C115.32 446.28 115.25 451.55 115.25 468.25C115.25 484.95 115.18 490.22 114.95 490.45C114.73 490.67 112.67 490.75 107.25 490.75C101.83 490.75 99.77 490.67 99.55 490.45ZM165.55 490.45C165.11 490.01 165.11 371.49 165.55 371.05C165.77 370.83 167.83 370.75 173.25 370.75C178.67 370.75 180.73 370.83 180.95 371.05C181.39 371.49 181.39 490.01 180.95 490.45C180.73 490.67 178.67 490.75 173.25 490.75C167.83 490.75 165.77 490.67 165.55 490.45ZM285.55 490.45C285.11 490.01 285.11 371.49 285.55 371.05C285.78 370.82 290.83 370.75 306.78 370.75C325.56 370.75 327.76 370.79 328.11 371.15C328.46 371.49 328.50 372.50 328.44 379.33L328.38 387.11L327.75 387.43C327.26 387.68 324.35 387.75 314.45 387.73C307.49 387.71 301.66 387.77 301.52 387.86C301.11 388.11 301.15 420.30 301.55 420.70C301.77 420.92 304.39 421.00 311.78 421.00C320.48 421.00 321.76 421.05 322.11 421.39C322.45 421.73 322.50 422.83 322.50 429.66C322.50 434.61 322.40 437.71 322.24 438.02C321.99 438.48 321.61 438.50 312.10 438.50C305.77 438.50 302.04 438.59 301.73 438.76C301.26 439.01 301.25 439.46 301.25 455.83C301.25 468.58 301.32 472.72 301.55 472.95C301.78 473.18 305.05 473.25 314.76 473.25C326.95 473.25 327.70 473.28 328.09 473.71C328.45 474.11 328.50 475.06 328.50 482.06C328.50 488.91 328.45 490.02 328.11 490.36C327.76 490.71 325.48 490.75 306.78 490.75C290.83 490.75 285.78 490.68 285.55 490.45ZM349.01 490.27C348.60 489.50 348.65 371.73 349.06 371.17C349.35 370.77 350.38 370.74 363.38 370.83C372.04 370.88 377.80 371.02 378.50 371.18C382.05 372.02 387.19 374.84 388.50 376.67C388.84 377.15 389.42 377.90 389.78 378.33C390.14 378.77 390.66 379.57 390.93 380.13C391.21 380.68 391.84 381.91 392.34 382.86C392.84 383.82 393.25 384.78 393.26 384.99C393.26 385.20 393.43 385.59 393.63 385.86C393.83 386.13 394.00 386.66 394.00 387.04C394.00 387.42 394.19 388.38 394.42 389.18C394.65 389.97 394.94 391.81 395.06 393.25C395.38 396.83 395.36 419.80 395.04 422.75C394.56 427.17 394.01 429.74 393.22 431.28C392.96 431.78 392.75 432.38 392.75 432.61C392.75 433.10 391.56 435.31 390.24 437.25C389.23 438.74 385.45 442.50 384.95 442.50C384.78 442.50 383.74 442.94 382.63 443.48C380.65 444.44 380.06 444.61 377.62 444.91C376.94 445.00 376.15 445.22 375.88 445.41C375.51 445.67 374.23 445.75 370.59 445.75C367.95 445.75 365.61 445.82 365.40 445.90C365.04 446.04 365.00 448.23 365.00 468.10C365.00 484.92 364.93 490.22 364.70 490.45C364.48 490.67 362.39 490.75 356.83 490.75C349.61 490.75 349.26 490.73 349.01 490.27ZM409.55 490.45C409.12 490.02 409.18 487.24 409.63 486.64C409.87 486.33 410.00 485.58 410.00 484.56C410.00 483.68 410.14 482.72 410.31 482.42C410.48 482.12 410.70 480.86 410.81 479.63C411.14 475.77 411.42 473.66 411.74 472.63C411.91 472.09 412.00 471.14 411.93 470.52C411.86 469.91 411.92 469.11 412.07 468.76C412.22 468.41 412.43 467.28 412.55 466.25C412.92 463.06 413.23 459.98 413.44 457.50C413.55 456.19 413.72 454.99 413.83 454.83C413.93 454.66 414.02 453.82 414.03 452.95C414.04 452.08 414.18 451.15 414.34 450.87C414.49 450.60 414.70 449.36 414.80 448.13C415.14 443.94 415.39 442.13 415.69 441.58C415.86 441.28 416.00 440.16 416.00 439.07C416.00 437.79 416.12 436.94 416.35 436.61C416.69 436.13 416.78 435.43 417.14 430.39C417.23 429.16 417.46 427.92 417.64 427.63C417.85 427.32 417.95 426.62 417.90 425.87C417.86 425.19 417.94 424.29 418.08 423.87C418.21 423.46 418.42 422.17 418.53 421.00C418.65 419.83 418.86 417.86 419.00 416.63C419.14 415.39 419.34 413.42 419.44 412.25C419.55 411.08 419.77 409.89 419.93 409.59C420.12 409.26 420.18 408.60 420.09 407.82C419.99 406.99 420.05 406.38 420.28 405.98C420.47 405.65 420.70 404.42 420.80 403.25C420.90 402.08 421.07 400.06 421.18 398.75C421.29 397.44 421.52 396.13 421.69 395.83C421.86 395.53 422.00 394.57 422.00 393.69C422.00 392.75 422.13 391.97 422.31 391.79C422.48 391.62 422.71 390.44 422.81 389.18C423.23 384.20 423.38 382.86 423.60 382.52C423.73 382.33 423.92 381.15 424.04 379.90C424.15 378.65 424.36 376.78 424.49 375.75C424.63 374.72 424.81 373.31 424.90 372.63C424.98 371.94 425.17 371.23 425.31 371.06C425.50 370.82 428.05 370.75 436.49 370.75C449.37 370.75 448.26 370.45 448.56 373.96C448.66 375.15 448.86 377.11 449.00 378.31C449.14 379.52 449.35 381.43 449.46 382.56C449.58 383.70 449.81 385.02 449.97 385.50C450.13 385.98 450.19 386.69 450.11 387.07C450.02 387.45 450.13 388.35 450.34 389.07C450.56 389.79 450.79 391.22 450.86 392.25C451.12 395.88 451.39 397.88 451.69 398.42C451.86 398.72 452.00 399.77 452.00 400.75C452.00 401.73 452.14 402.78 452.31 403.08C452.48 403.38 452.70 404.64 452.81 405.87C453.14 409.73 453.42 411.84 453.74 412.87C453.91 413.41 454.00 414.36 453.93 414.98C453.86 415.59 453.92 416.39 454.07 416.74C454.33 417.35 454.51 418.64 455.00 423.37C455.55 428.66 455.71 429.92 455.94 430.64C456.08 431.06 456.13 431.97 456.06 432.66C455.99 433.47 456.07 434.15 456.28 434.53C456.60 435.11 456.79 436.47 457.19 441.13C457.30 442.36 457.52 443.62 457.69 443.92C457.86 444.22 458.00 445.16 458.00 446.01C458.00 446.86 458.16 447.90 458.36 448.34C458.56 448.77 458.78 450.02 458.86 451.13C459.09 454.49 459.41 456.83 459.74 457.70C459.92 458.18 460.01 459.03 459.93 459.68C459.86 460.30 459.92 461.17 460.07 461.60C460.21 462.02 460.42 463.33 460.53 464.50C460.65 465.67 460.86 467.64 461.00 468.87C461.14 470.11 461.34 472.08 461.44 473.25C461.55 474.42 461.77 475.61 461.93 475.91C462.12 476.24 462.18 476.90 462.09 477.68C461.99 478.51 462.05 479.12 462.28 479.52C462.47 479.85 462.70 481.08 462.80 482.25C462.90 483.42 463.06 485.27 463.15 486.37C463.24 487.46 463.48 488.62 463.68 488.93C463.91 489.27 463.99 489.74 463.90 490.12L463.74 490.75L456.01 490.75C451.10 490.75 448.22 490.66 448.12 490.50C448.04 490.36 447.97 489.51 447.97 488.60C447.97 487.69 447.84 486.65 447.69 486.29C447.43 485.68 447.33 484.76 446.81 478.32C446.71 477.06 446.48 475.88 446.31 475.71C446.12 475.51 446.00 474.67 446.00 473.43C446.00 472.08 445.87 471.20 445.59 470.66C445.36 470.23 445.10 469.71 445.00 469.50C444.85 469.18 443.56 469.11 436.10 469.06C431.30 469.02 427.13 469.04 426.84 469.12C426.22 469.27 425.85 470.66 425.48 474.31C425.35 475.52 425.14 477.48 425.00 478.69C424.52 482.97 424.26 485.41 424.04 487.84C423.90 489.47 423.70 490.38 423.47 490.52C422.91 490.88 409.91 490.81 409.55 490.45ZM482.15 490.35C481.95 489.84 481.95 371.66 482.15 371.15C482.29 370.79 483.36 370.75 491.71 370.75C496.89 370.76 501.25 370.84 501.40 370.94C501.89 371.27 502.35 372.35 502.53 373.63C502.63 374.31 502.84 375.38 502.99 376.00C503.14 376.62 503.37 377.80 503.50 378.63C503.63 379.45 503.92 380.74 504.15 381.50C504.38 382.26 504.65 383.49 504.76 384.25C505.05 386.21 505.37 387.54 505.71 388.17C505.87 388.47 506.00 389.13 506.00 389.63C506.00 390.12 506.13 390.78 506.30 391.08C506.60 391.63 506.88 392.86 507.21 395.13C507.32 395.81 507.54 396.63 507.71 396.94C507.88 397.25 507.96 397.61 507.88 397.73C507.81 397.86 507.87 398.28 508.03 398.67C508.40 399.58 508.71 400.99 508.98 402.87C509.09 403.70 509.42 405.20 509.69 406.20C509.97 407.20 510.14 408.24 510.07 408.51C510.00 408.78 510.11 409.25 510.31 409.56C510.51 409.87 510.75 410.63 510.85 411.25C510.96 411.87 511.12 412.88 511.22 413.50C511.32 414.12 511.54 414.87 511.70 415.17C511.87 415.47 512.00 416.10 512.00 416.58C512.00 417.05 512.16 417.57 512.34 417.72C512.53 417.88 512.76 418.60 512.84 419.32C513.11 421.62 513.30 422.62 513.53 422.90C513.65 423.05 513.80 423.76 513.87 424.48C513.94 425.21 514.08 425.92 514.17 426.08C514.34 426.34 514.51 427.13 515.00 429.87C515.51 432.72 515.67 433.41 515.88 433.76C516.00 433.96 516.19 434.74 516.29 435.50C516.39 436.26 516.65 437.66 516.86 438.62C517.08 439.59 517.25 440.68 517.25 441.06C517.25 441.81 517.61 441.99 517.85 441.35C517.93 441.14 518.00 425.34 518.00 406.25C518.00 387.16 518.07 371.36 518.15 371.15C518.28 370.80 519.10 370.75 524.71 370.75C528.32 370.76 531.29 370.86 531.50 370.99C531.83 371.20 531.88 378.12 531.88 430.75C531.88 483.38 531.83 490.30 531.50 490.51C531.06 490.79 516.52 490.83 516.08 490.55C515.49 490.18 514.94 488.23 514.59 485.25C514.51 484.63 514.35 484.02 514.23 483.89C514.10 483.76 514.00 483.34 514.00 482.97C514.00 482.59 513.87 481.97 513.71 481.58C513.42 480.86 513.12 479.33 512.84 477.19C512.76 476.54 512.53 475.88 512.34 475.72C512.14 475.56 512.00 474.96 512.00 474.27C512.00 473.63 511.87 472.97 511.72 472.82C511.43 472.53 511.16 471.46 510.76 469.00C510.64 468.24 510.35 466.95 510.12 466.13C509.89 465.30 509.61 464.01 509.49 463.25C509.38 462.49 509.16 461.37 509.00 460.75C508.84 460.13 508.62 459.01 508.51 458.25C508.39 457.49 508.11 456.20 507.88 455.37C507.65 454.55 507.36 453.26 507.24 452.50C506.84 450.04 506.57 448.97 506.28 448.68C506.13 448.53 506.00 448.06 505.99 447.64C505.99 447.22 505.82 446.59 505.62 446.25C505.43 445.91 505.26 445.23 505.25 444.75C505.23 443.67 504.67 441.29 504.26 440.52C504.09 440.21 504.01 439.73 504.08 439.46C504.15 439.20 504.10 438.62 503.96 438.18C503.54 436.86 503.22 435.46 503.01 434.00C502.90 433.24 502.63 431.97 502.41 431.18C502.18 430.38 502.00 429.40 502.00 428.99C502.00 428.59 501.85 427.84 501.66 427.32C501.15 425.89 500.75 424.09 500.75 423.17C500.75 422.72 500.58 422.13 500.38 421.86C500.18 421.59 500.01 421.06 500.01 420.67C500.00 420.28 499.87 419.72 499.70 419.42C499.54 419.12 499.32 418.31 499.20 417.63C499.09 416.94 498.88 415.81 498.74 415.13C498.59 414.44 498.38 413.22 498.26 412.41C498.14 411.61 497.93 410.83 497.77 410.67C497.62 410.52 497.50 410.04 497.50 409.60C497.50 408.86 497.01 408.33 496.65 408.68C496.57 408.77 496.50 427.09 496.50 449.40C496.50 485.94 496.46 490.00 496.11 490.36C495.77 490.69 494.77 490.75 489.01 490.75C483.13 490.75 482.28 490.70 482.15 490.35ZM442.60 452.68C442.98 452.40 443.02 452.08 442.91 450.36C442.66 446.72 442.31 443.63 442.07 442.87C441.93 442.46 441.88 441.48 441.94 440.70C442.01 439.86 441.93 438.95 441.74 438.45C441.44 437.69 441.28 436.35 440.80 430.82C440.70 429.70 440.48 428.63 440.31 428.46C440.12 428.27 440.00 427.42 440.00 426.18C440.00 425.08 439.86 423.98 439.69 423.67C439.52 423.37 439.30 422.17 439.20 421.00C439.10 419.83 438.93 417.81 438.82 416.50C438.71 415.19 438.46 413.85 438.28 413.52C438.05 413.12 437.98 412.47 438.08 411.58C438.15 410.85 438.09 409.88 437.94 409.44C437.80 408.99 437.58 407.67 437.46 406.50C437.34 405.33 437.13 403.31 436.99 402.00C436.85 400.69 436.68 398.78 436.61 397.75C436.44 395.14 436.33 394.75 435.75 394.75C435.45 394.75 435.24 394.93 435.22 395.19C435.20 395.43 435.15 396.24 435.11 397.00C434.83 401.43 434.59 403.51 434.31 403.79C434.11 403.99 434.00 404.84 434.00 406.12C434.00 407.44 433.88 408.31 433.65 408.63C433.46 408.91 433.24 410.08 433.15 411.25C432.84 415.53 432.57 417.90 432.26 418.87C432.09 419.41 432.00 420.36 432.07 420.98C432.14 421.59 432.08 422.39 431.93 422.74C431.78 423.09 431.56 424.39 431.45 425.63C431.34 426.86 431.13 428.89 431.00 430.13C430.87 431.36 430.66 433.39 430.54 434.63C430.41 435.86 430.20 437.27 430.07 437.75C429.94 438.23 429.88 439.03 429.94 439.52C430.00 440.02 429.91 440.86 429.74 441.40C429.43 442.37 429.13 444.93 428.85 449.05C428.75 450.46 428.58 451.33 428.35 451.52C427.98 451.83 427.88 452.55 428.17 452.83C428.26 452.93 431.44 453.00 435.24 453.00C440.51 453.00 442.26 452.92 442.60 452.68ZM58.86 428.12C59.13 427.92 59.58 427.75 59.87 427.75C60.58 427.75 62.54 425.67 63.27 424.13C63.60 423.44 63.97 422.09 64.09 421.13C64.43 418.38 64.56 397.51 64.24 396.72C64.09 396.36 63.93 395.42 63.88 394.63C63.83 393.84 63.67 393.07 63.52 392.92C63.37 392.77 63.25 392.41 63.25 392.11C63.25 391.81 62.81 391.02 62.27 390.35C61.29 389.11 60.25 388.44 58.88 388.12C57.63 387.83 50.42 387.57 49.81 387.78L49.25 387.99L49.25 407.85C49.25 425.58 49.29 427.76 49.64 428.11C50.20 428.67 58.12 428.67 58.86 428.12ZM124.86 428.12C125.13 427.92 125.58 427.75 125.87 427.75C126.58 427.75 128.54 425.67 129.27 424.13C129.60 423.44 129.97 422.09 130.09 421.13C130.43 418.38 130.56 397.51 130.24 396.72C130.09 396.36 129.93 395.42 129.88 394.63C129.83 393.84 129.67 393.07 129.52 392.92C129.37 392.77 129.25 392.41 129.25 392.11C129.25 391.81 128.81 391.02 128.27 390.35C127.29 389.11 126.25 388.44 124.88 388.12C123.63 387.83 116.42 387.57 115.81 387.78L115.25 387.99L115.25 407.85C115.25 425.58 115.29 427.76 115.64 428.11C116.20 428.67 124.12 428.67 124.86 428.12ZM375.25 427.91C376.71 427.33 377.53 426.53 378.48 424.75C379.06 423.67 379.25 422.97 379.26 421.97C379.26 421.23 379.43 420.34 379.62 420.00C380.16 419.06 380.16 397.10 379.62 396.39C379.42 396.12 379.25 395.39 379.24 394.76C379.22 392.98 378.70 391.42 377.71 390.22C376.09 388.24 374.31 387.72 369.20 387.71C367.18 387.71 365.41 387.78 365.26 387.87C364.85 388.12 364.90 427.80 365.31 428.21C365.82 428.72 373.81 428.48 375.25 427.91Z"/>
+    <path id="p-side" d="M738.1185607196402 103.20000000000002H778.1401499250376Q790.9305547226387 103.20000000000002 799.0792803598201 105.36611694152924Q807.2280059970016 107.53223388305847 814.448395802099 113.72113943028486Q828.4765817091455 126.09895052473763 828.4765817091455 146.93493253373316Q828.4765817091455 166.32683658170916 817.1302548725638 177.67316341829087Q804.9587406296852 189.84467766116944 782.2660869565218 189.84467766116944H764.9371514242879V240.8H738.1185607196402ZM764.9371514242879 126.30524737631185V166.73943028485758H775.8708845577212Q787.6298050974514 166.73943028485758 793.4061169415293 162.40719640179913Q800.8328035982009 156.63088455772115 800.8328035982009 146.3160419790105Q800.8328035982009 136.2074962518741 793.1998200899551 130.6374812593703Q787.0109145427286 126.30524737631185 774.2205097451275 126.30524737631185ZM856.5329535232383 103.20000000000002H896.5545427286357Q909.3449475262369 103.20000000000002 917.4936731634183 105.36611694152924Q925.6423988005997 107.53223388305847 932.8627886056972 113.72113943028486Q946.8909745127437 126.09895052473763 946.8909745127437 146.93493253373316Q946.8909745127437 166.32683658170916 935.544647676162 177.67316341829087Q923.3731334332833 189.84467766116944 900.68047976012 189.84467766116944H883.351544227886V240.8H856.5329535232383ZM883.351544227886 126.30524737631185V166.73943028485758H894.2852773613193Q906.0441979010495 166.73943028485758 911.8205097451274 162.40719640179913Q919.2471964017991 156.63088455772115 919.2471964017991 146.3160419790105Q919.2471964017991 136.2074962518741 911.6142128935533 130.6374812593703Q905.4253073463269 126.30524737631185 892.6349025487257 126.30524737631185ZM974.9473463268366 103.20000000000002H1001.7659370314843V240.8H974.9473463268366ZM1119.9740329835083 103.20000000000002H1146.792623688156V196.0335832083958Q1146.792623688156 226.77181409295355 1130.7014692653675 237.7055472263868Q1121.2118140929535 243.8944527736132 1108.2151124437783 243.8944527736132Q1090.0609895052476 243.8944527736132 1076.6516941529237 231.104047976012L1092.9491454272863 211.50584707646178Q1098.1065667166417 218.93253373313345 1106.3584407796102 218.93253373313345Q1113.785127436282 218.93253373313345 1116.879580209895 214.18770614692656Q1119.9740329835083 209.64917541229386 1119.9740329835083 191.90764617691156ZM1262.7314542728636 103.20000000000002V126.30524737631185H1213.2202098950527V157.04347826086956H1260.6684857571215V180.14872563718143H1213.2202098950527V217.69475262368817H1262.7314542728636V240.8H1186.401619190405V103.20000000000002ZM1296.9767316341831 103.20000000000002H1336.9983208395804Q1349.7887256371816 103.20000000000002 1357.937451274363 105.36611694152924Q1366.0861769115445 107.53223388305847 1373.3065667166418 113.72113943028486Q1387.3347526236882 126.09895052473763 1387.3347526236882 146.93493253373316Q1387.3347526236882 166.32683658170916 1375.9884257871065 177.67316341829087Q1363.816911544228 189.84467766116944 1341.1242578710646 189.84467766116944H1323.7953223388308V240.8H1296.9767316341831ZM1323.7953223388308 126.30524737631185V166.73943028485758H1334.729055472264Q1346.487976011994 166.73943028485758 1352.264287856072 162.40719640179913Q1359.6909745127439 156.63088455772115 1359.6909745127439 146.3160419790105Q1359.6909745127439 136.2074962518741 1352.0579910044978 130.6374812593703Q1345.8690854572715 126.30524737631185 1333.0786806596702 126.30524737631185ZM1496.6720839580212 240.8 1484.5005697151425 211.9184407796102H1429.0067166416793L1416.8352023988007 240.8H1387.7473463268366L1446.9545427286357 103.20000000000002H1467.9968215892054L1525.5536431784108 240.8ZM1437.464887556222 190.05097451274364H1476.6612893553224L1457.0630884557722 140.53973013493254ZM1576.7152623688157 240.8H1549.896671664168V103.20000000000002H1568.463388305847L1652.2199100449775 195.00209895052475V103.20000000000002H1679.0385007496252V240.8H1660.4717841079462L1576.7152623688157 148.79160419790105ZM1788.3758320839581 190.25727136431786V167.15202398800602H1851.5026686656672V168.8023988005997Q1851.5026686656672 205.72953523238382 1831.2855772113944 225.74032983508246Q1813.1314542728635 243.8944527736132 1782.3932233883058 243.8944527736132Q1751.0361019490256 243.8944527736132 1732.4693853073463 225.32773613193405Q1712.0459970014992 204.90434782608696 1712.0459970014992 172.30944527736133Q1712.0459970014992 141.36491754122937 1732.263088455772 121.14782608695653Q1752.8927736131934 100.10554722638682 1786.51916041979 100.10554722638682Q1804.6732833583208 100.10554722638682 1818.288875562219 107.32593703148427Q1834.1737331334334 115.37151424287856 1844.0759820089957 132.49415292353825L1820.7644377811096 145.0782608695652Q1815.1944227886056 134.35082458770614 1804.6732833583208 128.7808095952024Q1796.008815592204 124.44857571214393 1785.2813793103448 124.44857571214393Q1765.889475262369 124.44857571214393 1753.511664167916 136.62008995502248Q1739.6897751124438 150.02938530734633 1739.6897751124438 172.92833583208397Q1739.6897751124438 194.58950524737634 1753.3053673163417 207.79250374812594Q1765.4768815592204 219.5514242878561 1783.8373013493253 219.5514242878561Q1799.928455772114 219.5514242878561 1810.8621889055473 211.29955022488755Q1820.7644377811096 203.66656671664168 1823.8588905547226 190.25727136431786Z"/>
+    <path id="p-full-name" d="M735.3748125937032 71.38H768.3926236881559Q778.944707646177 71.38 785.6674062968516 73.16704647676161Q792.3901049475263 74.95409295352323 798.3469265367316 80.059940029985Q809.920179910045 90.27163418290854 809.920179910045 107.46131934032984Q809.920179910045 123.45964017991005 800.5594602698651 132.82035982008995Q790.5179610194903 142.86185907046476 771.7965217391305 142.86185907046476H757.5001499250376V184.9H735.3748125937032ZM757.5001499250376 90.44182908545727V123.8000299850075H766.52047976012Q776.2215892053973 123.8000299850075 780.9870464767616 120.22593703148425Q787.1140629685158 115.46047976011994 787.1140629685158 106.95073463268365Q787.1140629685158 98.6111844077961 780.8168515742129 94.0159220389805Q775.7110044977512 90.44182908545727 765.1589205397302 90.44182908545727ZM833.0666866566717 71.38H866.0844977511244Q876.6365817091455 71.38 883.3592803598201 73.16704647676161Q890.0819790104948 74.95409295352323 896.0388005997002 80.059940029985Q907.6120539730135 90.27163418290854 907.6120539730135 107.46131934032984Q907.6120539730135 123.45964017991005 898.2513343328336 132.82035982008995Q888.2098350824588 142.86185907046476 869.488395802099 142.86185907046476H855.1920239880061V184.9H833.0666866566717ZM855.1920239880061 90.44182908545727V123.8000299850075H864.2123538230885Q873.9134632683658 123.8000299850075 878.6789205397301 120.22593703148425Q884.8059370314843 115.46047976011994 884.8059370314843 106.95073463268365Q884.8059370314843 98.6111844077961 878.5087256371814 94.0159220389805Q873.4028785607197 90.44182908545727 862.8507946026987 90.44182908545727ZM930.7585607196402 71.38H952.8838980509746V184.9H930.7585607196402ZM1050.4055772113943 71.38H1072.5309145427286V147.96770614692653Q1072.5309145427286 173.32674662668666 1059.2557121439281 182.34707646176912Q1051.4267466266867 187.4529235382309 1040.704467766117 187.4529235382309Q1025.7273163418292 187.4529235382309 1014.664647676162 176.9008395802099L1028.1100449775113 160.73232383808096Q1032.3649175412295 166.85934032983508 1039.1727136431784 166.85934032983508Q1045.2997301349326 166.85934032983508 1047.8526536731636 162.94485757121438Q1050.4055772113943 159.20056971514242 1050.4055772113943 144.56380809595203ZM1168.1804497751125 71.38V90.44182908545727H1127.3336731634183V115.80086956521738H1166.4785007496253V134.86269865067464H1127.3336731634183V165.83817091454273H1168.1804497751125V184.9H1105.208335832084V71.38ZM1196.432803598201 71.38H1229.4506146926537Q1240.0026986506748 71.38 1246.7253973013494 73.16704647676161Q1253.448095952024 74.95409295352323 1259.4049175412295 80.059940029985Q1270.978170914543 90.27163418290854 1270.978170914543 107.46131934032984Q1270.978170914543 123.45964017991005 1261.617451274363 132.82035982008995Q1251.575952023988 142.86185907046476 1232.8545127436282 142.86185907046476H1218.5581409295353V184.9H1196.432803598201ZM1218.5581409295353 90.44182908545727V123.8000299850075H1227.5784707646178Q1237.2795802098951 123.8000299850075 1242.0450374812594 120.22593703148425Q1248.1720539730136 115.46047976011994 1248.1720539730136 106.95073463268365Q1248.1720539730136 98.6111844077961 1241.8748425787107 94.0159220389805Q1236.768995502249 90.44182908545727 1226.216911544228 90.44182908545727ZM1361.1814692653672 184.9 1351.1399700149925 161.07271364317842H1305.3575412293853L1295.3160419790104 184.9H1271.3185607196401L1320.1644977511244 71.38H1337.5243778110944L1385.0087556221888 184.9ZM1312.335532233883 143.0320539730135H1344.672563718141L1328.504047976012 102.18527736131934ZM1427.217091454273 184.9H1405.0917541229387V71.38H1420.409295352324L1489.5084257871067 147.1167316341829V71.38H1511.633763118441V184.9H1496.3162218890557L1427.217091454273 108.99307346326836ZM1601.8370614692656 143.20224887556222V124.14041979010494H1653.9167016491756V125.50197901049475Q1653.9167016491756 155.96686656671665 1637.2376011994004 172.47577211394304Q1622.2604497751126 187.4529235382309 1596.9014092953526 187.4529235382309Q1571.0317841079461 187.4529235382309 1555.7142428785608 172.13538230884558Q1538.864947526237 155.28608695652173 1538.864947526237 128.3952923538231Q1538.864947526237 102.86605697151424 1555.544047976012 86.18695652173912Q1572.5635382308847 68.82707646176911 1600.305307346327 68.82707646176911Q1615.2824587706148 68.82707646176911 1626.5153223388306 74.7838980509745Q1639.6203298350827 81.42149925037481 1647.7896851574214 95.54767616191904L1628.5576611694155 105.9295652173913Q1623.9623988005999 97.07943028485757 1615.2824587706148 92.48416791604197Q1608.1342728635684 88.91007496251873 1599.2841379310346 88.91007496251873Q1583.2858170914544 88.91007496251873 1573.0741229385308 98.95157421289355Q1561.6710644677662 110.01424287856072 1561.6710644677662 128.90587706146925Q1561.6710644677662 146.77634182908545 1572.903928035982 157.66881559220388Q1582.945427286357 167.36992503748127 1598.0927736131935 167.36992503748127Q1611.3679760119942 167.36992503748127 1620.3883058470767 160.56212893553223Q1628.5576611694155 154.26491754122938 1631.1105847076462 143.20224887556222Z"/>
+    <path id="p-full-desc" d="M726.7722338830586 236.5H734.7327136431785Q739.7147826086957 236.5 742.6390404797602 238.44950524737632Q744.8051574212894 239.91163418290856 745.9694452773614 242.26728635682161Q747.1337331334333 244.62293853073464 747.1337331334333 247.2222788605697Q747.1337331334333 252.0960419790105 743.6137931034483 255.12860569715144Q740.3104647676163 257.94455772113946 734.7868665667168 257.94455772113946H732.2958320839581V272.62H726.7722338830586ZM732.2958320839581 241.5903748125937V252.85418290854574H734.7868665667168Q738.2526536731634 252.85418290854574 740.039700149925 251.31082458770615Q741.8267466266867 249.76746626686656 741.8267466266867 247.16812593703148Q741.8267466266867 246.24752623688155 741.5830584707646 245.4352323838081Q741.3393703148427 244.62293853073464 740.6624587706148 243.6752623688156Q739.9855472263869 242.72758620689655 738.4692653673164 242.1589805097451Q736.9529835082459 241.5903748125937 734.7327136431785 241.5903748125937ZM770.484387806097 264.9302848575712 774.9249275362318 267.42131934032983Q773.4086456771614 270.1289655172414 771.0800699650175 271.59109445277363Q768.4265767116442 273.323988005997 764.3651074462769 273.323988005997Q759.5996501749125 273.323988005997 756.6753923038481 270.39973013493255Q753.3179110444778 267.0422488755622 753.3179110444778 261.68110944527734Q753.3179110444778 256.04920539730136 756.9461569215392 252.31265367316342Q760.0328735632185 249.22593703148425 764.5817191404298 249.22593703148425Q769.0222588705648 249.22593703148425 771.892363818091 252.20434782608697Q775.0873863068466 255.50767616191905 775.0873863068466 261.84356821589205V262.4934032983508H758.7332033983008Q758.9498150924538 265.3635082458771 760.6827086456772 267.0964017991005Q762.1448375812095 268.5585307346327 764.7441779110445 268.5585307346327Q766.8561419290355 268.5585307346327 768.372423788106 267.42131934032983Q769.6179410294852 266.44656671664166 770.484387806097 264.9302848575712ZM759.1122738630685 258.16116941529236H769.6720939530235Q769.3471764117941 256.26581709145427 768.0475062468765 255.0744527736132Q766.6395302348826 253.77478260869566 764.4734132933534 253.77478260869566Q762.1989905047476 253.77478260869566 760.7368615692154 255.2369115442279Q759.5454972513743 256.3199700149925 759.1122738630685 258.16116941529236ZM783.8709045477261 272.62V249.8216191904048H789.1778910544728V251.87943028485756Q790.2067966016991 250.68806596701648 791.3981609195403 249.9840779610195Q792.6978310844578 249.22593703148425 794.6473363318341 249.22593703148425Q796.975912043978 249.22593703148425 798.8171114442779 250.30899550224888L796.6509945027486 255.12860569715144Q795.3513243378311 254.31631184407797 793.9433483258371 254.31631184407797Q791.8313843078461 254.31631184407797 790.640019990005 255.56182908545728Q789.1778910544728 257.132263868066 789.1778910544728 260.8146626686657V272.62ZM817.9438380809596 253.23325337331335 813.9906746626688 255.83259370314843Q812.7993103448276 253.8830884557721 810.7414992503749 253.8830884557721Q809.7125937031485 253.8830884557721 809.116911544228 254.47877061469265Q808.6295352323839 254.96614692653674 808.6295352323839 255.67013493253373Q808.6295352323839 256.4824287856072 809.3876761619191 256.9698050974513Q809.5501349325339 257.07811094452774 809.7125937031485 257.1593403298351Q809.8750524737632 257.24056971514244 810.308275862069 257.45718140929534Q810.7414992503749 257.6737931034483 811.1747226386807 257.8904047976012L813.8823688155923 259.244227886057Q816.156791604198 260.3814392803598 817.0773913043479 261.356191904048Q818.7561319340331 263.0349325337331 818.7561319340331 265.58011994003Q818.7561319340331 268.6126836581709 816.7524737631185 270.77880059970016Q814.4238980509746 273.323988005997 810.3624287856073 273.323988005997Q807.3298650674664 273.323988005997 805.4345127436283 271.8618590704648Q803.3767016491755 270.3455772113943 802.5102548725638 267.692083958021L806.8424887556223 265.63427286356824Q807.3840179910046 267.2047076461769 808.0880059970016 267.80038980509744Q808.9544527736133 268.66683658170916 810.4165817091455 268.66683658170916Q811.8245577211395 268.66683658170916 812.5826986506747 267.90869565217395Q813.34083958021 267.1505547226387 813.34083958021 266.1216491754123Q813.34083958021 265.1468965517241 812.636851574213 264.3887556221889Q811.8787106446778 263.6306146926537 810.3624287856073 262.98077961019493L808.412923538231 262.060179910045Q806.1385007496252 260.9771214392804 805.2720539730136 260.11067466266866Q803.6474662668667 258.54023988005997 803.6474662668667 256.26581709145427Q803.6474662668667 253.39571214392805 805.5428185907048 251.3920539730135Q807.6006296851575 249.22593703148425 811.1205697151426 249.22593703148425Q813.5574512743628 249.22593703148425 815.3444977511245 250.41730134932533Q816.9690854572715 251.44620689655173 817.9438380809596 253.23325337331335ZM843.4606096951526 252.4751124437781V249.8216191904048H848.7675962018992V272.62H843.4606096951526V270.23727136431785Q840.8071164417793 273.323988005997 836.6373413293354 273.323988005997Q831.60111944028 273.323988005997 828.5956321839082 269.7498950524738Q825.5901449275364 266.17580209895056 825.5901449275364 261.1937331334333Q825.5901449275364 255.7784407796102 828.812243878061 252.50218890554723Q832.0343428285859 249.22593703148425 836.6914942528737 249.22593703148425Q840.9695752123939 249.22593703148425 843.4606096951526 252.4751124437781ZM837.3413293353325 253.9913943028486Q834.5253773113444 253.9913943028486 832.7654072963519 256.10335832083956Q831.0054372813594 258.21532233883056 831.0054372813594 261.30203898050974Q831.0054372813594 264.33460269865066 832.7654072963519 266.44656671664166Q834.5253773113444 268.5585307346327 837.3413293353325 268.5585307346327Q840.0489755122439 268.5585307346327 841.9172513743129 266.6631784107946Q843.7855272363819 264.7678260869565 843.7855272363819 261.356191904048Q843.7855272363819 257.83625187406295 841.9172513743129 255.91382308845579Q840.0489755122439 253.9913943028486 837.3413293353325 253.9913943028486ZM868.2733933033484 254.69538230884558H864.2119240379811V272.62H858.9049375312345V254.69538230884558H856.684667666167V249.8216191904048H858.9049375312345V241.48206896551724H864.2119240379811V249.8216191904048H868.2733933033484ZM875.1074062968515 249.8216191904048H880.4143928035982V262.8724737631184Q880.4143928035982 265.7425787106447 881.3891454272864 266.98809595202397Q882.5805097451274 268.5585307346327 884.8549325337331 268.5585307346327Q887.1293553223388 268.5585307346327 888.32071964018 266.98809595202397Q889.2954722638681 265.7425787106447 889.2954722638681 262.8724737631184V249.8216191904048H894.6024587706147V263.0349325337331Q894.6024587706147 268.0711544227886 892.1655772113943 270.508035982009Q889.3496251874063 273.323988005997 884.7466266866567 273.323988005997Q880.3060869565218 273.323988005997 877.544287856072 270.508035982009Q875.1074062968515 268.0711544227886 875.1074062968515 263.0349325337331ZM921.2564417791106 252.4751124437781V249.8216191904048H926.5634282858572V272.62H921.2564417791106V270.23727136431785Q918.6029485257372 273.323988005997 914.4331734132934 273.323988005997Q909.3969515242379 273.323988005997 906.3914642678661 269.7498950524738Q903.3859770114943 266.17580209895056 903.3859770114943 261.1937331334333Q903.3859770114943 255.7784407796102 906.608075962019 252.50218890554723Q909.8301749125438 249.22593703148425 914.4873263368316 249.22593703148425Q918.7654072963519 249.22593703148425 921.2564417791106 252.4751124437781ZM915.1371614192905 253.9913943028486Q912.3212093953024 253.9913943028486 910.5612393803099 256.10335832083956Q908.8012693653174 258.21532233883056 908.8012693653174 261.30203898050974Q908.8012693653174 264.33460269865066 910.5612393803099 266.44656671664166Q912.3212093953024 268.5585307346327 915.1371614192905 268.5585307346327Q917.8448075962019 268.5585307346327 919.7130834582708 266.6631784107946Q921.5813593203399 264.7678260869565 921.5813593203399 261.356191904048Q921.5813593203399 257.83625187406295 919.7130834582708 255.91382308845579Q917.8448075962019 253.9913943028486 915.1371614192905 253.9913943028486ZM936.4841579210396 272.62V249.8216191904048H941.7911444277862V251.93358320839582Q944.2280259870065 249.22593703148425 947.9645777111444 249.22593703148425Q952.4592703648176 249.22593703148425 954.6795402298851 252.31265367316342Q956.0875162418791 254.31631184407797 956.0875162418791 258.6485457271364V272.62H950.7805297351325V259.94821589205395Q950.7805297351325 257.8904047976012 950.4556121939031 256.5907346326837Q950.1306946526737 255.29106446776612 949.4267066466766 254.7766116941529Q948.7227186406797 254.26215892053972 948.1541129435283 254.12677661169414Q947.5855072463769 253.9913943028486 946.6107546226887 253.9913943028486Q945.4735432283859 253.9913943028486 944.796631684158 254.1809295352324Q944.1197201399301 254.3704647676162 943.3345027486257 255.04737631184406Q942.5492853573214 255.72428785607195 942.1702148925538 257.375952023988Q941.7911444277862 259.02761619190403 941.7911444277862 261.68110944527734V272.62ZM982.9147026486758 236.5H990.8751824087957Q995.8572513743129 236.5 998.7815092453774 238.44950524737632Q1000.9476261869066 239.91163418290856 1002.1119140429786 242.26728635682161Q1003.2762018990505 244.62293853073464 1003.2762018990505 247.2222788605697Q1003.2762018990505 252.0960419790105 999.7562618690655 255.12860569715144Q996.4529335332335 257.94455772113946 990.929335332334 257.94455772113946H988.4383008495753V272.62H982.9147026486758ZM988.4383008495753 241.5903748125937V252.85418290854574H990.929335332334Q994.3951224387806 252.85418290854574 996.1821689155422 251.31082458770615Q997.9692153923039 249.76746626686656 997.9692153923039 247.16812593703148Q997.9692153923039 246.24752623688155 997.7255272363818 245.4352323838081Q997.4818390804598 244.62293853073464 996.804927536232 243.6752623688156Q996.1280159920041 242.72758620689655 994.6117341329336 242.1589805097451Q993.0954522738631 241.5903748125937 990.8751824087957 241.5903748125937ZM1026.6268565717141 264.9302848575712 1031.0673963018492 267.42131934032983Q1029.5511144427787 270.1289655172414 1027.2225387306346 271.59109445277363Q1024.5690454772614 273.323988005997 1020.507576211894 273.323988005997Q1015.7421189405297 273.323988005997 1012.8178610694653 270.39973013493255Q1009.460379810095 267.0422488755622 1009.460379810095 261.68110944527734Q1009.460379810095 256.04920539730136 1013.0886256871564 252.31265367316342Q1016.1753423288357 249.22593703148425 1020.724187906047 249.22593703148425Q1025.1647276361819 249.22593703148425 1028.034832583708 252.20434782608697Q1031.2298550724638 255.50767616191905 1031.2298550724638 261.84356821589205V262.4934032983508H1014.875672163918Q1015.092283858071 265.3635082458771 1016.8251774112944 267.0964017991005Q1018.2873063468267 268.5585307346327 1020.8866466766617 268.5585307346327Q1022.9986106946527 268.5585307346327 1024.5148925537233 267.42131934032983Q1025.7604097951025 266.44656671664166 1026.6268565717141 264.9302848575712ZM1015.2547426286857 258.16116941529236H1025.8145627186407Q1025.4896451774114 256.26581709145427 1024.1899750124937 255.0744527736132Q1022.7819990004998 253.77478260869566 1020.6158820589706 253.77478260869566Q1018.3414592703648 253.77478260869566 1016.8793303348326 255.2369115442279Q1015.6879660169915 256.3199700149925 1015.2547426286857 258.16116941529236ZM1040.0133733133434 233.1425187406297H1045.32035982009V272.62H1040.0133733133434ZM1071.9743428285858 252.4751124437781V249.8216191904048H1077.2813293353324V272.62H1071.9743428285858V270.23727136431785Q1069.3208495752126 273.323988005997 1065.1510744627687 273.323988005997Q1060.1148525737133 273.323988005997 1057.1093653173416 269.7498950524738Q1054.1038780609697 266.17580209895056 1054.1038780609697 261.1937331334333Q1054.1038780609697 255.7784407796102 1057.3259770114944 252.50218890554723Q1060.548075962019 249.22593703148425 1065.2052273863071 249.22593703148425Q1069.4833083458273 249.22593703148425 1071.9743428285858 252.4751124437781ZM1065.8550624687657 253.9913943028486Q1063.0391104447779 253.9913943028486 1061.2791404297855 256.10335832083956Q1059.5191704147928 258.21532233883056 1059.5191704147928 261.30203898050974Q1059.5191704147928 264.33460269865066 1061.2791404297855 266.44656671664166Q1063.0391104447779 268.5585307346327 1065.8550624687657 268.5585307346327Q1068.5627086456773 268.5585307346327 1070.4309845077464 266.6631784107946Q1072.2992603698153 264.7678260869565 1072.2992603698153 261.356191904048Q1072.2992603698153 257.83625187406295 1070.4309845077464 255.91382308845579Q1068.5627086456773 253.9913943028486 1065.8550624687657 253.9913943028486ZM1087.256211894053 249.8216191904048H1092.5631984007996V285.0210194902549H1087.256211894053ZM1087.4728235882058 242.835892053973Q1086.4980709645176 241.86113943028485 1086.4980709645176 240.39901049475262Q1086.4980709645176 238.93688155922038 1087.4728235882058 237.96212893553223Q1088.4475762118939 236.9873763118441 1089.9097051474262 236.9873763118441Q1091.3718340829585 236.9873763118441 1092.3465867066466 237.96212893553223Q1093.3213393303347 238.93688155922038 1093.3213393303347 240.39901049475262Q1093.3213393303347 241.86113943028485 1092.3465867066466 242.835892053973Q1091.3718340829585 243.81064467766117 1089.9097051474262 243.81064467766117Q1088.4475762118939 243.81064467766117 1087.4728235882058 242.835892053973ZM1119.2171814092953 252.4751124437781V249.8216191904048H1124.524167916042V272.62H1119.2171814092953V270.23727136431785Q1116.5636881559221 273.323988005997 1112.3939130434783 273.323988005997Q1107.3576911544228 273.323988005997 1104.352203898051 269.7498950524738Q1101.3467166416792 266.17580209895056 1101.3467166416792 261.1937331334333Q1101.3467166416792 255.7784407796102 1104.568815592204 252.50218890554723Q1107.7909145427286 249.22593703148425 1112.4480659670166 249.22593703148425Q1116.7261469265368 249.22593703148425 1119.2171814092953 252.4751124437781ZM1113.0979010494752 253.9913943028486Q1110.2819490254874 253.9913943028486 1108.5219790104948 256.10335832083956Q1106.7620089955024 258.21532233883056 1106.7620089955024 261.30203898050974Q1106.7620089955024 264.33460269865066 1108.5219790104948 266.44656671664166Q1110.2819490254874 268.5585307346327 1113.0979010494752 268.5585307346327Q1115.8055472263868 268.5585307346327 1117.6738230884557 266.6631784107946Q1119.5420989505249 264.7678260869565 1119.5420989505249 261.356191904048Q1119.5420989505249 257.83625187406295 1117.6738230884557 255.91382308845579Q1115.8055472263868 253.9913943028486 1113.0979010494752 253.9913943028486ZM1134.4990504747627 272.62V249.8216191904048H1139.8060369815094V251.87943028485756Q1140.8349425287356 250.68806596701648 1142.0263068465767 249.9840779610195Q1143.3259770114944 249.22593703148425 1145.2754822588706 249.22593703148425Q1147.6040579710145 249.22593703148425 1149.4452573713145 250.30899550224888L1147.2791404297852 255.12860569715144Q1145.9794702648676 254.31631184407797 1144.5714942528737 254.31631184407797Q1142.4595302348825 254.31631184407797 1141.2681659170414 255.56182908545728Q1139.8060369815094 257.132263868066 1139.8060369815094 260.8146626686657V272.62ZM1172.5900449775113 236.5H1178.1136431784107V272.62H1172.5900449775113ZM1189.0091254372815 272.62V249.8216191904048H1194.316111944028V251.93358320839582Q1196.7529935032485 249.22593703148425 1200.4895452273865 249.22593703148425Q1204.9842378810597 249.22593703148425 1207.204507746127 252.31265367316342Q1208.612483758121 254.31631184407797 1208.612483758121 258.6485457271364V272.62H1203.3054972513744V259.94821589205395Q1203.3054972513744 257.8904047976012 1202.980579710145 256.5907346326837Q1202.6556621689158 255.29106446776612 1201.9516741629186 254.7766116941529Q1201.2476861569216 254.26215892053972 1200.6790804597704 254.12677661169414Q1200.1104747626189 253.9913943028486 1199.1357221389308 253.9913943028486Q1197.9985107446278 253.9913943028486 1197.3215992003998 254.1809295352324Q1196.644687656172 254.3704647676162 1195.8594702648677 255.04737631184406Q1195.0742528735634 255.72428785607195 1194.6951824087957 257.375952023988Q1194.316111944028 259.02761619190403 1194.316111944028 261.68110944527734V272.62ZM1235.2664667666168 252.4751124437781V233.1425187406297H1240.5734532733634V272.62H1235.2664667666168V270.23727136431785Q1232.6129735132436 273.323988005997 1228.4431984007997 273.323988005997Q1223.4069765117442 273.323988005997 1220.4014892553723 269.7498950524738Q1217.3960019990006 266.17580209895056 1217.3960019990006 261.1937331334333Q1217.3960019990006 255.7784407796102 1220.6181009495253 252.50218890554723Q1223.84019990005 249.22593703148425 1228.497351324338 249.22593703148425Q1232.7754322838582 249.22593703148425 1235.2664667666168 252.4751124437781ZM1229.1471864067967 253.9913943028486Q1226.3312343828088 253.9913943028486 1224.5712643678162 256.10335832083956Q1222.8112943528238 258.21532233883056 1222.8112943528238 261.30203898050974Q1222.8112943528238 264.33460269865066 1224.5712643678162 266.44656671664166Q1226.3312343828088 268.5585307346327 1229.1471864067967 268.5585307346327Q1231.8548325837082 268.5585307346327 1233.7231084457771 266.6631784107946Q1235.5913843078463 264.7678260869565 1235.5913843078463 261.356191904048Q1235.5913843078463 257.83625187406295 1233.7231084457771 255.91382308845579Q1231.8548325837082 253.9913943028486 1229.1471864067967 253.9913943028486ZM1273.725787106447 261.24788605697154Q1273.725787106447 266.44656671664166 1270.232923538231 269.88527736131937Q1266.7400599700152 273.323988005997 1261.5413793103448 273.323988005997Q1256.3426986506747 273.323988005997 1252.8498350824589 269.88527736131937Q1249.356971514243 266.44656671664166 1249.356971514243 261.24788605697154Q1249.356971514243 255.9950524737631 1252.8498350824589 252.61049475262368Q1256.3426986506747 249.22593703148425 1261.5413793103448 249.22593703148425Q1266.7400599700152 249.22593703148425 1270.232923538231 252.61049475262368Q1273.725787106447 255.9950524737631 1273.725787106447 261.24788605697154ZM1268.3104947526238 261.30203898050974Q1268.3104947526238 257.6737931034483 1266.3339130434783 255.83259370314846Q1264.357331334333 253.9913943028486 1261.5413793103448 253.9913943028486Q1258.725427286357 253.9913943028486 1256.7488455772116 255.83259370314846Q1254.7722638680661 257.6737931034483 1254.7722638680661 261.30203898050974Q1254.7722638680661 264.6053673163418 1256.613463268366 266.58194902548723Q1258.4546626686658 268.5585307346327 1261.5413793103448 268.5585307346327Q1264.628095952024 268.5585307346327 1266.469295352324 266.58194902548723Q1268.3104947526238 264.6053673163418 1268.3104947526238 261.30203898050974ZM1282.4551524237884 272.62V249.8216191904048H1287.762138930535V251.93358320839582Q1290.1990204897554 249.22593703148425 1293.9355722138935 249.22593703148425Q1298.4302648675666 249.22593703148425 1300.650534732634 252.31265367316342Q1302.058510744628 254.31631184407797 1302.058510744628 258.6485457271364V272.62H1296.7515242378813V259.94821589205395Q1296.7515242378813 257.8904047976012 1296.426606696652 256.5907346326837Q1296.1016891554227 255.29106446776612 1295.3977011494258 254.7766116941529Q1294.6937131434286 254.26215892053972 1294.125107446277 254.12677661169414Q1293.5565017491258 253.9913943028486 1292.5817491254377 253.9913943028486Q1291.4445377311347 253.9913943028486 1290.767626186907 254.1809295352324Q1290.090714642679 254.3704647676162 1289.3054972513746 255.04737631184406Q1288.5202798600703 255.72428785607195 1288.1412093953027 257.375952023988Q1287.762138930535 259.02761619190403 1287.762138930535 261.68110944527734V272.62ZM1328.0085057471267 264.9302848575712 1332.4490454772617 267.42131934032983Q1330.9327636181913 270.1289655172414 1328.6041879060472 271.59109445277363Q1325.950694652674 273.323988005997 1321.8892253873066 273.323988005997Q1317.1237681159423 273.323988005997 1314.199510244878 270.39973013493255Q1310.8420289855076 267.0422488755622 1310.8420289855076 261.68110944527734Q1310.8420289855076 256.04920539730136 1314.470274862569 252.31265367316342Q1317.5569915042481 249.22593703148425 1322.1058370814596 249.22593703148425Q1326.5463768115944 249.22593703148425 1329.4164817591206 252.20434782608697Q1332.6115042478764 255.50767616191905 1332.6115042478764 261.84356821589205V262.4934032983508H1316.2573213393307Q1316.4739330334835 265.3635082458771 1318.206826586707 267.0964017991005Q1319.6689555222392 268.5585307346327 1322.2682958520743 268.5585307346327Q1324.3802598700652 268.5585307346327 1325.8965417291358 267.42131934032983Q1327.142058970515 266.44656671664166 1328.0085057471267 264.9302848575712ZM1316.6363918040984 258.16116941529236H1327.1962118940532Q1326.871294352824 256.26581709145427 1325.5716241879063 255.0744527736132Q1324.1636481759124 253.77478260869566 1321.9975312343831 253.77478260869566Q1319.7231084457774 253.77478260869566 1318.260979510245 255.2369115442279Q1317.0696151924042 256.3199700149925 1316.6363918040984 258.16116941529236ZM1355.3123238380813 253.23325337331335 1351.3591604197904 255.83259370314843Q1350.1677961019493 253.8830884557721 1348.1099850074966 253.8830884557721Q1347.08107946027 253.8830884557721 1346.4853973013496 254.47877061469265Q1345.9980209895057 254.96614692653674 1345.9980209895057 255.67013493253373Q1345.9980209895057 256.4824287856072 1346.7561619190408 256.9698050974513Q1346.9186206896554 257.07811094452774 1347.0810794602703 257.1593403298351Q1347.243538230885 257.24056971514244 1347.6767616191908 257.45718140929534Q1348.1099850074966 257.6737931034483 1348.5432083958024 257.8904047976012L1351.250854572714 259.244227886057Q1353.5252773613197 260.3814392803598 1354.4458770614697 261.356191904048Q1356.1246176911548 263.0349325337331 1356.1246176911548 265.58011994003Q1356.1246176911548 268.6126836581709 1354.1209595202401 270.77880059970016Q1351.7923838080962 273.323988005997 1347.730914542729 273.323988005997Q1344.698350824588 273.323988005997 1342.80299850075 271.8618590704648Q1340.7451874062972 270.3455772113943 1339.8787406296856 267.692083958021L1344.2109745127439 265.63427286356824Q1344.7525037481262 267.2047076461769 1345.4564917541234 267.80038980509744Q1346.322938530735 268.66683658170916 1347.7850674662673 268.66683658170916Q1349.1930434782612 268.66683658170916 1349.9511844077965 267.90869565217395Q1350.7093253373316 267.1505547226387 1350.7093253373316 266.1216491754123Q1350.7093253373316 265.1468965517241 1350.0053373313347 264.3887556221889Q1349.2471964017993 263.6306146926537 1347.730914542729 262.98077961019493L1345.7814092953527 262.060179910045Q1343.506986506747 260.9771214392804 1342.6405397301353 260.11067466266866Q1341.0159520239883 258.54023988005997 1341.0159520239883 256.26581709145427Q1341.0159520239883 253.39571214392805 1342.9113043478264 251.3920539730135Q1344.9691154422792 249.22593703148425 1348.4890554722642 249.22593703148425Q1350.9259370314846 249.22593703148425 1352.7129835082462 250.41730134932533Q1354.3375712143932 251.44620689655173 1355.3123238380813 253.23325337331335ZM1364.1499950024993 249.8216191904048H1369.456981509246V272.62H1364.1499950024993ZM1364.366606696652 242.835892053973Q1363.391854072964 241.86113943028485 1363.391854072964 240.39901049475262Q1363.391854072964 238.93688155922038 1364.366606696652 237.96212893553223Q1365.3413593203402 236.9873763118441 1366.8034882558725 236.9873763118441Q1368.2656171914048 236.9873763118441 1369.240369815093 237.96212893553223Q1370.215122438781 238.93688155922038 1370.215122438781 240.39901049475262Q1370.215122438781 241.86113943028485 1369.240369815093 242.835892053973Q1368.2656171914048 243.81064467766117 1366.8034882558725 243.81064467766117Q1365.3413593203402 243.81064467766117 1364.366606696652 242.835892053973ZM1396.1109645177414 252.4751124437781V249.8216191904048H1401.417951024488V272.62H1396.1109645177414V270.23727136431785Q1393.4574712643682 273.323988005997 1389.2876961519244 273.323988005997Q1384.251474262869 273.323988005997 1381.2459870064972 269.7498950524738Q1378.2404997501253 266.17580209895056 1378.2404997501253 261.1937331334333Q1378.2404997501253 255.7784407796102 1381.46259870065 252.50218890554723Q1384.6846976511747 249.22593703148425 1389.3418490754627 249.22593703148425Q1393.6199300349829 249.22593703148425 1396.1109645177414 252.4751124437781ZM1389.9916841579213 253.9913943028486Q1387.1757321339335 253.9913943028486 1385.415762118941 256.10335832083956Q1383.6557921039484 258.21532233883056 1383.6557921039484 261.30203898050974Q1383.6557921039484 264.33460269865066 1385.415762118941 266.44656671664166Q1387.1757321339335 268.5585307346327 1389.9916841579213 268.5585307346327Q1392.699330334833 268.5585307346327 1394.567606196902 266.6631784107946Q1396.435882058971 264.7678260869565 1396.435882058971 261.356191904048Q1396.435882058971 257.83625187406295 1394.567606196902 255.91382308845579Q1392.699330334833 253.9913943028486 1389.9916841579213 253.9913943028486ZM1443.9494852573719 252.4751124437781V233.1425187406297H1449.2564717641185V272.62H1443.9494852573719V270.23727136431785Q1441.2959920039987 273.323988005997 1437.1262168915548 273.323988005997Q1432.0899950024993 273.323988005997 1429.0845077461277 269.7498950524738Q1426.0790204897557 266.17580209895056 1426.0790204897557 261.1937331334333Q1426.0790204897557 255.7784407796102 1429.3011194402804 252.50218890554723Q1432.5232183908051 249.22593703148425 1437.1803698150932 249.22593703148425Q1441.4584507746133 249.22593703148425 1443.9494852573719 252.4751124437781ZM1437.8302048975518 253.9913943028486Q1435.014252873564 253.9913943028486 1433.2542828585715 256.10335832083956Q1431.4943128435789 258.21532233883056 1431.4943128435789 261.30203898050974Q1431.4943128435789 264.33460269865066 1433.2542828585715 266.44656671664166Q1435.014252873564 268.5585307346327 1437.8302048975518 268.5585307346327Q1440.5378510744633 268.5585307346327 1442.4061269365325 266.6631784107946Q1444.2744027986014 264.7678260869565 1444.2744027986014 261.356191904048Q1444.2744027986014 257.83625187406295 1442.4061269365325 255.91382308845579Q1440.5378510744633 253.9913943028486 1437.8302048975518 253.9913943028486ZM1459.231354322839 249.8216191904048H1464.5383408295856V272.62H1459.231354322839ZM1459.4479660169918 242.835892053973Q1458.4732133933037 241.86113943028485 1458.4732133933037 240.39901049475262Q1458.4732133933037 238.93688155922038 1459.4479660169918 237.96212893553223Q1460.42271864068 236.9873763118441 1461.8848475762122 236.9873763118441Q1463.3469765117445 236.9873763118441 1464.3217291354326 237.96212893553223Q1465.2964817591208 238.93688155922038 1465.2964817591208 240.39901049475262Q1465.2964817591208 241.86113943028485 1464.3217291354326 242.835892053973Q1463.3469765117445 243.81064467766117 1461.8848475762122 243.81064467766117Q1460.42271864068 243.81064467766117 1459.4479660169918 242.835892053973ZM1496.7808195902057 236.5H1502.3044177911052V259.89406296851575Q1502.3044177911052 265.4176611694153 1500.9505947026494 268.12530734632685Q1498.3512543728143 273.323988005997 1492.4485857071472 273.323988005997Q1488.874492753624 273.323988005997 1486.058540729636 271.4827886056972L1488.7661869065475 266.8256371814093Q1490.282468765618 268.12530734632685 1492.5568915542237 268.12530734632685Q1495.210384807597 268.12530734632685 1496.185137431285 265.68842578710644Q1496.7808195902057 264.172143928036 1496.7808195902057 259.89406296851575ZM1529.229165417292 264.9302848575712 1533.669705147427 267.42131934032983Q1532.1534232883566 270.1289655172414 1529.8248475762125 271.59109445277363Q1527.1713543228393 273.323988005997 1523.109885057472 273.323988005997Q1518.3444277861076 273.323988005997 1515.4201699150433 270.39973013493255Q1512.062688655673 267.0422488755622 1512.062688655673 261.68110944527734Q1512.062688655673 256.04920539730136 1515.6909345327344 252.31265367316342Q1518.7776511744134 249.22593703148425 1523.326496751625 249.22593703148425Q1527.7670364817598 249.22593703148425 1530.637141429286 252.20434782608697Q1533.8321639180417 255.50767616191905 1533.8321639180417 261.84356821589205V262.4934032983508H1517.477981009496Q1517.6945927036488 265.3635082458771 1519.4274862568723 267.0964017991005Q1520.8896151924046 268.5585307346327 1523.4889555222396 268.5585307346327Q1525.6009195402305 268.5585307346327 1527.1172013993012 267.42131934032983Q1528.3627186406804 266.44656671664166 1529.229165417292 264.9302848575712ZM1517.8570514742637 258.16116941529236H1528.4168715642186Q1528.0919540229893 256.26581709145427 1526.7922838580716 255.0744527736132Q1525.3843078460777 253.77478260869566 1523.2181909045485 253.77478260869566Q1520.9437681159427 253.77478260869566 1519.4816391804104 255.2369115442279Q1518.2902748625695 256.3199700149925 1517.8570514742637 258.16116941529236ZM1547.922668665668 269.9665067466267V285.0210194902549H1542.6156821589213V249.8216191904048H1547.922668665668V252.31265367316342Q1550.522008995503 249.22593703148425 1554.6917841079467 249.22593703148425Q1559.3489355322347 249.22593703148425 1562.5710344827594 252.50218890554723Q1565.793133433284 255.7784407796102 1565.793133433284 261.08542728635683Q1565.793133433284 266.55487256371816 1562.4356521739137 269.9394302848576Q1559.0781709145435 273.323988005997 1554.745937031485 273.323988005997Q1550.6844677661177 273.323988005997 1547.922668665668 269.9665067466267ZM1554.041949025488 253.9913943028486Q1551.3343028485765 253.9913943028486 1549.4660269865076 255.91382308845579Q1547.5977511244384 257.83625187406295 1547.5977511244384 261.356191904048Q1547.5977511244384 264.7678260869565 1549.4660269865076 266.6631784107946Q1551.3343028485765 268.5585307346327 1554.041949025488 268.5585307346327Q1556.857901049476 268.5585307346327 1558.6178710644685 266.44656671664166Q1560.377841079461 264.33460269865066 1560.377841079461 261.30203898050974Q1560.377841079461 258.21532233883056 1558.6178710644685 256.10335832083956Q1556.857901049476 253.9913943028486 1554.041949025488 253.9913943028486ZM1591.2557521239387 252.4751124437781V249.8216191904048H1596.5627386306853V272.62H1591.2557521239387V270.23727136431785Q1588.6022588705655 273.323988005997 1584.4324837581216 273.323988005997Q1579.3962618690662 273.323988005997 1576.3907746126943 269.7498950524738Q1573.3852873563226 266.17580209895056 1573.3852873563226 261.1937331334333Q1573.3852873563226 255.7784407796102 1576.6073863068473 252.50218890554723Q1579.829485257372 249.22593703148425 1584.48663668166 249.22593703148425Q1588.7647176411801 249.22593703148425 1591.2557521239387 252.4751124437781ZM1585.1364717641186 253.9913943028486Q1582.3205197401307 253.9913943028486 1580.5605497251381 256.10335832083956Q1578.8005797101457 258.21532233883056 1578.8005797101457 261.30203898050974Q1578.8005797101457 264.33460269865066 1580.5605497251381 266.44656671664166Q1582.3205197401307 268.5585307346327 1585.1364717641186 268.5585307346327Q1587.8441179410302 268.5585307346327 1589.712393803099 266.6631784107946Q1591.5806696651682 264.7678260869565 1591.5806696651682 261.356191904048Q1591.5806696651682 257.83625187406295 1589.712393803099 255.91382308845579Q1587.8441179410302 253.9913943028486 1585.1364717641186 253.9913943028486ZM1606.4834682658677 272.62V249.8216191904048H1611.7904547726143V251.93358320839582Q1614.2273363318347 249.22593703148425 1617.9638880559728 249.22593703148425Q1622.458580709646 249.22593703148425 1624.6788505747134 252.31265367316342Q1626.0868265867073 254.31631184407797 1626.0868265867073 258.6485457271364V272.62H1620.7798400799606V259.94821589205395Q1620.7798400799606 257.8904047976012 1620.4549225387314 256.5907346326837Q1620.130004997502 255.29106446776612 1619.426016991505 254.7766116941529Q1618.722028985508 254.26215892053972 1618.1534232883564 254.12677661169414Q1617.5848175912051 253.9913943028486 1616.610064967517 253.9913943028486Q1615.472853573214 253.9913943028486 1614.7959420289862 254.1809295352324Q1614.1190304847582 254.3704647676162 1613.333813093454 255.04737631184406Q1612.5485957021497 255.72428785607195 1612.169525237382 257.375952023988Q1611.7904547726143 259.02761619190403 1611.7904547726143 261.68110944527734V272.62ZM1652.740809595203 252.31265367316342V249.8216191904048H1658.0477961019496V270.77880059970016Q1658.0477961019496 275.21934032983506 1657.2896551724143 278.00821589205395Q1656.5315142428792 280.79709145427285 1654.3112443778118 282.63829085457274Q1651.332833583209 285.0751724137931 1646.7298350824594 285.0751724137931Q1642.0726836581716 285.0751724137931 1639.2567316341836 282.2592203898051Q1636.4949325337338 279.4974212893553 1635.8992503748132 275.16518740629687H1641.0437781109451Q1641.4228485757128 277.3313043478261 1642.7225187406304 278.7392803598201Q1644.1846476761625 280.3097151424288 1646.8381409295357 280.3097151424288Q1649.4916341829091 280.3097151424288 1651.0079160419798 278.79343328335835Q1652.740809595203 277.11469265367316 1652.740809595203 273.05322338830587V270.07481259370314Q1650.1956221889063 273.323988005997 1645.8092353823095 273.323988005997Q1641.2062368815598 273.323988005997 1638.2819790104954 270.23727136431785Q1634.870344827587 266.6631784107946 1634.870344827587 261.1937331334333Q1634.870344827587 255.72428785607195 1638.2278260869573 252.36680659670165Q1641.3145427286363 249.22593703148425 1645.9716941529243 249.22593703148425Q1650.141469265368 249.22593703148425 1652.740809595203 252.31265367316342ZM1646.621529235383 253.9913943028486Q1644.1846476761625 253.9913943028486 1642.614212893554 255.50767616191905Q1640.28563718141 257.6737931034483 1640.28563718141 261.30203898050974Q1640.28563718141 265.0385907046477 1642.5600599700156 267.0422488755622Q1644.292953523239 268.5585307346327 1646.621529235383 268.5585307346327Q1649.2750224887563 268.5585307346327 1651.062068965518 266.7173313343328Q1653.0657271364325 264.5512143928036 1653.0657271364325 261.356191904048Q1653.0657271364325 257.6737931034483 1650.8996101949033 255.6159820089955Q1649.2750224887563 253.9913943028486 1646.621529235383 253.9913943028486Z"/>
+    <symbol id="logo-stacked" viewBox="0 0 633 492"><use href="#p-emblem" style="fill:var(--le)"/><use href="#p-word" style="fill:var(--lt)"/></symbol>
+    <symbol id="logo-side" viewBox="0 0 1860.58 344"><use href="#p-emblem" style="fill:var(--le)"/><use href="#p-side" style="fill:var(--lt)"/></symbol>
+    <symbol id="logo-full" viewBox="0 0 1661.41 344"><use href="#p-emblem" style="fill:var(--le)"/><use href="#p-full-name" style="fill:var(--lt)"/><use href="#p-full-desc" style="fill:var(--lt)"/></symbol>
+    <symbol id="logo-emblem" viewBox="0 0 633 344"><use href="#p-emblem" style="fill:var(--le)"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="mast">
+    <svg class="logo v-theme" viewBox="0 0 1860.58 344" role="img" aria-label="PPI Jepang"><use href="#logo-side"/></svg>
+    <div class="actions"><p>Pedoman Identitas Visual · Biro Pendataan · November 2026</p><a class="pdf" href="brand-ppi-jepang.pdf" download>Unduh PDF</a></div>
+  </header>
+
+  <div class="hero">
+    <p class="eyebrow">Persatuan Pelajar Indonesia di Jepang</p>
+    <h1>Identitas Visual PPI Jepang</h1>
+    <p class="lead">Panduan penggunaan logo PPI Jepang: versi merah dan hitam yang berlaku saat ini, versi inversi untuk latar gelap dan merah, serta susunan horizontal dengan tipografi Futura.</p>
+    <p class="status"><i></i>Versi inversi dan susunan horizontal diajukan untuk AD/ART 2027–2028. Hingga disahkan Kongres, korespondensi resmi tetap menggunakan versi Primer.</p>
+  </div>
+</div>
+
+<div class="triptych" role="img" aria-label="Logo PPI Jepang di atas latar putih, hitam, dan merah">
+  <div class="g-white"><svg class="logo v-primary" viewBox="0 0 633 492"><use href="#logo-stacked"/></svg></div>
+  <div class="g-black"><svg class="logo v-inverse-black" viewBox="0 0 633 492"><use href="#logo-stacked"/></svg></div>
+  <div class="g-red"><svg class="logo v-inverse-white" viewBox="0 0 633 492"><use href="#logo-stacked"/></svg></div>
+</div>
+<div class="wrap">
+  <div class="trip-caption">
+    <span><b>Primer</b> · di atas latar putih</span>
+    <span><b>Inversi Hitam</b> · di atas latar hitam</span>
+    <span><b>Inversi Putih</b> · di atas latar merah dan warna gelap lainnya</span>
+  </div>
+
+  <section class="block" id="lambang">
+    <div class="rail"><h2>Lambang</h2><p>AD Pasal 10</p></div>
+    <div class="body">
+      <div class="meaning">
+        <div class="stage"><svg class="logo v-primary" viewBox="0 0 633 344" role="img" aria-label="Lambang PPI Jepang"><use href="#logo-emblem"/></svg></div>
+        <div class="prose">
+          <p>Bentuk dan makna lambang ditetapkan dalam Anggaran Dasar. Gunakan uraian berikut secara utuh saat mempresentasikan identitas organisasi.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Elemen</th><th>Makna</th></tr></thead>
+            <tbody>
+              <tr><td>Elips merah</td><td>Bentuk bola dunia dan mata</td></tr>
+              <tr><td>Belah ketupat</td><td>Buku, melambangkan ilmu pengetahuan yang dipelajari di Jepang</td></tr>
+              <tr><td>Lingkaran dan garis melintang</td><td>Dinamika kegiatan pelajar yang mengikuti perkembangan ilmu pengetahuan dan teknologi</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+      <p class="motto">"Melihat dan Mempelajari Kemajuan Dunia dengan Hati untuk Kemajuan Indonesia"<small>Makna filosofis lambang secara keseluruhan, AD Pasal 10 ayat 2</small></p>
+    </div>
+  </section>
+
+  <section class="block" id="susunan">
+    <div class="rail"><h2>Susunan Logo</h2><p>Sesuaikan dengan bidang ruang</p></div>
+    <div class="body">
+      <div class="arrange">
+        <figure><div class="stage"><svg class="logo v-primary w-stacked" viewBox="0 0 633 492" role="img" aria-label="Logo vertikal"><use href="#logo-stacked"/></svg></div>
+          <figcaption><b>Vertikal (Bertumpuk)</b><span>Susunan resmi utama. Digunakan pada kop surat, sertifikat, sampul dokumen, dan bidang persegi.</span></figcaption></figure>
+        <figure><div class="stage"><svg class="logo v-primary w-side" viewBox="0 0 1860.58 344" role="img" aria-label="Logo horizontal"><use href="#logo-side"/></svg></div>
+          <figcaption><b>Horizontal (Samping)</b><span>Untuk bidang melebar: tajuk situs web dan Portal, spanduk, salindia presentasi, serta tanda tangan surel.</span></figcaption></figure>
+        <figure><div class="stage"><svg class="logo v-primary w-full" viewBox="0 0 1661.41 344" role="img" aria-label="Logo horizontal lengkap"><use href="#logo-full"/></svg></div>
+          <figcaption><b>Horizontal Lengkap</b><span>Untuk audiens eksternal yang belum mengenal akronim PPI: proposal kerja sama, materi sponsor, atau acara bersama mitra Jepang.</span></figcaption></figure>
+        <figure><div class="stage"><svg class="logo v-primary w-emblem" viewBox="0 0 633 344" role="img" aria-label="Lambang saja"><use href="#logo-emblem"/></svg></div>
+          <figcaption><b>Lambang Saja</b><span>Untuk ikon aplikasi, foto profil media sosial, favicon, stempel, atau media yang sudah mencantumkan nama PPI Jepang secara jelas.</span></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="warna-logo">
+    <div class="rail"><h2>Variasi Warna</h2><p>Ditentukan oleh warna latar</p></div>
+    <div class="body">
+      <p>Setiap susunan memiliki tiga variasi warna. Tentukan warna latar terlebih dahulu, lalu pilih variasi yang sesuai. Penggunaan variasi warna di luar ketentuan ini tidak diperkenankan.</p>
+      <div class="ways">
+        <div class="way">
+          <div class="g-white" style="border:1px solid var(--rule)"><svg class="logo v-primary w-stacked" viewBox="0 0 633 492"><use href="#logo-stacked"/></svg></div>
+          <div class="g-white" style="border:1px solid var(--rule)"><svg class="logo v-primary" viewBox="0 0 1860.58 344"><use href="#logo-side"/></svg></div>
+          <div class="g-white" style="border:1px solid var(--rule)"><svg class="logo v-primary w-full" viewBox="0 0 1661.41 344"><use href="#logo-full"/></svg></div>
+        </div>
+        <div class="way">
+          <div class="g-black"><svg class="logo v-inverse-black w-stacked" viewBox="0 0 633 492"><use href="#logo-stacked"/></svg></div>
+          <div class="g-black"><svg class="logo v-inverse-black" viewBox="0 0 1860.58 344"><use href="#logo-side"/></svg></div>
+          <div class="g-black"><svg class="logo v-inverse-black w-full" viewBox="0 0 1661.41 344"><use href="#logo-full"/></svg></div>
+        </div>
+        <div class="way">
+          <div class="g-red"><svg class="logo v-inverse-white w-stacked" viewBox="0 0 633 492"><use href="#logo-stacked"/></svg></div>
+          <div class="g-red"><svg class="logo v-inverse-white" viewBox="0 0 1860.58 344"><use href="#logo-side"/></svg></div>
+          <div class="g-red"><svg class="logo v-inverse-white w-full" viewBox="0 0 1661.41 344"><use href="#logo-full"/></svg></div>
+        </div>
+      </div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Variasi</th><th>Lambang</th><th>Tipografi</th><th>Latar Belakang</th></tr></thead>
+        <tbody>
+          <tr><td>Primer</td><td>Merah #ED2326</td><td>Hitam #000000</td><td>Putih, abu-abu sangat terang, atau foto terang yang bersih</td></tr>
+          <tr><td>Inversi Hitam</td><td>Merah #ED2326</td><td>Putih #FFFFFF</td><td>Hitam, serta warna sangat gelap yang memenuhi standar kontras</td></tr>
+          <tr><td>Inversi Putih</td><td>Putih #FFFFFF</td><td>Putih #FFFFFF</td><td>Merah #ED2326, serta warna gelap atau solid lain yang lulus uji kontras (lihat bagian Latar Gelap Lainnya)</td></tr>
+        </tbody>
+      </table></div>
+      <p class="hole-note">Area kosong di dalam lambang bersifat transparan (berlubang), bukan isian warna putih. Di atas latar hitam area tersebut akan tampak hitam, dan di atas latar merah akan tampak merah. Sifat transparan ini disengaja; jangan menutupinya dengan warna putih.</p>
+    </div>
+  </section>
+
+
+  <section class="block" id="latar-gelap">
+    <div class="rail"><h2>Latar Gelap Lainnya</h2><p>Berbasis uji kontras, bukan preferensi</p></div>
+    <div class="body">
+      <p>Latar gelap tidak terbatas pada warna hitam. Untuk warna abu-abu arang, biru tua, hijau tua, merah tua, atau foto gelap, jangan mengira-ngira: ukur tingkat kecerahan latar di bawah logo, lalu pilih variasi berdasarkan tabel berikut. Kecerahan dihitung sebagai luminans relatif (menggunakan rumus WCAG dari nilai RGB, dalam rentang 0 hingga 1).</p>
+      <div class="table-scroll rules"><table>
+        <thead><tr><th>Luminans Latar</th><th>Variasi yang Digunakan</th><th>Keterangan</th></tr></thead>
+        <tbody>
+          <tr><td>0 hingga 0,031<br><small>setara abu-abu #313131</small></td><td>Inversi Hitam (Inversi Putih juga diperbolehkan)</td><td>Rasio kontras lambang merah mencapai minimal 3:1 terhadap latar, memenuhi batas minimum elemen grafis.</td></tr>
+          <tr><td>0,031 hingga 0,193<br><small>setara merah logo</small></td><td>Hanya Inversi Putih</td><td>Kontras warna putih terhadap latar minimal 4,3:1 (setara dengan putih di atas merah logo). Lambang merah akan menyatu dengan latar jika digunakan.</td></tr>
+          <tr><td>Di atas 0,193</td><td>Tidak diperbolehkan. Tambahkan panel putih, hitam, atau merah di bawah logo.</td><td>Terlalu terang untuk logo putih, tetapi terlalu gelap untuk logo Primer.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Pengecualian: di atas latar bernuansa merah, meskipun sangat gelap (seperti merah anggur atau marun), wajib menggunakan <b>Inversi Putih</b>. Lambang merah di atas latar sewarna akan kehilangan keterbacaannya.</p>
+
+      <div class="grounds" id="grounds" aria-label="Contoh warna latar dan versi logo yang dipakai"></div>
+
+      <div class="checker" id="checker">
+        <div>
+          <h3>Uji Warna Latar</h3>
+          <p style="font-size:13px;color:var(--muted);margin:0 0 14px">Masukkan kode warna HEX atau pilih melalui pemilih warna.</p>
+          <label for="gc-text">Warna latar (HEX)</label>
+          <div class="field">
+            <input type="color" id="gc-pick" value="#0b2545" aria-label="Pilih warna latar">
+            <input type="text" id="gc-text" value="#0B2545" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" aria-describedby="gc-out">
+          </div>
+          <ul class="readout" id="gc-out" aria-live="polite">
+            <li><span>Luminans latar</span><span id="gc-l">-</span></li>
+            <li><span>Kontras lambang merah</span><span id="gc-r">-</span></li>
+            <li><span>Kontras warna putih</span><span id="gc-w">-</span></li>
+          </ul>
+          <p class="verdict" id="gc-verdict"></p>
+        </div>
+        <div class="preview" id="gc-preview" role="img" aria-label="Pratinjau logo di atas warna yang dipilih"></div>
+      </div>
+
+      <div class="prose">
+        <h3>Foto dan Gradien</h3>
+        <p>Ukur titik paling terang pada area penempatan logo—termasuk area ruang bebas <i>x</i> di sekelilingnya—bukan nilai rata-rata seluruh foto. Apabila titik tersebut melebihi luminans 0,193 atau latar foto terlalu ramai, tempatkan logo di atas panel solid. Alternatif lainnya, tambahkan lapisan gelap (<i>overlay</i> hitam 60%) di atas foto terlebih dahulu sebelum melakukan pengukuran ulang.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="samping">
+    <div class="rail"><h2>Logo Horizontal</h2><p>Tipografi Futura (Baru)</p></div>
+    <div class="body">
+      <p>Tipografi pada logo horizontal menggunakan jenis huruf Futura, merujuk pada ART Pasal 55. Tulisan "PPI JEPANG" menggunakan Futura Demi dengan tinggi huruf kapital sebesar 40% dari tinggi lambang, serta jarak antara lambang dan teks sebesar 26% dari tinggi lambang. Seluruh teks dalam berkas resmi telah dikonversi menjadi kurva vektor (<i>outlined</i>); jangan mengetik ulang secara manual.</p>
+      <div class="diagram">
+        <svg viewBox="-100 -60 2260.58 470" role="img" aria-label="Konstruksi logo horizontal: tinggi huruf kapital 40 persen dan jarak 26 persen tinggi lambang">
+          <line class="dg-guide" x1="-100" y1="0" x2="1860.58" y2="0"/>
+          <line class="dg-guide" x1="-100" y1="344" x2="1860.58" y2="344"/>
+          <line class="dg-guide" x1="700" y1="103.2" x2="1860.58" y2="103.2"/>
+          <line class="dg-guide" x1="700" y1="240.8" x2="1860.58" y2="240.8"/>
+          <rect class="dg-box" x="633" y="0" width="89.44" height="344"/>
+          <g class="v-primary"><use href="#logo-side" width="1860.58" height="344"/></g>
+          <text class="dg-label" x="-90" y="-20">tinggi lambang = 100%</text>
+          <text class="dg-label" x="640" y="390">26%</text>
+          <text class="dg-label" x="1900.58" y="185">40%</text>
+          <line class="dg-guide" x1="1884.58" y1="103.2" x2="1884.58" y2="240.8" style="stroke-dasharray:none"/>
+        </svg>
+      </div>
+      <p>Pada susunan horizontal lengkap, ukuran tulisan "PPI JEPANG" disesuaikan menjadi 33% dari tinggi lambang. Di bawahnya tercantum teks "Persatuan Pelajar Indonesia di Jepang" dalam Futura Medium dengan spasi antarhuruf (<i>tracking</i>) 0,06em agar sejajar dengan lebar baris di atasnya.</p>
+    </div>
+  </section>
+
+  <section class="block" id="ruang">
+    <div class="rail"><h2>Ruang Bebas dan Ukuran</h2><p>x = ¼ tinggi lambang</p></div>
+    <div class="body">
+      <p>Sediakan ruang bebas minimal selebar <i>x</i> di keempat sisi logo dari teks, tepi halaman, maupun elemen visual lainnya. Nilai <i>x</i> setara dengan seperempat tinggi lambang, sehingga proporsinya akan menyesuaikan secara otomatis saat ukuran logo diubah.</p>
+      <div class="diagram">
+        <svg viewBox="-130 -130 2120.58 604" role="img" aria-label="Ruang bebas x di sekeliling logo horizontal">
+          <rect class="dg-zone" x="-86" y="-86" width="2032.58" height="516"/>
+          <rect class="dg-box" x="-86" y="-86" width="86" height="86"/><text class="dg-label" x="-54" y="-32">x</text>
+          <rect class="dg-box" x="1860.58" y="-86" width="86" height="86"/><text class="dg-label" x="1892.58" y="-32">x</text>
+          <rect class="dg-box" x="-86" y="344" width="86" height="86"/><text class="dg-label" x="-54" y="398">x</text>
+          <rect class="dg-box" x="1860.58" y="344" width="86" height="86"/><text class="dg-label" x="1892.58" y="398">x</text>
+          <text class="dg-label" x="0" y="-104" style="font-size:26px">x = ¼ tinggi lambang (86 dari 344)</text>
+          <g class="v-primary"><use href="#logo-side" width="1860.58" height="344"/></g>
+        </svg>
+      </div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Susunan</th><th>Nilai x</th><th>Ukuran Minimum Layar</th><th>Ukuran Minimum Cetak</th></tr></thead>
+        <tbody>
+          <tr><td>Horizontal</td><td>25% tinggi logo</td><td>tinggi 24 px</td><td>tinggi 8 mm</td></tr>
+          <tr><td>Horizontal lengkap</td><td>25% tinggi logo</td><td>tinggi 48 px</td><td>tinggi 14 mm</td></tr>
+          <tr><td>Vertikal</td><td>17,5% tinggi logo</td><td>tinggi 56 px</td><td>tinggi 16 mm</td></tr>
+          <tr><td>Lambang saja</td><td>25% tinggi lambang</td><td>tinggi 20 px</td><td>tinggi 6 mm</td></tr>
+        </tbody>
+      </table></div>
+      <div class="minsizes" aria-label="Logo pada ukuran minimum">
+        <figure><svg class="v-primary" style="height:24px" viewBox="0 0 1860.58 344" role="img" aria-label="Horizontal 24px"><use href="#logo-side"/></svg><figcaption><b>Horizontal</b>24 px</figcaption></figure>
+        <figure><svg class="v-primary" style="height:48px" viewBox="0 0 1661.41 344" role="img" aria-label="Horizontal lengkap 48px"><use href="#logo-full"/></svg><figcaption><b>Horizontal lengkap</b>48 px</figcaption></figure>
+        <figure><svg class="v-primary" style="height:56px" viewBox="0 0 633 492" role="img" aria-label="Vertikal 56px"><use href="#logo-stacked"/></svg><figcaption><b>Vertikal</b>56 px</figcaption></figure>
+        <figure><svg class="v-primary" style="height:20px" viewBox="0 0 633 344" role="img" aria-label="Lambang 20px"><use href="#logo-emblem"/></svg><figcaption><b>Lambang</b>20 px</figcaption></figure>
+      </div>
+      <p>Apabila bidang ruang lebih kecil dari ukuran minimum tersebut, gunakan susunan yang lebih ringkas: beralih dari horizontal lengkap ke horizontal, atau dari vertikal ke lambang saja.</p>
+    </div>
+  </section>
+
+  <section class="block" id="larangan">
+    <div class="rail"><h2>Larangan Penggunaan</h2><p>Jaga keutuhan bentuk logo</p></div>
+    <div class="body">
+      <div class="donts">
+        <figure><div class="stage d-stretch v-primary"><svg class="logo" viewBox="0 0 633 492" aria-hidden="true"><use href="#logo-stacked"/></svg></div><figcaption><b>Jangan</b> meregangkan atau memampatkan proporsi logo.</figcaption></figure>
+        <figure><div class="stage v-primary d-recolor"><svg class="logo" viewBox="0 0 633 492" aria-hidden="true"><use href="#logo-stacked"/></svg></div><figcaption><b>Jangan</b> mengubah warna di luar ketentuan.</figcaption></figure>
+        <figure><div class="stage d-rotate v-primary"><svg class="logo" viewBox="0 0 633 492" aria-hidden="true"><use href="#logo-stacked"/></svg></div><figcaption><b>Jangan</b> memutar atau memiringkan logo.</figcaption></figure>
+        <figure><div class="stage d-effect v-primary"><svg class="logo" viewBox="0 0 633 492" aria-hidden="true"><use href="#logo-stacked"/></svg></div><figcaption><b>Jangan</b> menambahkan efek bayangan, pendar, atau garis tepi.</figcaption></figure>
+        <figure><div class="stage d-ground v-primary"><svg class="logo" viewBox="0 0 633 492" aria-hidden="true"><use href="#logo-stacked"/></svg></div><figcaption><b>Jangan</b> menggunakan versi Primer di atas merah. Gunakan Inversi Putih.</figcaption></figure>
+        <figure><div class="stage d-busy v-primary"><svg class="logo" viewBox="0 0 633 492" aria-hidden="true"><use href="#logo-stacked"/></svg></div><figcaption><b>Jangan</b> menempatkan logo langsung di atas latar ramai. Gunakan panel solid.</figcaption></figure>
+      </div>
+      <p>Selain itu, dilarang mengetik ulang tipografi logo, memotong bagian lambang, atau menjadikan logo sebagai pola berulang maupun tanda air (<i>watermark</i>). Penggunaan logo oleh pihak eksternal wajib mendapatkan persetujuan Pengurus Pusat PPI Jepang.</p>
+    </div>
+  </section>
+
+  <section class="block" id="warna">
+    <div class="rail"><h2>Palet Warna</h2><p>ART Pasal 55</p></div>
+    <div class="body">
+      <div class="swatches">
+        <div class="swatch sw-red"><b>Merah PPI Jepang</b><dl><dt>HEX</dt><dd>#ED2326</dd><dt>RGB</dt><dd>237 35 38</dd><dt>Penggunaan</dt><dd>Lambang, blok aksen</dd></dl></div>
+        <div class="swatch sw-black"><b>Hitam</b><dl><dt>HEX</dt><dd>#000000</dd><dt>RGB</dt><dd>0 0 0</dd><dt>Penggunaan</dt><dd>Tipografi logo, latar</dd></dl></div>
+        <div class="swatch sw-white"><b>Putih</b><dl><dt>HEX</dt><dd>#FFFFFF</dd><dt>RGB</dt><dd>255 255 255</dd><dt>Penggunaan</dt><dd>Latar, versi inversi</dd></dl></div>
+      </div>
+      <div class="prose">
+        <h3>Warna Antarmuka Digital</h3>
+        <p>Merah utama logo hanya memiliki rasio kontras 4,3:1 di atas latar putih sehingga kurang optimal untuk teks berukuran kecil. Untuk teks, tautan, dan elemen interaktif pada situs web maupun Portal, gunakan warna merah antarmuka berikut.</p>
+      </div>
+      <div class="ui-colors">
+        <div class="chip"><i style="background:#c8102e"></i><b>Merah Teks</b><span>#C8102E · kontras 5,9:1 di atas putih</span></div>
+        <div class="chip"><i style="background:#1c1f23"></i><b>Hitam Tinta</b><span>#1C1F23 · teks utama</span></div>
+        <div class="chip"><i style="background:#5b6168"></i><b>Abu-abu</b><span>#5B6168 · teks sekunder, kontras 6,2:1</span></div>
+        <div class="chip"><i style="background:#f6f6f4"></i><b>Latar Lembut</b><span>#F6F6F4 · permukaan panel</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="tipografi">
+    <div class="rail"><h2>Tipografi</h2><p>Futura dan Plus Jakarta Sans</p></div>
+    <div class="body">
+      <div class="specimen">
+        <div class="big">PPI JEPANG</div>
+        <div class="abc">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk 0123456789</div>
+      </div>
+      <p>Jenis huruf Futura digunakan untuk logo dan judul utama. PPI Jepang memegang lisensi resmi Futura Cyrillic; berkas fon ini tidak boleh disebarluaskan atau diunggah ke repositori publik. Untuk tampilan web, judul menggunakan Jost sebagai alternatif gratis dengan proporsi serupa. Teks isi menggunakan Plus Jakarta Sans, selaras dengan sistem Portal.</p>
+      <div>
+        <div class="typerow"><div class="meta"><b>Display</b>Futura Demi · 44/48</div><div class="t-display">Kongres PPI Jepang 2027</div></div>
+        <div class="typerow"><div class="meta"><b>Judul</b>Futura Demi · 28/34</div><div class="t-title">Laporan Pertanggungjawaban</div></div>
+        <div class="typerow"><div class="meta"><b>Teks isi</b>Plus Jakarta Sans · 16/26</div><div class="t-body">PPI Jepang menaungi pelajar Indonesia di sembilan koordinator daerah (korda), mulai dari Hokkaido hingga Kyushu-Okinawa.</div></div>
+        <div class="typerow"><div class="meta"><b>Label</b>Plus Jakarta Sans 600 · 12/16</div><div class="t-label">Korda Kansai</div></div>
+        <div class="typerow"><div class="meta"><b>Bahasa Jepang</b>Noto Sans JP · 18</div><div class="t-jp">在日インドネシア留学生協会</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="nama">
+    <div class="rail"><h2>Tata Penamaan</h2><p>Penulisan nama resmi</p></div>
+    <div class="body">
+      <div class="names">
+        <div><span>Bahasa Indonesia</span><p>Persatuan Pelajar Indonesia di Jepang</p></div>
+        <div><span>Bahasa Inggris</span><p>Indonesian Students' Association in Japan</p></div>
+        <div><span>Bahasa Jepang</span><p class="jp">在日インドネシア留学生協会</p></div>
+      </div>
+      <div class="prose">
+        <p>Dalam penulisan naskah kalimat, gunakan bentuk "PPI Jepang". Penulisan kapital seluruhnya ("PPI JEPANG") hanya diterapkan pada logo. Singkatan "PPIJ" digunakan khusus untuk kebutuhan internal dan penamaan sistem, seperti Portal PPIJ.</p>
+        <p class="motto">"Dari Jepang, Membuka Dunia untuk Indonesia, dan Membuka Indonesia untuk Dunia"<small>Semboyan organisasi, AD Pasal 9</small></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="berkas">
+    <div class="rail"><h2>Unduh Aset Logo</h2><p>Format SVG, latar transparan</p></div>
+    <div class="body">
+      <p>Klik <b>Unduh</b> untuk mengambil berkas <code>.svg</code>, atau klik <b>Salin SVG</b> lalu tempelkan kode ke berkas baru atau langsung ke ruang kerja Figma. Nama berkas mengikuti istilah di halaman ini (vertikal, horizontal, horizontal lengkap), dan akhirannya menunjukkan variasi warna latar yang diperuntukkan.</p>
+      <div class="files" id="files"></div>
+    </div>
+  </section>
+
+  <footer>
+    <svg class="logo v-theme" viewBox="0 0 1860.58 344" role="img" aria-label="PPI Jepang"><use href="#logo-side"/></svg>
+    <span>Lambang dan tipografi vertikal direkonstruksi presisi dari logo resmi (akurasi bentuk di atas 99%). Tipografi horizontal menggunakan Futura Cyrillic yang telah dikonversi menjadi kurva vektor.</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var INK = {
+    'primary': ['#ed2326', '#000000', '#ffffff', 'g-white'],
+    'inverse-black': ['#ed2326', '#ffffff', '#000000', 'g-black'],
+    'inverse-white': ['#ffffff', '#ffffff', '#ed2326', 'g-red']
+  };
+  var LAYOUT = {
+    'stacked': { sym: 'logo-stacked', vb: '0 0 633 492', parts: [['p-emblem', 0], ['p-word', 1]] },
+    'side': { sym: 'logo-side', vb: '0 0 1860.58 344', parts: [['p-emblem', 0], ['p-side', 1]] },
+    'side-full': { sym: 'logo-full', vb: '0 0 1661.41 344', parts: [['p-emblem', 0], ['p-full-name', 1], ['p-full-desc', 1]] }
+  };
+  var list = [];
+  var FILE = { 'stacked': 'vertical', 'side': 'horizontal', 'side-full': 'horizontal-full' };
+  ['stacked', 'side', 'side-full'].forEach(function (l) {
+    Object.keys(INK).forEach(function (v) { list.push({ name: 'ppij-' + FILE[l] + '-' + v + '.svg', layout: l, v: v }); });
+  });
+  list.push({ name: 'ppij-emblem-red.svg', layout: 'emblem', v: 'primary' });
+  list.push({ name: 'ppij-emblem-white.svg', layout: 'emblem', v: 'inverse-white' });
+
+  function source(item) {
+    var ink = INK[item.v];
+    var lay = item.layout === 'emblem' ? { vb: '0 0 633 344', parts: [['p-emblem', 0]] } : LAYOUT[item.layout];
+    var w = lay.vb.split(' ')[2], h = lay.vb.split(' ')[3];
+    var paths = lay.parts.map(function (p) {
+      var el = document.getElementById(p[0]);
+      var rule = el.getAttribute('fill-rule') ? ' fill-rule="evenodd"' : '';
+      return '<path fill="' + ink[p[1]] + '"' + rule + ' d="' + el.getAttribute('d') + '"/>';
+    }).join('');
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + lay.vb + '" width="' + Math.round(w) + '" height="' + Math.round(h) + '"><title>PPI Jepang</title>' + paths + '</svg>\n';
+  }
+
+  var host = document.getElementById('files');
+  list.forEach(function (item) {
+    var lay = item.layout === 'emblem' ? { sym: 'logo-emblem', vb: '0 0 633 344' } : LAYOUT[item.layout];
+    var card = document.createElement('div');
+    card.className = 'file';
+    var ground = INK[item.v][3];
+    card.innerHTML = '<div class="stage ' + ground + '"' + (ground === 'g-white' ? ' style="border-bottom:1px solid var(--rule)"' : '') + '>' +
+      '<svg class="logo v-' + item.v + '" viewBox="' + lay.vb + '" role="img" aria-label="' + item.name + '"><use href="#' + lay.sym + '"/></svg></div>' +
+      '<div class="info"><code>' + item.name + '</code><div class="actions"><a class="dl" href="' + item.name + '" download>Unduh</a><button class="copy" type="button">Salin SVG</button></div></div>';
+    var btn = card.querySelector('button');
+    btn.addEventListener('click', function () {
+      var text = source(item);
+      function done() { btn.textContent = 'Tersalin'; btn.setAttribute('data-done', ''); setTimeout(function () { btn.textContent = 'Salin SVG'; btn.removeAttribute('data-done'); }, 1800); }
+      function fallback() {
+        var ta = card.querySelector('textarea') || document.createElement('textarea');
+        ta.className = 'fallback'; ta.value = text; ta.readOnly = true; ta.setAttribute('aria-label', 'Kode SVG ' + item.name);
+        card.querySelector('.info').appendChild(ta); ta.focus(); ta.select();
+        btn.textContent = 'Pilih semua, lalu salin';
+      }
+      try {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } catch (e) { fallback(); }
+    });
+    host.appendChild(card);
+  });
+})();
+
+(function () {
+  function lin(c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(r, g, b) { return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b); }
+  var LRED = lum(237, 35, 38);
+  var LMIN_RED = (LRED + 0.05) / 3 - 0.05;   /* red emblem keeps 3:1 */
+  var LMAX = LRED + 1e-6;                      /* white keeps at least what it has on brand red */
+  function parse(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex).trim());
+    if (!m) return null;
+    var n = parseInt(m[1], 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function hsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn, h = 0, l = (mx + mn) / 2;
+    var s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+    if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
+    return { h: h, s: s, l: l };
+  }
+  function analyse(hex) {
+    var rgb = parse(hex); if (!rgb) return null;
+    var L = lum(rgb[0], rgb[1], rgb[2]);
+    var c = hsl(rgb[0], rgb[1], rgb[2]);
+    var redish = c.s > 0.35 && (c.h >= 340 || c.h <= 20) && L > 0.004;
+    var cr = (LRED + 0.05) / (L + 0.05), cw = 1.05 / (L + 0.05);
+    var v, why;
+    if (L > LMAX) { v = 'no'; why = 'Latar terlalu terang. Tambahkan panel putih, hitam, atau merah di bawah logo.'; }
+    else if (L <= LMIN_RED && !redish) { v = 'inverse-black'; why = 'Lambang merah terbaca jelas (kontras di atas 3:1) dengan tipografi putih. Inversi Putih juga diperbolehkan.'; }
+    else if (redish) { v = 'inverse-white'; why = 'Latar bernuansa merah: lambang merah akan menyatu dengan latar. Gunakan Inversi Putih.'; }
+    else { v = 'inverse-white'; why = 'Kontras lambang merah kurang memadai di latar ini (di bawah 3:1). Gunakan Inversi Putih.'; }
+    return { rgb: rgb, L: L, cr: cr, cw: cw, v: v, why: why };
+  }
+  var NAME = { 'inverse-black': 'Inversi Hitam', 'inverse-white': 'Inversi Putih', 'no': 'Tidak diperbolehkan' };
+  function f(n, d) { return n.toFixed(d).replace('.', ','); }
+  function logo(v, cls, vb, sym) { return '<svg class="logo ' + cls + ' v-' + v + '" viewBox="' + vb + '" aria-hidden="true"><use href="#' + sym + '"/></svg>'; }
+
+  var SAMPLES = [
+    ['Hitam', '#000000'], ['Abu arang', '#1C1F23'], ['Hijau tua', '#14342B'], ['Cokelat tua', '#3B2A20'], ['Batas abu-abu', '#313131'],
+    ['Biru Pemira', '#123B70'], ['Merah anggur', '#7A0B12'], ['Abu sedang', '#5B6168'], ['Merah logo', '#ED2326'], ['Abu terang', '#8A8F95']
+  ];
+  var host = document.getElementById('grounds');
+  SAMPLES.forEach(function (s) {
+    var a = analyse(s[1]), v = a.v === 'no' ? 'inverse-white' : a.v;
+    var d = document.createElement('div'); d.className = 'ground';
+    d.innerHTML = '<div class="face' + (a.v === 'no' ? ' fail' : '') + '" style="background:' + s[1] + '">' + logo(v, '', '0 0 ' + '1860.58' + ' 344', 'logo-side') + '</div>' +
+      '<div class="cap"><b>' + s[0] + '</b><code>' + s[1] + '</code> · ' + f(a.L, 3) + '<span class="v ' + (a.v === 'no' ? 'no' : 'ok') + '">' + NAME[a.v] + '</span></div>';
+    host.appendChild(d);
+  });
+
+  var pick = document.getElementById('gc-pick'), txt = document.getElementById('gc-text');
+  function render(hex) {
+    var a = analyse(hex), prev = document.getElementById('gc-preview'), vd = document.getElementById('gc-verdict');
+    if (!a) { vd.className = 'verdict no'; vd.innerHTML = '<b>Kode warna belum lengkap</b>Masukkan enam karakter heksadesimal, misalnya #0B2545.'; return; }
+    document.getElementById('gc-l').textContent = f(a.L, 3);
+    document.getElementById('gc-r').textContent = f(a.cr, 2) + ' : 1 ' + (a.cr >= 3 ? '(lulus)' : '(gagal)');
+    document.getElementById('gc-w').textContent = f(a.cw, 2) + ' : 1 ' + (a.cw >= 4.3 ? '(lulus)' : '(gagal)');
+    vd.className = 'verdict' + (a.v === 'no' ? ' no' : '');
+    vd.innerHTML = '<b>' + NAME[a.v] + '</b>' + a.why;
+    var v = a.v === 'no' ? 'inverse-white' : a.v;
+    prev.className = 'preview' + (a.v === 'no' ? ' fail' : '');
+    prev.style.background = '#' + hex.replace('#', '');
+    prev.innerHTML = logo(v, 'a', '0 0 633 492', 'logo-stacked') + logo(v, 'b', '0 0 ' + '1860.58' + ' 344', 'logo-side');
+  }
+  function fromText() {
+    var v = txt.value.trim(); if (v[0] !== '#') v = '#' + v;
+    if (parse(v)) pick.value = v.toLowerCase();
+    render(v);
+  }
+  txt.addEventListener('input', fromText);
+  pick.addEventListener('input', function () { txt.value = pick.value.toUpperCase(); render(pick.value); });
+  render('#0B2545');
+})();
+</script>
+</body>
+</html>
